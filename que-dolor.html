@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Qué Dolor — MochiGo Karaoke</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#09070f;--card:#1a1230;--accent1:#c084fc;--accent2:#f472b6;--accent3:#818cf8;--text:#f1e9ff;--muted:#6b5e8c;--glow:rgba(192,132,252,0.3)}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 20%,rgba(192,132,252,0.08) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 80% 80%,rgba(244,114,182,0.07) 0%,transparent 60%);z-index:0;pointer-events:none}
+  .back-btn{position:fixed;top:1rem;left:1rem;z-index:100;background:rgba(26,18,48,0.8);border:1px solid rgba(192,132,252,0.3);color:var(--accent1);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px);transition:all 0.2s}
+  .back-btn:hover{background:rgba(192,132,252,0.15)}
+  header{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 1rem;border-bottom:1px solid rgba(192,132,252,0.15)}
+  .song-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.05em;margin-bottom:0.3rem}
+  .artist-name{color:var(--muted);font-size:0.9rem;font-weight:300;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:1rem}
+  .visualizer-wrap{display:flex;justify-content:center;align-items:flex-end;gap:3px;height:50px;padding:0 2rem;margin-top:0.5rem}
+  .bar{width:4px;border-radius:2px 2px 0 0;background:linear-gradient(to top,var(--accent2),var(--accent1));opacity:0.4;height:4px}
+  @keyframes wave{0%,100%{height:4px}50%{height:var(--max-h)}}
+  .playing .bar{opacity:1;animation:wave var(--spd) ease-in-out infinite;animation-delay:var(--delay)}
+  audio{display:none}
+  .progress-section{position:relative;z-index:1;padding:1rem 2rem 0.5rem;max-width:780px;margin:0 auto}
+  .progress-bar-wrap{width:100%;height:6px;background:var(--card);border-radius:3px;cursor:pointer;overflow:hidden;margin-bottom:0.5rem}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent1),var(--accent2));border-radius:3px;width:0%;box-shadow:0 0 10px var(--glow);pointer-events:none}
+  .time-row{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--muted);font-family:'Cormorant Garamond',serif;letter-spacing:0.05em}
+  .controls{position:relative;z-index:1;display:flex;justify-content:center;gap:1rem;padding:0.8rem 2rem 1rem;flex-wrap:wrap}
+  .btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem}
+  .btn-primary{background:linear-gradient(135deg,var(--accent1),var(--accent2));color:white;padding:0.75rem 2rem;font-size:1rem;font-weight:700;box-shadow:0 0 20px var(--glow);min-width:130px;justify-content:center}
+  .btn-primary:hover{transform:scale(1.05);box-shadow:0 0 35px var(--glow)}
+  .btn-secondary{background:var(--card);color:var(--accent1);border:1px solid rgba(192,132,252,0.3);padding:0.75rem 1.3rem;font-size:0.9rem}
+  .btn-secondary:hover{background:rgba(192,132,252,0.1)}
+  .volume-row{display:flex;align-items:center;gap:0.6rem;justify-content:center;padding-bottom:0.8rem;position:relative;z-index:1}
+  .volume-row span{color:var(--muted);font-size:0.8rem}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100px;height:4px;border-radius:2px;background:var(--card);outline:none;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent1);cursor:pointer}
+  .view-toggles{position:relative;z-index:1;display:flex;justify-content:center;gap:0.5rem;padding:0 2rem 1.2rem;flex-wrap:wrap}
+  .toggle-btn{border:1px solid rgba(192,132,252,0.25);background:transparent;color:var(--muted);padding:0.35rem 1rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.78rem;transition:all 0.2s;letter-spacing:0.05em}
+  .toggle-btn:hover,.toggle-btn.active{background:rgba(192,132,252,0.12);border-color:var(--accent1);color:var(--accent1)}
+  .lyrics-container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:0 1.5rem 8rem}
+  .lyric-block{padding:1.2rem 1.6rem;margin-bottom:0.5rem;border-radius:16px;border:1px solid transparent;transition:all 0.4s ease;cursor:pointer;opacity:0.3}
+  .lyric-block:hover{opacity:0.55;background:rgba(192,132,252,0.04)}
+  .lyric-block.past{opacity:0.18}
+  .lyric-block.active{opacity:1;background:linear-gradient(135deg,rgba(192,132,252,0.08),rgba(244,114,182,0.06));border-color:rgba(192,132,252,0.3);box-shadow:0 0 30px rgba(192,132,252,0.1),inset 0 0 20px rgba(192,132,252,0.03);transform:translateX(6px)}
+  .lyric-es{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:600;color:var(--text);line-height:1.3;margin-bottom:0.35rem;transition:all 0.4s}
+  .lyric-block.active .lyric-es{background:linear-gradient(90deg,var(--text),var(--accent1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .lyric-romaji{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(0.88rem,2vw,1.05rem);color:var(--accent1);opacity:0.85;margin-bottom:0.25rem;letter-spacing:0.03em}
+  .lyric-kanji{font-family:'Noto Serif JP',serif;font-size:clamp(0.75rem,1.5vw,0.88rem);color:var(--muted);font-weight:300;letter-spacing:0.08em}
+  body.view-es .lyric-romaji,body.view-es .lyric-kanji{display:none}
+  body.view-romaji .lyric-es,body.view-romaji .lyric-kanji{display:none}
+  .now-pill{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,rgba(192,132,252,0.85),rgba(244,114,182,0.85));color:white;padding:0.45rem 1.3rem;border-radius:999px;font-size:0.75rem;letter-spacing:0.1em;backdrop-filter:blur(10px);opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:100;white-space:nowrap}
+  body.is-playing .now-pill{opacity:1}
+  @keyframes pulse-pill{0%,100%{box-shadow:0 0 12px rgba(192,132,252,0.5)}50%{box-shadow:0 0 28px rgba(192,132,252,0.9)}}
+  body.is-playing .now-pill{animation:pulse-pill 2s ease-in-out infinite}
+  .audio-error{display:none;position:relative;z-index:1;margin:0.5rem 2rem;padding:0.8rem 1.2rem;background:rgba(244,114,182,0.12);border:1px solid rgba(244,114,182,0.3);border-radius:12px;color:var(--accent2);font-size:0.82rem;text-align:center;line-height:1.5}
+  .audio-error.show{display:block}
+</style>
+</head>
+<body>
+<a class="back-btn" href="index.html">← Menú</a>
+<audio id="audio" src="que-dolor.mp3" preload="auto"></audio>
+<header>
+  <div class="song-title">Qué Dolor</div>
+  <div class="artist-name">Nyako · Ao no Hako</div>
+  <div class="visualizer-wrap" id="visualizer"></div>
+</header>
+<div class="audio-error" id="audioError">⚠️ Falta el archivo <strong>que-dolor.mp3</strong></div>
+<div class="progress-section">
+  <div class="progress-bar-wrap" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="time-row"><span id="timeNow">0:00</span><span id="timeTotal">—</span></div>
+</div>
+<div class="controls">
+  <button class="btn btn-primary" id="playBtn">▶ Play</button>
+  <button class="btn btn-secondary" id="resetBtn">↩ Reinicio</button>
+</div>
+<div class="volume-row">
+  <span>🔈</span><input type="range" id="vol" min="0" max="1" step="0.05" value="0.8"><span>🔊</span>
+</div>
+<div class="view-toggles">
+  <button class="toggle-btn active" data-view="all">Todo</button>
+  <button class="toggle-btn" data-view="es">Solo español</button>
+  <button class="toggle-btn" data-view="romaji">Solo romaji</button>
+</div>
+<div class="lyrics-container" id="lyricsContainer"></div>
+<div class="now-pill">♪ reproduciendo · Qué Dolor</div>
+<script>
+const LYRICS=[
+  {t:0,es:"— intro —",ro:"",kj:""},
+  {t:8,es:"Tanto tiempo juntos como amigos",ro:"",kj:""},
+  {t:12,es:"Sin saber que mis latidos",ro:"",kj:""},
+  {t:15,es:"Aumentarían por tu apoyo y determinación",ro:"",kj:""},
+  {t:21,es:"He escuchado que has sentido",ro:"",kj:""},
+  {t:24,es:"Lo mismo que yo he sentido por ti",ro:"",kj:""},
+  {t:28,es:"Sueñas con esa persona y no soy yo",ro:"",kj:""},
+  {t:34,es:"Y resulta que me ignoras",ro:"",kj:""},
+  {t:37,es:"No me ves como una opción",ro:"",kj:""},
+  {t:40,es:"Menos teniéndola cerca de tu habitación",ro:"",kj:""},
+  {t:46,es:"Pero me verás ahora",ro:"",kj:""},
+  {t:49,es:"Te he confesado mi amor",ro:"",kj:""},
+  {t:52,es:"Y cambiará la perspectiva de esta relación",ro:"",kj:""},
+  {t:58,es:"Qué maldición",ro:"",kj:""},
+  {t:61,es:"Sentir tanto amor",ro:"",kj:""},
+  {t:64,es:"Por alguien que ya está sintiéndolo",ro:"",kj:""},
+  {t:68,es:"Qué maldición",ro:"",kj:""},
+  {t:71,es:"Se parte mi corazón",ro:"",kj:""},
+  {t:74,es:"Al saber que esa persona no soy yo",ro:"",kj:""},
+  {t:80,es:"Quiero lograr que me mires",ro:"",kj:""},
+  {t:83,es:"Te sonrojas, no me pides",ro:"",kj:""},
+  {t:86,es:"Que me aleje, ¿pensarás en mí?",ro:"",kj:""},
+  {t:90,es:"¿Lo logré o no?",ro:"",kj:""},
+  {t:93,es:"Príncipe de blanca nieves",ro:"",kj:""},
+  {t:96,es:"Sé que un poquito me quieres",ro:"",kj:""},
+  {t:99,es:"Déjame vivir un tiempo con esta ilusión",ro:"",kj:""},
+  {t:104,es:"Mi amor, mi amor",ro:"",kj:""},
+  {t:107,es:"Te recuerdo que me tienes",ro:"",kj:""},
+  {t:110,es:"¿Por qué no me prefieres?",ro:"",kj:""},
+  {t:113,es:"Me conoces mejor",ro:"",kj:""},
+  {t:117,es:"Ay por qué no",ro:"",kj:""},
+  {t:120,es:"Me ves como la ves a ella, mi amor",ro:"",kj:""},
+  {t:124,es:"Ay, qué dolor",ro:"",kj:""},
+  {t:127,es:"Como una lanza directo al corazón",ro:"",kj:""},
+  {t:131,es:"Llegó tu voz",ro:"",kj:""},
+  {t:135,es:"Y yo no entiendo",ro:"",kj:""},
+  {t:138,es:"Por qué no esperar",ro:"",kj:""},
+  {t:141,es:"Si un día de mí te podrías enamorar",ro:"",kj:""},
+  {t:146,es:"Es que no entiendo",ro:"",kj:""},
+  {t:149,es:"¿Eso nos hacía mal?",ro:"",kj:""},
+  {t:152,es:"Mis sentimientos te podían esperar",ro:"",kj:""},
+  {t:157,es:"Te arrepentirás",ro:"",kj:""},
+  {t:160,es:"Si me das tu respuesta final",ro:"",kj:""},
+  {t:163,es:"Dame un tiempo más",ro:"",kj:""},
+  {t:166,es:"De ella te vas a olvidar",ro:"",kj:""},
+  {t:171,es:"Dices que esto no es nada positivo",ro:"",kj:""},
+  {t:174,es:"No escuchas lo que te digo",ro:"",kj:""},
+  {t:178,es:"No me importa si con ella quieres intentar",ro:"",kj:""},
+  {t:183,es:"Ya te he dicho mis motivos",ro:"",kj:""},
+  {t:186,es:"No respondas porque sino",ro:"",kj:""},
+  {t:189,es:"Escucharé algo que sé que yo no quiero escuchar",ro:"",kj:""},
+  {t:195,es:"Ay, por qué no",ro:"",kj:""},
+  {t:198,es:"Me ves como la ves a ella, mi amor",ro:"",kj:""},
+  {t:202,es:"Ay, qué dolor",ro:"",kj:""},
+  {t:205,es:"Como una lanza directo al corazón",ro:"",kj:""},
+  {t:209,es:"Llegó tu voz",ro:"",kj:""},
+  {t:213,es:"A mí diciendo",ro:"",kj:""},
+  {t:216,es:"Perdóname, yo",ro:"",kj:""},
+  {t:219,es:"No puedo estar contigo",ro:"",kj:""},
+  {t:222,es:"Ay, qué dolor",ro:"",kj:""},
+  {t:225,es:"Toma tu tiempo",ro:"",kj:""},
+  {t:228,es:"Tú piénsatelo",ro:"",kj:""},
+  {t:231,es:"Si con ella no estás, aún seré una opción",ro:"",kj:""},
+  {t:238,es:"No digas más",ro:"",kj:""},
+  {t:241,es:"Ya lo sabía al momento de confesar",ro:"",kj:""},
+  {t:245,es:"No es natural",ro:"",kj:""},
+  {t:248,es:"Pero quererte es difícil de cambiar",ro:"",kj:""},
+  {t:253,es:"Ay, qué dolor",ro:"",kj:""},
+  {t:257,es:"Qué dolor",ro:"",kj:""},
+  {t:260,es:"Ay, qué dolor",ro:"",kj:""},
+  {t:264,es:"— fin —",ro:"",kj:""},
+];
+</script>
+<script>
+(function(){
+const audio=document.getElementById('audio');
+let activeIdx=-1;
+const container=document.getElementById('lyricsContainer');
+LYRICS.forEach((line,i)=>{
+  const block=document.createElement('div');
+  block.className='lyric-block';
+  let inner='';
+  if(line.es) inner+=`<div class="lyric-es">${line.es}</div>`;
+  if(line.ro) inner+=`<div class="lyric-romaji">${line.ro}</div>`;
+  if(line.kj) inner+=`<div class="lyric-kanji">${line.kj}</div>`;
+  block.innerHTML=inner;
+  block.addEventListener('click',()=>{audio.currentTime=line.t;});
+  container.appendChild(block);
+});
+const fmt=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+audio.addEventListener('loadedmetadata',()=>{document.getElementById('timeTotal').textContent=fmt(audio.duration);});
+audio.addEventListener('error',()=>{document.getElementById('audioError').classList.add('show');});
+audio.addEventListener('timeupdate',()=>{
+  const t=audio.currentTime;
+  document.getElementById('progressFill').style.width=(audio.duration?(t/audio.duration*100):0)+'%';
+  document.getElementById('timeNow').textContent=fmt(t);
+  let newActive=-1;
+  for(let i=LYRICS.length-1;i>=0;i--){if(t>=LYRICS[i].t){newActive=i;break;}}
+  if(newActive!==activeIdx){
+    activeIdx=newActive;
+    document.querySelectorAll('.lyric-block').forEach((b,i)=>{
+      b.classList.toggle('active',i===activeIdx);
+      b.classList.toggle('past',i<activeIdx);
+    });
+    if(activeIdx>=0) document.querySelectorAll('.lyric-block')[activeIdx].scrollIntoView({behavior:'smooth',block:'center'});
+  }
+});
+audio.addEventListener('ended',()=>{
+  document.body.classList.remove('is-playing');
+  document.getElementById('visualizer').classList.remove('playing');
+  document.getElementById('playBtn').textContent='▶ Play';
+});
+document.getElementById('progressBar').addEventListener('click',e=>{
+  const rect=e.currentTarget.getBoundingClientRect();
+  audio.currentTime=((e.clientX-rect.left)/rect.width)*(audio.duration||0);
+});
+const playBtn=document.getElementById('playBtn');
+playBtn.addEventListener('click',()=>{
+  if(audio.paused){audio.play();playBtn.textContent='⏸ Pausa';document.body.classList.add('is-playing');document.getElementById('visualizer').classList.add('playing');}
+  else{audio.pause();playBtn.textContent='▶ Play';document.body.classList.remove('is-playing');document.getElementById('visualizer').classList.remove('playing');}
+});
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  audio.pause();audio.currentTime=0;activeIdx=-1;
+  playBtn.textContent='▶ Play';
+  document.body.classList.remove('is-playing');
+  document.getElementById('visualizer').classList.remove('playing');
+  document.querySelectorAll('.lyric-block').forEach(b=>b.classList.remove('active','past'));
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+document.getElementById('vol').addEventListener('input',e=>{audio.volume=parseFloat(e.target.value);});
+audio.volume=0.8;
+document.querySelectorAll('.toggle-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const v=btn.dataset.view;
+    document.body.className=document.body.className.replace(/\bview-\S+/g,'').trim();
+    if(v!=='all') document.body.classList.add('view-'+v);
+    if(!audio.paused) document.body.classList.add('is-playing');
+  });
+});
+const vizEl=document.getElementById('visualizer');
+for(let i=0;i<48;i++){
+  const bar=document.createElement('div');
+  bar.className='bar';
+  const maxH=8+Math.sin(i*0.4)*22+Math.random()*16;
+  bar.style.cssText=`--max-h:${maxH}px;--spd:${0.4+Math.random()*0.8}s;--delay:${(i/48)*-1.2}s;`;
+  vizEl.appendChild(bar);
+}
+})();
+</script>
+</body>
+</html>
