@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ビバリウム · Ado — MochiGo Karaoke</title>
+<title>Qué Dolor · Nyako — MochiGo Karaoke</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
   :root{--bg:#09070f;--card:#1a1230;--accent1:#c084fc;--accent2:#f472b6;--accent3:#818cf8;--text:#f1e9ff;--muted:#6b5e8c;--glow:rgba(192,132,252,0.3)}
@@ -59,15 +59,15 @@
 <body>
 
 <a class="back-btn" href="../index.html">← Menú</a>
-<audio id="audio" src="vivarium.mp3" preload="auto"></audio>
+<audio id="audio" src="que-dolor.mp3" preload="auto"></audio>
 
 <header>
-  <div class="song-title">ビバリウム · Vivarium</div>
-  <div class="artist-name">Ado · 2026</div>
+  <div class="song-title">Qué Dolor</div>
+  <div class="artist-name">Nyako · Ao no Hako</div>
   <div class="visualizer-wrap" id="visualizer"></div>
 </header>
 
-<div class="audio-error" id="audioError">⚠️ Falta el archivo <strong>vivarium.mp3</strong> en la carpeta <strong>vivarium/</strong></div>
+<div class="audio-error" id="audioError">⚠️ Falta el archivo <strong>que-dolor.mp3</strong> en la carpeta <strong>que-dolor/</strong></div>
 
 <div class="progress-section">
   <div class="progress-bar-wrap" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
@@ -86,66 +86,82 @@
   <button class="toggle-btn" data-view="romaji">Solo romaji</button>
 </div>
 <div class="lyrics-container" id="lyricsContainer"></div>
-<div class="now-pill">♪ reproduciendo · ビバリウム</div>
+<div class="now-pill">♪ reproduciendo · Qué Dolor</div>
 
 <script>
+// Esta canción es en español — romaji/kanji vacíos adrede
 const LYRICS=[
   {t:0,es:"— intro —",ro:"",kj:""},
-  {t:18,es:"Me pregunto cuánto tiempo ha pasado desde entonces",ro:"Are kara dore kurai tatta koto darou",kj:"あれからどれくらい経ったことだろう"},
-  {t:22,es:"Mi forma amortiguada de hablar no ha cambiado nada",ro:"Kugumotta monoii wa ai mo kawarazu de",kj:"くぐもった物言いは相も変わらずで"},
-  {t:26,es:"El espejo refleja una imagen ideal tan lejana",ro:"Kagami ga utsusu wa hedataru risouzou",kj:"鏡が写すは隔たる理想像"},
-  {t:30,es:"Y hoy también hurgo en mis torpes yemas de los dedos",ro:"Bukiyou na yubisaki ni kyou mo te o kaketa",kj:"不器用な指先に今日も手をかけた"},
-  {t:36,es:"Excluida y sola por las palabras de alguien",ro:"Dareka no kotoba de hitori, tsumahajiki",kj:"誰かの言葉で1人、爪弾き"},
-  {t:40,es:"No hay remedio, nunca fui querida de todas formas",ro:"Shou ga nai ne nozomareta koto nante nai shi",kj:"しょうがないね 望まれたことなんてないし"},
-  {t:44,es:"Discutiendo detrás de los insultos, aferrada al rojo",ro:"Kobiritsuku akairo basei no ura de mondou",kj:"こびりつく赤色 罵声の裏で問答"},
-  {t:49,es:"«¿Ser defectuosa es algo especial?»",ro:'"Kekkan wa tokubetsu?"',kj:"「欠陥は特別？」"},
-  {t:52,es:"Entonces, desde el principio fui una falsificación",ro:"Nara, hajime kara magaimono",kj:"なら、初めから紛いもの"},
-  {t:57,es:"A cambio de lo que quería lograr",ro:"Kanaetai mono to wa hikikae ni",kj:"叶えたいものとは引き換えに"},
-  {t:61,es:"Terminé rompiendo las cosas que apreciaba",ro:"Taisetsu na mono o kowashite kite",kj:"大切なものを壊してきて"},
-  {t:65,es:"Como no puedo respirar de tanto arrepentimiento",ro:"Koukai bakari de iki ga dekinai kara",kj:"後悔ばかりで息ができないから"},
-  {t:69,es:"Abandoné mis emociones para encontrar algo de paz",ro:"Kanjou o sutete raku ni natte",kj:"感情を棄てて楽になって"},
-  {t:73,es:"Sin saber cómo curar las heridas después de caer",ro:"Koronda nochi no kizu no naoshikata mo",kj:"転んだ後の傷の治し方も"},
-  {t:77,es:"Ni entender el remordimiento por los errores que dejé",ro:"Nokoshita ayamachi no kui mo shiranai mama",kj:"残した過ちの悔いも知らないまま"},
-  {t:81,es:"¿Así voy a hacerme adulta?",ro:"Otona ni naru no?",kj:"大人になるの？"},
-  {t:88,es:"En este jardín en miniatura tenuemente iluminado",ro:"Honogurai hakoniwa de",kj:"仄暗い箱庭で"},
-  {t:91,es:"Soñaba sin cesar con mis propios sueños",ro:"Tomedonaku watashi ga watashi no yume o mite ita",kj:"とめどなく私が私の夢を見ていた"},
-  {t:96,es:"La luz que oscilaba a lo lejos sentí que me llamaba",ro:"Tooku de yureta hikari wa watashi o yobu ki ga shita",kj:"遠くで揺れた光は私を呼ぶ気がした"},
-  {t:104,es:"— estrofa 2 —",ro:"",kj:""},
-  {t:108,es:"Antes de darme cuenta, me giré y estoy aquí, sola",ro:"Kizukeba furimuku to koko ni, hitori",kj:"気付けば振り向くと此処に、1人"},
-  {t:112,es:"Un espejismo vagando en esta habitación desordenada",ro:"Chirakatta heya no naka mayoikomu shinkirou",kj:"散らかった部屋の中迷い込む蜃気楼"},
-  {t:116,es:"¿Por qué brotan estas lágrimas y esta frustración?",ro:"Doushite afuredasu namida to shousou",kj:"どうして溢れ出す涙と焦燥"},
-  {t:120,es:"Mis yemas mordidas se tiñen de rojo una vez más",ro:"Fukazume no yubisaki mata akaku somatta",kj:"深爪の指先また赤く染まった"},
-  {t:126,es:"«Los escucho en mi cabeza»",ro:'"Atama no naka de kikoeru"',kj:"「頭の中で聞こえる」"},
-  {t:129,es:"«Las voces de mí misma y de alguien más»",ro:'"Watashi to watashi de nai koe ga"',kj:"「私と私でない声が」"},
-  {t:133,es:"«Una y otra vez»",ro:'"Kurikaeshi kurikaeshi"',kj:"「繰り返し繰り返し」"},
-  {t:136,es:"«Negando el hecho mismo de haber nacido»",ro:"Umarete kita koto o hitei suru",kj:"生まれてきたことを否定する"},
-  {t:141,es:"«¿Por qué no puedo hacer nada bien?»",ro:'"Doushite nanimo dekinai no"',kj:"「どうして何もできないの」"},
-  {t:144,es:"«¿Por qué no sé nada?»",ro:'"Doushite nanimo shiranai no"',kj:"「どうして何も知らないの」"},
-  {t:147,es:"«No lo entiendo»",ro:'"Wakaranai"',kj:"「わからない」"},
-  {t:149,es:"«Simplemente no comprendo»",ro:'"Watashi ni wa wakaranai"',kj:"「私にはわからない」"},
-  {t:153,es:"«Sin conocer ni una sola cosa correcta que hacer»",ro:'"Tadashii koto hitotsu mo shiranai mama"',kj:"「正しいことひとつも知らないまま」"},
-  {t:157,es:"«Parece que me he convertido en adulta»",ro:'"Otona ni natte shimatta mitai da"',kj:"「大人になってしまったみたいだ」"},
-  {t:162,es:"«Tú no creías en nada»",ro:'"Kimi wa nanimo shinjinakatta"',kj:"「君は何も信じなかった」"},
-  {t:165,es:"«Y no podías confiar en nadie»",ro:'"Dare mo shinjirarenakatta"',kj:"「誰も信じられなかった」"},
-  {t:169,es:"«Lo que necesitabas, incluso antes de la fama»",ro:'"Kimi ni hitsuyou datta no wa meisei yori mo saki ni"',kj:"「君に必要だったのは名声よりも先に」"},
-  {t:174,es:"«Era solo una palabra que dijera que estarías bien»",ro:'"Daijoubu no hitokoto datta ne"',kj:"「大丈夫のひと言だったね」"},
-  {t:179,es:"«Lo siento, perdiste tu lugar donde pertenecer»",ro:'"Ibasho o nakushichatte gomen ne"',kj:"「居場所をなくしちゃってごめんね」"},
-  {t:183,es:"«Así que está bien si ya no sales más»",ro:'"Dakara mou dete konakutatte ii sa"',kj:"「だからもう出てこなくたっていいさ」"},
-  {t:188,es:"«En lo profundo de la ciudad que oscila»",ro:'"Yureru miyako no oku"',kj:"「揺れる都の奥」"},
-  {t:191,es:"«Escuché el canto de una niña mecánica en esa luz»",ro:"Sono hikari no naka de kikai shoujo no uta ga kikoeta",kj:"その光の中で機械少女の歌が聞こえた"},
-  {t:196,es:"«Yo también quiero ir allá»",ro:'"Watashi mo, soko ni ikitai"',kj:"「私も、そこに行きたい」"},
-  {t:202,es:"— coro final —",ro:"",kj:""},
-  {t:206,es:"En este jardín en miniatura tenuemente iluminado",ro:"Honogurai hakoniwa de",kj:"仄暗い箱庭で"},
-  {t:209,es:"Sigo soñando sin cesar mis propios sueños",ro:"Tomedonaku watashi ga watashi no yume o mite ite",kj:"とめどなく私が私の夢を見ていて"},
-  {t:214,es:"Tan cerca que puedo tocarlo, no te vayas, no cambies",ro:"Furerareru kyori no mama hanarenaide kawaranaide",kj:"触れられる距離のまま離れないで変わらないで"},
-  {t:220,es:"Dentro de este jardín en miniatura",ro:"Kono hakoniwa de",kj:"この箱庭で"},
-  {t:223,es:"Por mucho que me pierda, me aferre, o pierda todo",ro:"Dore dake mayotte, sugatte, mienaku natte mo",kj:"どれだけ迷って、縋って、見えなくなっても"},
-  {t:228,es:"La luz que titila en mis ojos es el futuro que pinté",ro:"Kono me de yureta hikari wa ano hi egaku mirai da",kj:"この目で揺れた光はあの日描く未来だ"},
-  {t:235,es:"Adiós, porque aún tengo que seguir cantando",ro:"Sayonara mada watashi wa utawanakunacha",kj:"さようなら まだ私は 歌わなくちゃ"},
-  {t:242,es:"No estás sola hasta que el alba finalmente llegue",ro:"Yoru ga akeru made hitori ja nai kara",kj:"夜が明けるまで一人じゃないから"},
-  {t:247,es:"Porque «tú», escondida en el clóset",ro:"Kuroozetto no kimi wa mada",kj:"クローゼットの君はまだ"},
-  {t:251,es:"Aún sigue llorando",ro:"Naite iru",kj:"泣いている"},
-  {t:256,es:"— fin —",ro:"",kj:""},
+  {t:8,es:"Tanto tiempo juntos como amigos",ro:"",kj:""},
+  {t:12,es:"Sin saber que mis latidos",ro:"",kj:""},
+  {t:15,es:"Aumentarían por tu apoyo y determinación",ro:"",kj:""},
+  {t:21,es:"He escuchado que has sentido",ro:"",kj:""},
+  {t:24,es:"Lo mismo que yo he sentido por ti",ro:"",kj:""},
+  {t:28,es:"Sueñas con esa persona y no soy yo",ro:"",kj:""},
+  {t:34,es:"Y resulta que me ignoras",ro:"",kj:""},
+  {t:37,es:"No me ves como una opción",ro:"",kj:""},
+  {t:40,es:"Menos teniéndola cerca de tu habitación",ro:"",kj:""},
+  {t:46,es:"Pero me verás ahora",ro:"",kj:""},
+  {t:49,es:"Te he confesado mi amor",ro:"",kj:""},
+  {t:52,es:"Y cambiará la perspectiva de esta relación",ro:"",kj:""},
+  {t:58,es:"Qué maldición",ro:"",kj:""},
+  {t:61,es:"Sentir tanto amor",ro:"",kj:""},
+  {t:64,es:"Por alguien que ya está sintiéndolo",ro:"",kj:""},
+  {t:68,es:"Qué maldición",ro:"",kj:""},
+  {t:71,es:"Se parte mi corazón",ro:"",kj:""},
+  {t:74,es:"Al saber que esa persona no soy yo",ro:"",kj:""},
+  {t:80,es:"Quiero lograr que me mires",ro:"",kj:""},
+  {t:83,es:"Te sonrojas, no me pides",ro:"",kj:""},
+  {t:86,es:"Que me aleje, ¿pensarás en mí?",ro:"",kj:""},
+  {t:90,es:"¿Lo logré o no?",ro:"",kj:""},
+  {t:93,es:"Príncipe de blanca nieves",ro:"",kj:""},
+  {t:96,es:"Sé que un poquito me quieres",ro:"",kj:""},
+  {t:99,es:"Déjame vivir un tiempo con esta ilusión",ro:"",kj:""},
+  {t:104,es:"Mi amor, mi amor",ro:"",kj:""},
+  {t:107,es:"Te recuerdo que me tienes",ro:"",kj:""},
+  {t:110,es:"¿Por qué no me prefieres?",ro:"",kj:""},
+  {t:113,es:"Me conoces mejor",ro:"",kj:""},
+  {t:117,es:"Ay por qué no",ro:"",kj:""},
+  {t:120,es:"Me ves como la ves a ella, mi amor",ro:"",kj:""},
+  {t:124,es:"Ay, qué dolor",ro:"",kj:""},
+  {t:127,es:"Como una lanza directo al corazón",ro:"",kj:""},
+  {t:131,es:"Llegó tu voz",ro:"",kj:""},
+  {t:135,es:"Y yo no entiendo",ro:"",kj:""},
+  {t:138,es:"Por qué no esperar",ro:"",kj:""},
+  {t:141,es:"Si un día de mí te podrías enamorar",ro:"",kj:""},
+  {t:146,es:"Es que no entiendo",ro:"",kj:""},
+  {t:149,es:"¿Eso nos hacía mal?",ro:"",kj:""},
+  {t:152,es:"Mis sentimientos te podían esperar",ro:"",kj:""},
+  {t:157,es:"Te arrepentirás",ro:"",kj:""},
+  {t:160,es:"Si me das tu respuesta final",ro:"",kj:""},
+  {t:163,es:"Dame un tiempo más",ro:"",kj:""},
+  {t:166,es:"De ella te vas a olvidar",ro:"",kj:""},
+  {t:171,es:"Dices que esto no es nada positivo",ro:"",kj:""},
+  {t:174,es:"No escuchas lo que te digo",ro:"",kj:""},
+  {t:178,es:"No me importa si con ella quieres intentar",ro:"",kj:""},
+  {t:183,es:"Ya te he dicho mis motivos",ro:"",kj:""},
+  {t:186,es:"No respondas porque sino",ro:"",kj:""},
+  {t:189,es:"Escucharé algo que sé que yo no quiero escuchar",ro:"",kj:""},
+  {t:195,es:"Ay, por qué no",ro:"",kj:""},
+  {t:198,es:"Me ves como la ves a ella, mi amor",ro:"",kj:""},
+  {t:202,es:"Ay, qué dolor",ro:"",kj:""},
+  {t:205,es:"Como una lanza directo al corazón",ro:"",kj:""},
+  {t:209,es:"Llegó tu voz",ro:"",kj:""},
+  {t:213,es:"A mí diciendo",ro:"",kj:""},
+  {t:216,es:"Perdóname, yo",ro:"",kj:""},
+  {t:219,es:"No puedo estar contigo",ro:"",kj:""},
+  {t:222,es:"Ay, qué dolor",ro:"",kj:""},
+  {t:225,es:"Toma tu tiempo",ro:"",kj:""},
+  {t:228,es:"Tú piénsatelo",ro:"",kj:""},
+  {t:231,es:"Si con ella no estás, aún seré una opción",ro:"",kj:""},
+  {t:238,es:"No digas más",ro:"",kj:""},
+  {t:241,es:"Ya lo sabía al momento de confesar",ro:"",kj:""},
+  {t:245,es:"No es natural",ro:"",kj:""},
+  {t:248,es:"Pero quererte es difícil de cambiar",ro:"",kj:""},
+  {t:253,es:"Ay, qué dolor",ro:"",kj:""},
+  {t:257,es:"Qué dolor",ro:"",kj:""},
+  {t:260,es:"Ay, qué dolor",ro:"",kj:""},
+  {t:264,es:"— fin —",ro:"",kj:""},
 ];
 </script>
 <script src="../player.js"></script>
