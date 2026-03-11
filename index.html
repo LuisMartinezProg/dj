@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Qué Dolor · Nyako — MochiGo Karaoke</title>
+<title>あの夢をなぞって · YOASOBI — MochiGo Karaoke</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
   :root{--bg:#09070f;--card:#1a1230;--accent1:#c084fc;--accent2:#f472b6;--accent3:#818cf8;--text:#f1e9ff;--muted:#6b5e8c;--glow:rgba(192,132,252,0.3)}
@@ -59,15 +59,15 @@
 <body>
 
 <a class="back-btn" href="../index.html">← Menú</a>
-<audio id="audio" src="que-dolor.mp3" preload="auto"></audio>
+<audio id="audio" src="ano-yume.mp3" preload="auto"></audio>
 
 <header>
-  <div class="song-title">Qué Dolor</div>
-  <div class="artist-name">Nyako · Ao no Hako</div>
+  <div class="song-title">あの夢をなぞって</div>
+  <div class="artist-name">YOASOBI · Tracing that Dream</div>
   <div class="visualizer-wrap" id="visualizer"></div>
 </header>
 
-<div class="audio-error" id="audioError">⚠️ Falta el archivo <strong>que-dolor.mp3</strong> en la carpeta <strong>que-dolor/</strong></div>
+<div class="audio-error" id="audioError">⚠️ Falta el archivo <strong>ano-yume.mp3</strong> en la carpeta <strong>ano-yume/</strong></div>
 
 <div class="progress-section">
   <div class="progress-bar-wrap" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
@@ -86,82 +86,62 @@
   <button class="toggle-btn" data-view="romaji">Solo romaji</button>
 </div>
 <div class="lyrics-container" id="lyricsContainer"></div>
-<div class="now-pill">♪ reproduciendo · Qué Dolor</div>
+<div class="now-pill">♪ reproduciendo · あの夢をなぞって</div>
 
 <script>
-// Esta canción es en español — romaji/kanji vacíos adrede
 const LYRICS=[
   {t:0,es:"— intro —",ro:"",kj:""},
-  {t:8,es:"Tanto tiempo juntos como amigos",ro:"",kj:""},
-  {t:12,es:"Sin saber que mis latidos",ro:"",kj:""},
-  {t:15,es:"Aumentarían por tu apoyo y determinación",ro:"",kj:""},
-  {t:21,es:"He escuchado que has sentido",ro:"",kj:""},
-  {t:24,es:"Lo mismo que yo he sentido por ti",ro:"",kj:""},
-  {t:28,es:"Sueñas con esa persona y no soy yo",ro:"",kj:""},
-  {t:34,es:"Y resulta que me ignoras",ro:"",kj:""},
-  {t:37,es:"No me ves como una opción",ro:"",kj:""},
-  {t:40,es:"Menos teniéndola cerca de tu habitación",ro:"",kj:""},
-  {t:46,es:"Pero me verás ahora",ro:"",kj:""},
-  {t:49,es:"Te he confesado mi amor",ro:"",kj:""},
-  {t:52,es:"Y cambiará la perspectiva de esta relación",ro:"",kj:""},
-  {t:58,es:"Qué maldición",ro:"",kj:""},
-  {t:61,es:"Sentir tanto amor",ro:"",kj:""},
-  {t:64,es:"Por alguien que ya está sintiéndolo",ro:"",kj:""},
-  {t:68,es:"Qué maldición",ro:"",kj:""},
-  {t:71,es:"Se parte mi corazón",ro:"",kj:""},
-  {t:74,es:"Al saber que esa persona no soy yo",ro:"",kj:""},
-  {t:80,es:"Quiero lograr que me mires",ro:"",kj:""},
-  {t:83,es:"Te sonrojas, no me pides",ro:"",kj:""},
-  {t:86,es:"Que me aleje, ¿pensarás en mí?",ro:"",kj:""},
-  {t:90,es:"¿Lo logré o no?",ro:"",kj:""},
-  {t:93,es:"Príncipe de blanca nieves",ro:"",kj:""},
-  {t:96,es:"Sé que un poquito me quieres",ro:"",kj:""},
-  {t:99,es:"Déjame vivir un tiempo con esta ilusión",ro:"",kj:""},
-  {t:104,es:"Mi amor, mi amor",ro:"",kj:""},
-  {t:107,es:"Te recuerdo que me tienes",ro:"",kj:""},
-  {t:110,es:"¿Por qué no me prefieres?",ro:"",kj:""},
-  {t:113,es:"Me conoces mejor",ro:"",kj:""},
-  {t:117,es:"Ay por qué no",ro:"",kj:""},
-  {t:120,es:"Me ves como la ves a ella, mi amor",ro:"",kj:""},
-  {t:124,es:"Ay, qué dolor",ro:"",kj:""},
-  {t:127,es:"Como una lanza directo al corazón",ro:"",kj:""},
-  {t:131,es:"Llegó tu voz",ro:"",kj:""},
-  {t:135,es:"Y yo no entiendo",ro:"",kj:""},
-  {t:138,es:"Por qué no esperar",ro:"",kj:""},
-  {t:141,es:"Si un día de mí te podrías enamorar",ro:"",kj:""},
-  {t:146,es:"Es que no entiendo",ro:"",kj:""},
-  {t:149,es:"¿Eso nos hacía mal?",ro:"",kj:""},
-  {t:152,es:"Mis sentimientos te podían esperar",ro:"",kj:""},
-  {t:157,es:"Te arrepentirás",ro:"",kj:""},
-  {t:160,es:"Si me das tu respuesta final",ro:"",kj:""},
-  {t:163,es:"Dame un tiempo más",ro:"",kj:""},
-  {t:166,es:"De ella te vas a olvidar",ro:"",kj:""},
-  {t:171,es:"Dices que esto no es nada positivo",ro:"",kj:""},
-  {t:174,es:"No escuchas lo que te digo",ro:"",kj:""},
-  {t:178,es:"No me importa si con ella quieres intentar",ro:"",kj:""},
-  {t:183,es:"Ya te he dicho mis motivos",ro:"",kj:""},
-  {t:186,es:"No respondas porque sino",ro:"",kj:""},
-  {t:189,es:"Escucharé algo que sé que yo no quiero escuchar",ro:"",kj:""},
-  {t:195,es:"Ay, por qué no",ro:"",kj:""},
-  {t:198,es:"Me ves como la ves a ella, mi amor",ro:"",kj:""},
-  {t:202,es:"Ay, qué dolor",ro:"",kj:""},
-  {t:205,es:"Como una lanza directo al corazón",ro:"",kj:""},
-  {t:209,es:"Llegó tu voz",ro:"",kj:""},
-  {t:213,es:"A mí diciendo",ro:"",kj:""},
-  {t:216,es:"Perdóname, yo",ro:"",kj:""},
-  {t:219,es:"No puedo estar contigo",ro:"",kj:""},
-  {t:222,es:"Ay, qué dolor",ro:"",kj:""},
-  {t:225,es:"Toma tu tiempo",ro:"",kj:""},
-  {t:228,es:"Tú piénsatelo",ro:"",kj:""},
-  {t:231,es:"Si con ella no estás, aún seré una opción",ro:"",kj:""},
-  {t:238,es:"No digas más",ro:"",kj:""},
-  {t:241,es:"Ya lo sabía al momento de confesar",ro:"",kj:""},
-  {t:245,es:"No es natural",ro:"",kj:""},
-  {t:248,es:"Pero quererte es difícil de cambiar",ro:"",kj:""},
-  {t:253,es:"Ay, qué dolor",ro:"",kj:""},
-  {t:257,es:"Qué dolor",ro:"",kj:""},
-  {t:260,es:"Ay, qué dolor",ro:"",kj:""},
-  {t:264,es:"— fin —",ro:"",kj:""},
+  {t:5,es:"Las hermosas flores que adornan el cielo nocturno",ro:"Yoru no sora wo kazaru kirei na hana",kj:"夜の空を飾る綺麗な花"},
+  {t:10,es:"Los sonidos de la ciudad, envueltos por la luz",ro:"Machi no koe wo gyutto hikari ga tsutsumikomu",kj:"街の声をぎゅっと光が包み込む"},
+  {t:15,es:"En ese mundo sin sonido, solo para dos, las palabras que escuché fueron",ro:"Oto no nai futari dake no sekai de kikoeta kotoba wa",kj:"音の無い二人だけの世界で聞こえた言葉は"},
+  {t:22,es:"«Te quiero»",ro:'"Suki da yo"',kj:"「好きだよ」"},
+  {t:26,es:"— estrofa —",ro:"",kj:""},
+  {t:28,es:"El futuro que vi en ese sueño",ro:"Yume no naka de mieta mirai no koto",kj:"夢の中で見えた未来のこと"},
+  {t:32,es:"Noche de verano, contigo, dos siluetas lado a lado",ro:"Natsu no yoru, kimi to, narabu kage ga futatsu",kj:"夏の夜、君と、並ぶ影が二つ"},
+  {t:37,es:"Cuando los últimos fuegos artificiales subieron al cielo y desaparecieron",ro:"Saigo no hanabi ga sora ni nobotte kietara",kj:"最後の花火が空に昇って消えたら"},
+  {t:42,es:"Esa fue su señal",ro:"Sore wo aizu ni",kj:"それを合図に"},
+  {t:46,es:"Es una mañana normal",ro:"Itsumo doori no asa ni",kj:"いつも通りの朝に"},
+  {t:49,es:"Y tú te ves como siempre",ro:"Itsumo doori no kimi no sugata",kj:"いつも通りの君の姿"},
+  {t:52,es:"Aparté la mirada sin querer",ro:"Omowazu me wo sorashite shimatta no wa",kj:"思わず目を逸らしてしまったのは"},
+  {t:56,es:"Porque tus palabras que no puedo olvidar",ro:"Dou yattatte wasurerarenai kimi no kotoba",kj:"どうやったって忘れられない君の言葉"},
+  {t:60,es:"Todavía resuenan en mí, incluso ahora",ro:"Ima mo zutto hibiiteru kara",kj:"今もずっと響いてるから"},
+  {t:65,es:"— coro —",ro:"",kj:""},
+  {t:67,es:"Atravesaré la noche hacia más allá del sueño",ro:"Yoru wo nukete yume no saki e",kj:"夜を抜けて夢の先へ"},
+  {t:71,es:"Hacia el futuro al que quiero llegar",ro:"Tadoritsukitai mirai e",kj:"辿り着きたい未来へ"},
+  {t:74,es:"¿De verdad? ¿En ese sueño, de verdad? incluso ahora",ro:"Hontou ni? ano yume ni, hontou ni? tte ima mo",kj:"本当に？あの夢に、本当に？って今も"},
+  {t:80,es:"Me pongo nerviosa, pero seguramente",ro:"Fuan ni natte shimau kedo kitto",kj:"不安になってしまうけどきっと"},
+  {t:83,es:"Dejaré atrás el presente, hacia más allá del mañana",ro:"Ima wo nukete asu no saki e",kj:"今を抜けて明日の先へ"},
+  {t:87,es:"Hacia un lugar solo para dos",ro:"Futari dake no basho e",kj:"二人だけの場所へ"},
+  {t:90,es:"Un poco más",ro:"Mou chotto",kj:"もうちょっと"},
+  {t:92,es:"Por favor no cambies",ro:"Douka kawaranaide",kj:"どうか変わらないで"},
+  {t:95,es:"Un poco más",ro:"Mou chotto",kj:"もうちょっと"},
+  {t:97,es:"Las palabras que vienen de ti",ro:"Kimi kara no kotoba",kj:"君からの言葉"},
+  {t:100,es:"Te estarán esperando en ese futuro",ro:"Ano mirai de matteiru yo",kj:"あの未来で待っているよ"},
+  {t:105,es:"— puente —",ro:"",kj:""},
+  {t:107,es:"Una noche que nadie conoce",ro:"Daremo shiranai",kj:"誰も知らない"},
+  {t:109,es:"Solo para los dos",ro:"Futari dake no yoru",kj:"二人だけの夜"},
+  {t:112,es:"Se superpone con el paisaje que tanto anhelaba",ro:"Machikogareteita keshiki to kasanaru",kj:"待ちこがれていた景色と重なる"},
+  {t:116,es:"Los fuegos artificiales florecen en el cielo de verano",ro:"Natsu no sora ni mirai to ima tsunagaru you ni hiraku hanabi",kj:"夏の空に未来と今つながるように開く花火"},
+  {t:122,es:"Aquí contigo, mira, trazamos ese sueño",ro:"Kimi to koko de hora ano yume wo nazoru",kj:"君とここでほら あの夢をなぞる"},
+  {t:128,es:"La luz que decora el cielo que miro ilumina tu perfil",ro:"Miageta sora wo kazaru hikari ga ima terashita yokogao",kj:"見上げた空を飾る光が今照らした横顔"},
+  {t:134,es:"Sí, todo este tiempo ha sido por este paisaje",ro:"Sou zutto kono keshiki no tame ni",kj:"そうずっとこの景色のために"},
+  {t:138,es:"Sí, seguramente mira, dos futuros",ro:"Sou kitto hora futatsu no mirai ga",kj:"そうきっとほら 二つの未来が"},
+  {t:142,es:"Se superponen ahora",ro:"Ima kasanariau",kj:"今重なり合う"},
+  {t:146,es:"— coro final —",ro:"",kj:""},
+  {t:148,es:"En la oscuridad de la noche, los dos juntos",ro:"Yoru no naka de kimi to futari",kj:"夜の中で君と二人"},
+  {t:152,es:"En el futuro al que hemos llegado",ro:"Tadoritsuita mirai de",kj:"辿り着いた未来で"},
+  {t:155,es:"Está bien, los sentimientos seguramente llegarán",ro:"Daijoubu omoi wa kitto daijoubu tsutawaru",kj:"大丈夫 想いはきっと大丈夫 伝わる"},
+  {t:161,es:"Más allá del sueño que vi aquel día",ro:"Ano hi mita yume no saki e",kj:"あの日見た夢の先へ"},
+  {t:164,es:"Dejando atrás el presente, más allá del mañana",ro:"Ima wo nukete asu no saki de",kj:"今を抜けて明日の先で"},
+  {t:168,es:"De nuevo junto a ti",ro:"Mata deaeta kimi e",kj:"また出会えた君へ"},
+  {t:171,es:"Un poco más",ro:"Mou chotto",kj:"もうちょっと"},
+  {t:173,es:"Por favor no termines",ro:"Douka owaranaide",kj:"どうか終わらないで"},
+  {t:176,es:"Un poco más",ro:"Mou chotto",kj:"もうちょっと"},
+  {t:178,es:"Mira, los últimos fuegos artificiales ahora",ro:"Hora saigo no hanabi ga ima",kj:"ほら 最後の花火が今"},
+  {t:182,es:"Envuelven a los dos",ro:"Futari wo tsutsumu",kj:"二人を包む"},
+  {t:185,es:"En ese mundo sin sonido resonaron las palabras",ro:"Oto no nai sekai ni hibiita",kj:"音の無い世界に響いた"},
+  {t:189,es:"«Te quiero»",ro:'"Suki da yo"',kj:"「好きだよ」"},
+  {t:193,es:"— fin —",ro:"",kj:""},
 ];
 </script>
 <script src="../player.js"></script>
