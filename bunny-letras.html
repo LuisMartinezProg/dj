@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>バニーガール · Bunny Girl — Musci</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0f0800;--card:#1a1000;--accent1:#e8732a;--accent2:#f5b87a;--accent3:#8b3a00;--text:#fff5ee;--muted:#6b4a2a;--glow:rgba(232,115,42,0.35)}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden;padding-bottom:40px}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 20%,rgba(140,60,0,0.12) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 80% 80%,rgba(100,30,0,0.08) 0%,transparent 60%);z-index:0;pointer-events:none}
+  .back-btn{position:fixed;top:1rem;left:1rem;z-index:100;background:rgba(15,8,0,0.85);border:1px solid rgba(232,115,42,0.3);color:var(--accent1);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px);transition:all 0.2s}
+  header{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 1rem;border-bottom:1px solid rgba(232,115,42,0.15)}
+  .song-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.05em;margin-bottom:0.3rem}
+  .artist-name{color:var(--muted);font-size:0.9rem;font-weight:300;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:1rem}
+  .visualizer-wrap{display:flex;justify-content:center;align-items:flex-end;gap:3px;height:50px;padding:0 2rem;margin-top:0.5rem}
+  .bar{width:4px;border-radius:2px 2px 0 0;background:linear-gradient(to top,var(--accent3),var(--accent1));opacity:0.4;height:4px}
+  @keyframes wave{0%,100%{height:4px}50%{height:var(--max-h)}}
+  .playing .bar{opacity:1;animation:wave var(--spd) ease-in-out infinite;animation-delay:var(--delay)}
+  audio{display:none}
+  .progress-section{position:relative;z-index:1;padding:1rem 2rem 0.5rem;max-width:780px;margin:0 auto}
+  .progress-bar-wrap{width:100%;height:6px;background:var(--card);border-radius:3px;cursor:pointer;overflow:hidden;margin-bottom:0.5rem}
+  .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent1),var(--accent2));border-radius:3px;width:0%;box-shadow:0 0 10px var(--glow);pointer-events:none}
+  .time-row{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--muted);font-family:'Cormorant Garamond',serif}
+  .controls{position:relative;z-index:1;display:flex;justify-content:center;gap:1rem;padding:0.8rem 2rem 0.5rem;flex-wrap:wrap}
+  .btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem}
+  .btn-primary{background:linear-gradient(135deg,var(--accent3),var(--accent1));color:white;padding:0.75rem 2rem;font-size:1rem;font-weight:700;box-shadow:0 0 20px var(--glow);min-width:130px;justify-content:center}
+  .btn-primary:hover{transform:scale(1.05)}
+  .btn-secondary{background:var(--card);color:var(--accent1);border:1px solid rgba(232,115,42,0.3);padding:0.75rem 1.3rem;font-size:0.9rem}
+  .volume-row{display:flex;align-items:center;gap:0.6rem;justify-content:center;padding-bottom:0.5rem;position:relative;z-index:1}
+  .volume-row span{color:var(--muted);font-size:0.8rem}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100px;height:4px;border-radius:2px;background:var(--card);outline:none;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent1);cursor:pointer}
+  .view-toggles{position:relative;z-index:1;display:flex;justify-content:center;gap:0.5rem;padding:0 2rem 1.2rem;flex-wrap:wrap}
+  .toggle-btn{border:1px solid rgba(232,115,42,0.25);background:transparent;color:var(--muted);padding:0.35rem 1rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.78rem;transition:all 0.2s}
+  .toggle-btn.active{background:rgba(232,115,42,0.12);border-color:var(--accent1);color:var(--accent1)}
+  .lyrics-container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:0 1.5rem 2rem}
+  .section-label{text-align:center;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);padding:1.2rem 0 0.5rem;opacity:0.5;display:flex;align-items:center;gap:0.8rem}
+  .section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(232,115,42,0.15)}
+  .section-adj{display:flex;align-items:center;gap:0.3rem;margin-left:0.5rem}
+  .btn-sadj{background:rgba(232,115,42,0.08);border:1px solid rgba(232,115,42,0.2);color:var(--accent1);padding:0.15rem 0.5rem;border-radius:999px;font-size:0.7rem;cursor:pointer}
+  .sadj-val{font-size:0.7rem;color:var(--muted);min-width:28px;text-align:center}
+  .lyric-block{padding:1.2rem 1.6rem;margin-bottom:0.5rem;border-radius:16px;border:1px solid transparent;transition:all 0.4s ease;cursor:pointer;opacity:0.3}
+  .lyric-block.past{opacity:0.18}
+  .lyric-block.active{opacity:1;background:linear-gradient(135deg,rgba(139,58,0,0.15),rgba(232,115,42,0.07));border-color:rgba(232,115,42,0.4);box-shadow:0 0 30px rgba(232,115,42,0.12);transform:translateX(6px)}
+  .lyric-es{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:600;color:var(--text);line-height:1.3;margin-bottom:0.35rem}
+  .lyric-block.active .lyric-es{background:linear-gradient(90deg,var(--text),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .lyric-romaji{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,2.5vw,1.25rem);color:var(--accent2);opacity:1;margin-bottom:0.3rem}
+  .lyric-kanji{font-family:'Noto Serif JP',serif;font-size:clamp(0.95rem,2vw,1.1rem);color:var(--accent2);opacity:0.75;font-weight:400;letter-spacing:0.08em}
+  body.view-es .lyric-romaji,body.view-es .lyric-kanji{display:none}
+  body.view-romaji .lyric-es,body.view-romaji .lyric-kanji{display:none}
+  body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
+  .scroll-btn{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--accent1));border:none;cursor:pointer;box-shadow:0 4px 20px var(--glow);display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:all 0.2s;opacity:0.5}
+  .scroll-btn:hover{transform:scale(1.1);opacity:1}
+  .scroll-btn.active{opacity:1}
+</style>
+</head>
+<body>
+
+<a class="back-btn" href="bunny.html">← Volver</a>
+<audio id="audio" src="Bunny.mp3" preload="auto"></audio>
+
+<header>
+  <div class="song-title">バニーガール · Bunny Girl</div>
+  <div class="artist-name">Akasaki · 2024</div>
+  <div class="visualizer-wrap" id="visualizer"></div>
+</header>
+
+<div class="progress-section">
+  <div class="progress-bar-wrap" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="time-row"><span id="timeNow">0:00</span><span id="timeTotal">—</span></div>
+</div>
+
+<div class="controls">
+  <button class="btn btn-primary" id="playBtn">▶ Play</button>
+  <button class="btn btn-secondary" id="resetBtn">↩ Reinicio</button>
+</div>
+
+<div class="volume-row">
+  <span>🔈</span><input type="range" id="vol" min="0" max="1" step="0.05" value="0.8"><span>🔊</span>
+</div>
+
+<div class="view-toggles">
+  <button class="toggle-btn active" data-view="all">Todo</button>
+  <button class="toggle-btn" data-view="es">Español</button>
+  <button class="toggle-btn" data-view="romaji">Romaji</button>
+  <button class="toggle-btn" data-view="kanji">日本語</button>
+</div>
+
+<div class="lyrics-container" id="lyricsContainer"></div>
+
+<button class="scroll-btn" id="scrollBtn" title="Ir a letra actual">♪</button>
+
+<script>
+const SONG_ID = 'bunny';
+const INSTRUMENTAL_END = 4.5;
+
+const LYRICS = [
+  {t:4.500,  section:"Intro",    es:"Es el comienzo de la noche",                              ro:"Yoru no hajimari sa",                                    kj:"夜の始まりさ"},
+  {t:7.500,  section:"Intro",    es:"Bunny girl",                                               ro:"Bunny girl",                                             kj:"Bunny girl"},
+  {t:9.800,  section:"Intro",    es:"Bunny girl",                                               ro:"Bunny girl",                                             kj:"Bunny girl"},
+  {t:12.000, section:"Intro",    es:"El latido que me seduce",                                  ro:"Yuuwaku sareru kodou ni",                                kj:"誘惑される鼓動に"},
+  {t:16.000, section:"Intro",    es:"Brindo por la tensión que estalla, aunque no pueda decirte que te amo", ro:"Hajike tobu kattou ni ai wo kanpai tsutaerarenakutemo", kj:"弾け飛ぶ葛藤に愛を乾杯 伝えられなくても"},
+  {t:23.000, section:"Intro",    es:"Es el comienzo del amor",                                  ro:"Koi no hajimari sa",                                     kj:"恋の始まりさ"},
+  {t:26.000, section:"Intro",    es:"Bunny girl",                                               ro:"Bunny girl",                                             kj:"Bunny girl"},
+  {t:28.000, section:"Intro",    es:"Bunny girl",                                               ro:"Bunny girl",                                             kj:"Bunny girl"},
+  {t:30.000, section:"Intro",    es:"Atravesando a alguien",                                    ro:"Dareka wo ugatte",                                       kj:"誰かを穿って"},
+  {t:33.500, section:"Intro",    es:"Cargando tus ojos puros",                                  ro:"Sunda kimi no me wo harande",                            kj:"澄んだ君の目を 孕んで"},
+  {t:40.000, section:"Verso 1",  es:"Vamos",                                                    ro:"Saa",                                                    kj:"さあ"},
+  {t:41.500, section:"Verso 1",  es:"Marcando pasos elegantes",                                 ro:"Kiza na suteppu wo kizande",                             kj:"キザなステップを刻んで"},
+  {t:45.500, section:"Verso 1",  es:"El cansancio del regreso del trabajo",                     ro:"Shigoto kaeri no tsukare wa",                            kj:"仕事帰りの疲れは"},
+  {t:49.500, section:"Verso 1",  es:"Déjalo en mí y en esta copa",                              ro:"Watashi to kono gurasu ni",                              kj:"私と このグラスに"},
+  {t:55.000, section:"Verso 1",  es:"Vamos",                                                    ro:"Saa",                                                    kj:"さあ"},
+  {t:56.500, section:"Verso 1",  es:"Apóyate en lo que te gusta",                               ro:"Jibun konomi ni sugatte",                                kj:"自分好みに縋って"},
+  {t:60.000, section:"Verso 1",  es:"Lo que sientes ante el mundo",                             ro:"Seken ni taisuru kimochi",                               kj:"世間に対する気持ち"},
+  {t:64.000, section:"Verso 1",  es:"¿Por qué no me lo viertes a mí?",                          ro:"Watashi ni soide minai?",                                kj:"私に注いでみない?"},
+  {t:70.000, section:"Puente",   es:"Aunque sea una canción de amor típica",                    ro:"Arigachi na rabu songu demo",                            kj:"ありがちなラブソングでも"},
+  {t:74.000, section:"Puente",   es:"Está llena de amor",                                       ro:"Ai ga komerareteruno",                                   kj:"愛が込められてるの"},
+  {t:78.000, section:"Puente",   es:"Aun así te manchas, ¿verdad?",                             ro:"Soredemo yogoreru no ne",                                kj:"それでも汚れるのね"},
+  {t:81.500, section:"Puente",   es:"Si te miro, lo entiendo",                                  ro:"Kimi wo mireba wakaruno",                                kj:"君を見れば分かるの"},
+  {t:85.000, section:"Puente",   es:"Tus ojos mirando hacia abajo",                             ro:"Shita wo muku kimi no me wo",                            kj:"下を向く君の目を"},
+  {t:88.500, section:"Puente",   es:"No voy a arrancártelos por la fuerza",                     ro:"Muriyari hagou to wa shinai",                            kj:"無理矢理剥ごうとはしない"},
+  {t:94.500, section:"Puente",   es:"Así que sin poner esa cara, extiende tu mano",             ro:"Dakara sonna kao sezu te wo sashiobete",                 kj:"だからそんな顔せず手を差し伸べて"},
+  {t:99.000, section:"Puente",   es:"Mira",                                                     ro:"Hora",                                                   kj:"ほら"},
+  {t:102.000,section:"Coro 1",   es:"Es el comienzo de la noche",                               ro:"Yoru no hajimari sa",                                    kj:"夜の始まりさ"},
+  {t:105.000,section:"Coro 1",   es:"Bunny girl",                                               ro:"Bunny girl",                                             kj:"Bunny girl"},
+  {t:107.000,section:"Coro 1",   es:"Bunny girl",                                               ro:"Bunny girl",                                             kj:"Bunny girl"},
+  {t:109.000,section:"Coro 1",   es:"El latido que me seduce",                                  ro:"Yuuwaku sareru kodou ni",                                kj:"誘惑される鼓動に"},
+  {t:112.500,section:"Coro 1",   es:"Brindo por la tensión que estalla, aunque no pueda decirte que te amo", ro:"Hajike tobu kattou ni ai wo kanpai tsutaerarenakutemo", kj:"弾け飛ぶ葛藤に愛を乾杯 伝えられなくても"},
+  {t:119.000,section:"Coro 1",   es:"Es el comienzo del amor",                                  ro:"Koi no hajimari sa",                                     kj:"恋の始まりさ"},
+  {t:122.000,section:"Coro 1",   es:"Bunny girl",                                               ro:"Bunny girl",                                             kj:"Bunny girl"},
+  {t:124.000,section:"Coro 1",   es:"Bunny girl",                                               ro:"Bunny girl",                                             kj:"Bunny girl"},
+  {t:126.000,section:"Coro 1",   es:"Atravesando a alguien",                                    ro:"Dareka wo ugatte",                                       kj:"誰かを穿って"},
+  {t:129.500,section:"Coro 1",   es:"Cargando tus ojos puros",                                  ro:"Sunda kimi no me wo harande",                            kj:"澄んだ君の目を 孕んで"},
+  {t:136.000,section:"Verso 2",  es:"Creyendo conocer tu amor",                                 ro:"Kimi no ai wo shitta ki de",                             kj:"君の愛を知った気で"},
+  {t:140.000,section:"Verso 2",  es:"Estando en las nubes",                                     ro:"Hai ni natte ite",                                       kj:"ハイになっていて"},
+  {t:143.000,section:"Verso 2",  es:"Con los sentidos embotados",                               ro:"Kando satte ite",                                        kj:"感度去っていて"},
+  {t:146.000,section:"Verso 2",  es:"Siempre llorando",                                         ro:"Maido naite ite sa",                                     kj:"毎度泣いていてさ"},
+  {t:149.500,section:"Verso 2",  es:"Eso es lo que está bien, ¿verdad?",                        ro:"Sore kurai ga ii n desho",                               kj:"それくらいがいいんでしょ"},
+  {t:155.000,section:"Verso 2",  es:"Vamos",                                                    ro:"Saa",                                                    kj:"さあ"},
+  {t:156.500,section:"Verso 2",  es:"Marcando pasos elegantes",                                 ro:"Kiza na suteppu wo kizande",                             kj:"キザなステップを刻んで"},
+  {t:160.000,section:"Verso 2",  es:"El color de tu rostro ahora",                              ro:"Kimi no kaoiro ima de wa",                               kj:"君の顔色今では"},
+  {t:164.000,section:"Verso 2",  es:"Ha mejorado bastante",                                     ro:"Mashi ni natte kiteru kara",                             kj:"マシになってきてるから"},
+  {t:170.000,section:"Coro 2",   es:"Te lo confío todo",                                        ro:"Kimi ni yudaneru wa",                                    kj:"君に委ねるわ"},
+  {t:173.000,section:"Coro 2",   es:"Bunny girl",                                               ro:"Bunny girl",                                             kj:"Bunny girl"},
+  {t:175.000,section:"Coro 2",   es:"Bunny girl",                                               ro:"Bunny girl",                                             kj:"Bunny girl"},
+  {t:177.000,section:"Coro 2",   es:"Me entrego a ti",                                          ro:"Watashi wo ageru wa",                                    kj:"私をあげるわ"},
+  {t:180.000,section:"Coro 2",   es:"Bunny girl",                                               ro:"Bunny girl",                                             kj:"Bunny girl"},
+  {t:182.000,section:"Coro 2",   es:"Bunny girl",                                               ro:"Bunny girl",                                             kj:"Bunny girl"},
+  {t:184.000,section:"Coro 2",   es:"El latido que me seduce",                                  ro:"Yuuwaku sareru kodou ni",                                kj:"誘惑される鼓動に"},
+  {t:187.500,section:"Coro 2",   es:"Brindo por la tensión que estalla, y sé que puedo decírtelo", ro:"Hajike tobu kattou ni ai wo kanpai tsutaerareru hazu", kj:"弾け飛ぶ葛藤に愛を乾杯 伝えられてるはず"},
+  {t:194.000,section:"Coro Final",es:"Es el comienzo de la noche",                              ro:"Yoru no hajimari sa",                                    kj:"夜の始まりさ"},
+  {t:197.000,section:"Coro Final",es:"Bunny girl",                                              ro:"Bunny girl",                                             kj:"Bunny girl"},
+  {t:199.000,section:"Coro Final",es:"Bunny girl",                                              ro:"Bunny girl",                                             kj:"Bunny girl"},
+  {t:201.000,section:"Coro Final",es:"Atravesando a alguien",                                   ro:"Dareka wo ugatte",                                       kj:"誰かを穿って"},
+  {t:204.500,section:"Coro Final",es:"Cargando tus ojos puros",                                 ro:"Sunda kimi no me wo harande",                            kj:"澄んだ君の目を 孕んで"},
+];
+</script>
+
+<script>
+(function(){
+const STORAGE_KEY = 'musci_sync_bunny';
+const audio = document.getElementById('audio');
+let activeIdx = -1;
+let sectionOffsets = {};
+try { const s = localStorage.getItem(STORAGE_KEY); if(s) sectionOffsets = JSON.parse(s); } catch(e){}
+function saveOffsets(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(sectionOffsets)); }catch(e){} }
+function adjTime(line){ return line.t + (sectionOffsets[line.section]||0); }
+
+const container = document.getElementById('lyricsContainer');
+let curSection = null;
+LYRICS.forEach((line,i)=>{
+  if(line.section !== curSection){
+    curSection = line.section;
+    const sl = document.createElement('div');
+    sl.className='section-label';
+    sl.dataset.section=line.section;
+    const off=sectionOffsets[line.section]||0;
+    sl.innerHTML=`<span>${line.section}</span><div class="section-adj"><button class="btn-sadj" data-sec="${line.section}" data-d="-1">-1s</button><span class="sadj-val" id="sadj-${line.section}">${off>=0?'+':''}${off}s</span><button class="btn-sadj" data-sec="${line.section}" data-d="1">+1s</button></div>`;
+    container.appendChild(sl);
+  }
+  const b=document.createElement('div');
+  b.className='lyric-block';b.dataset.idx=i;
+  let h='';
+  if(line.es) h+=`<div class="lyric-es">${line.es}</div>`;
+  if(line.ro) h+=`<div class="lyric-romaji">${line.ro}</div>`;
+  if(line.kj) h+=`<div class="lyric-kanji">${line.kj}</div>`;
+  b.innerHTML=h;
+  b.addEventListener('click',()=>{ audio.currentTime=adjTime(line); });
+  container.appendChild(b);
+});
+
+document.querySelectorAll('.btn-sadj').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const sec=btn.dataset.sec, d=parseInt(btn.dataset.d);
+    sectionOffsets[sec]=(sectionOffsets[sec]||0)+d;
+    saveOffsets();
+    const el=document.getElementById('sadj-'+sec);
+    if(el){ const v=sectionOffsets[sec]; el.textContent=(v>=0?'+':'')+v+'s'; }
+    updateActive(audio.currentTime);
+  });
+});
+
+const fmt=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+const scrollBtn = document.getElementById('scrollBtn');
+scrollBtn.addEventListener('click', ()=>{
+  const blocks = document.querySelectorAll('.lyric-block');
+  if(activeIdx >= 0 && blocks[activeIdx]){
+    blocks[activeIdx].scrollIntoView({behavior:'smooth', block:'center'});
+  }
+});
+
+let lastBarIdx=-2;
+
+function updateBar(idx){
+  if(idx === lastBarIdx) return;
+  lastBarIdx = idx;
+  scrollBtn.classList.toggle('active', idx >= 0);
+}
+
+function updateActive(t){
+  document.getElementById('progressFill').style.width=(audio.duration?(t/audio.duration*100):0)+'%';
+  document.getElementById('timeNow').textContent=fmt(t);
+  let newActive=-1;
+  for(let i=0;i<LYRICS.length;i++){
+    if(t>=adjTime(LYRICS[i])) newActive=i;
+  }
+  const blocks=document.querySelectorAll('.lyric-block');
+  if(newActive!==activeIdx){
+    activeIdx=newActive;
+    blocks.forEach((b,i)=>{ b.classList.toggle('active',i===activeIdx); b.classList.toggle('past',i<activeIdx); });
+    if(activeIdx>=0&&blocks[activeIdx]) blocks[activeIdx].scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  updateBar(activeIdx);
+}
+
+audio.addEventListener('loadedmetadata',()=>{ document.getElementById('timeTotal').textContent=fmt(audio.duration); });
+audio.addEventListener('timeupdate',()=>{ updateActive(audio.currentTime); });
+audio.addEventListener('ended',()=>{
+  document.body.classList.remove('is-playing');
+  document.getElementById('visualizer').classList.remove('playing');
+  document.getElementById('playBtn').textContent='▶ Play';
+  scrollBtn.classList.remove('active');
+  lastBarIdx=-2;
+});
+
+document.getElementById('progressBar').addEventListener('click',e=>{
+  const r=e.currentTarget.getBoundingClientRect();
+  audio.currentTime=((e.clientX-r.left)/r.width)*(audio.duration||0);
+});
+
+const playBtn=document.getElementById('playBtn');
+playBtn.addEventListener('click',()=>{
+  if(audio.paused){
+    audio.play(); playBtn.textContent='⏸ Pausa';
+    document.body.classList.add('is-playing');
+    document.getElementById('visualizer').classList.add('playing');
+  } else {
+    audio.pause(); playBtn.textContent='▶ Play';
+    document.body.classList.remove('is-playing');
+    document.getElementById('visualizer').classList.remove('playing');
+  }
+});
+
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  audio.pause(); audio.currentTime=0; activeIdx=-1; lastBarIdx=-2;
+  playBtn.textContent='▶ Play';
+  document.body.classList.remove('is-playing');
+  document.getElementById('visualizer').classList.remove('playing');
+  document.querySelectorAll('.lyric-block').forEach(b=>b.classList.remove('active','past'));
+  scrollBtn.classList.remove('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+document.getElementById('vol').addEventListener('input',e=>{ audio.volume=parseFloat(e.target.value); });
+audio.volume=0.8;
+
+document.querySelectorAll('.toggle-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const v=btn.dataset.view;
+    document.body.className=document.body.className.replace(/\bview-\S+/g,'').trim();
+    if(v!=='all') document.body.classList.add('view-'+v);
+    if(!audio.paused) document.body.classList.add('is-playing');
+  });
+});
+
+const vizEl=document.getElementById('visualizer');
+for(let i=0;i<48;i++){
+  const bar=document.createElement('div'); bar.className='bar';
+  const mh=8+Math.sin(i*0.4)*22+Math.random()*16;
+  bar.style.cssText=`--max-h:${mh}px;--spd:${0.4+Math.random()*0.8}s;--delay:${(i/48)*-1.2}s;`;
+  vizEl.appendChild(bar);
+}
+})();
+</script>
+</body>
+</html>
