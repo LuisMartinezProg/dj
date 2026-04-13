@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JANE DOE · Kenshi Yonezu × Hikaru Utada — Música</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050505;
+  --card:#0f0f0f;
+  --accent1:#e8e0d8;
+  --accent2:#ffffff;
+  --accent3:#8c1a1a;
+  --text:#d4ccc4;
+  --muted:#3a3530;
+  --glow:rgba(180,30,30,0.3)
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden;padding-bottom:40px}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 50% 40% at 50% 0%,rgba(100,10,10,0.08) 0%,transparent 70%);z-index:0;pointer-events:none}
+.back-btn{position:fixed;top:1rem;left:1rem;z-index:100;background:rgba(5,5,5,0.9);border:1px solid rgba(232,224,216,0.2);color:var(--accent1);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px);transition:all 0.2s}
+header{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 1rem;border-bottom:1px solid rgba(232,224,216,0.08)}
+.song-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,6vw,3.5rem);font-weight:300;color:var(--accent2);letter-spacing:0.18em;margin-bottom:0.3rem}
+.artist-name{color:var(--muted);font-size:0.85rem;font-weight:300;letter-spacing:0.35em;text-transform:uppercase;margin-bottom:1rem}
+.visualizer-wrap{display:flex;justify-content:center;align-items:flex-end;gap:3px;height:40px;padding:0 2rem;margin-top:0.5rem}
+.bar{width:3px;border-radius:2px 2px 0 0;background:linear-gradient(to top,var(--accent3),var(--accent1));opacity:0.3;height:3px}
+@keyframes wave{0%,100%{height:3px}50%{height:var(--max-h)}}
+.playing .bar{opacity:1;animation:wave var(--spd) ease-in-out infinite;animation-delay:var(--delay)}
+audio{display:none}
+.progress-section{position:relative;z-index:1;padding:1rem 2rem 0.5rem;max-width:780px;margin:0 auto}
+.progress-bar-wrap{width:100%;height:3px;background:var(--card);border-radius:2px;cursor:pointer;overflow:hidden;margin-bottom:0.5rem}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent1));border-radius:2px;width:0%;box-shadow:0 0 8px var(--glow);pointer-events:none}
+.time-row{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--muted);font-family:'Cormorant Garamond',serif;letter-spacing:0.1em}
+.controls{position:relative;z-index:1;display:flex;justify-content:center;gap:1rem;padding:0.8rem 2rem 0.5rem;flex-wrap:wrap}
+.btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem}
+.btn-primary{background:transparent;color:var(--accent1);border:1px solid rgba(232,224,216,0.4);padding:0.75rem 2rem;font-size:0.95rem;font-weight:400;min-width:130px;justify-content:center;letter-spacing:0.1em}
+.btn-primary:hover{background:rgba(232,224,216,0.07);border-color:var(--accent1)}
+.btn-secondary{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.1);padding:0.75rem 1.3rem;font-size:0.9rem}
+.btn-secondary:hover{color:var(--accent1);border-color:rgba(232,224,216,0.3)}
+.volume-row{display:flex;align-items:center;gap:0.6rem;justify-content:center;padding-bottom:0.5rem;position:relative;z-index:1}
+.volume-row span{color:var(--muted);font-size:0.8rem}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100px;height:2px;border-radius:2px;background:var(--card);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--accent1);cursor:pointer}
+.view-toggles{position:relative;z-index:1;display:flex;justify-content:center;gap:0.5rem;padding:0 2rem 1.2rem;flex-wrap:wrap}
+.toggle-btn{border:1px solid rgba(255,255,255,0.1);background:transparent;color:var(--muted);padding:0.3rem 0.9rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.75rem;transition:all 0.2s;letter-spacing:0.05em}
+.toggle-btn.active{border-color:rgba(232,224,216,0.5);color:var(--accent1)}
+.lyrics-container{position:relative;z-index:1;max-width:740px;margin:0 auto;padding:0 1.5rem 2rem}
+.section-label{text-align:center;font-size:0.6rem;letter-spacing:0.4em;text-transform:uppercase;color:var(--muted);padding:1.4rem 0 0.6rem;display:flex;align-items:center;gap:0.8rem;opacity:0.5}
+.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(232,224,216,0.08)}
+.lyric-block{padding:1rem 1.4rem;margin-bottom:0.3rem;border-radius:4px;border-left:2px solid transparent;transition:all 0.35s ease;cursor:pointer;opacity:0.25}
+.lyric-block.past{opacity:0.12}
+.lyric-block.active{opacity:1;border-left-color:var(--accent3);background:rgba(255,255,255,0.03);box-shadow:inset 0 0 30px rgba(140,26,26,0.06)}
+.lyric-es{font-family:'Cormorant Garamond',serif;font-size:clamp(1.15rem,2.8vw,1.65rem);font-weight:300;color:var(--accent2);line-height:1.4;margin-bottom:0.3rem;letter-spacing:0.02em}
+.lyric-block.active .lyric-es{color:#ffffff}
+.lyric-romaji{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(0.95rem,2.2vw,1.15rem);color:var(--accent1);opacity:0.7;margin-bottom:0.25rem;letter-spacing:0.03em}
+.lyric-kanji{font-family:'Noto Serif JP',serif;font-size:clamp(0.85rem,1.8vw,1rem);color:var(--muted);opacity:0.9;font-weight:300;letter-spacing:0.1em}
+body.view-es .lyric-romaji,body.view-es .lyric-kanji{display:none}
+body.view-romaji .lyric-es,body.view-romaji .lyric-kanji{display:none}
+body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
+.audio-error{display:none;position:relative;z-index:1;margin:0.5rem 2rem;padding:0.8rem 1.2rem;background:rgba(140,26,26,0.1);border:1px solid rgba(140,26,26,0.3);border-radius:4px;color:var(--accent1);font-size:0.82rem;text-align:center}
+.audio-error.show{display:block}
+.scroll-btn{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;width:48px;height:48px;border-radius:50%;background:transparent;border:1px solid rgba(232,224,216,0.25);cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:all 0.2s;opacity:0.4;color:var(--accent1)}
+.scroll-btn:hover{transform:scale(1.1);opacity:1;border-color:var(--accent1)}
+.scroll-btn.active{opacity:1;border-color:rgba(140,26,26,0.8);box-shadow:0 0 12px var(--glow)}
+</style>
+</head>
+<body>
+<a class="back-btn" href="jane.html">← Volver</a>
+<audio id="audio" src="Jane Musica.mp3" preload="auto"></audio>
+
+<header>
+  <div class="song-title">JANE DOE</div>
+  <div class="artist-name">Kenshi Yonezu × Hikaru Utada · 2025</div>
+  <div class="visualizer-wrap" id="visualizer"></div>
+</header>
+
+<div class="audio-error" id="audioError">⚠️ Falta el archivo de audio</div>
+
+<div class="progress-section">
+  <div class="progress-bar-wrap" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="time-row"><span id="timeNow">0:00</span><span id="timeTotal">—</span></div>
+</div>
+
+<div class="controls">
+  <button class="btn btn-primary" id="playBtn">▶ Play</button>
+  <button class="btn btn-secondary" id="resetBtn">↩ Reinicio</button>
+</div>
+
+<div class="volume-row">
+  <span>🔈</span><input type="range" id="vol" min="0" max="1" step="0.05" value="0.8"><span>🔊</span>
+</div>
+
+<div class="view-toggles">
+  <button class="toggle-btn active" data-view="all">Todo</button>
+  <button class="toggle-btn" data-view="es">Español</button>
+  <button class="toggle-btn" data-view="romaji">Romaji</button>
+  <button class="toggle-btn" data-view="kanji">日本語</button>
+</div>
+
+<div class="lyrics-container" id="lyricsContainer"></div>
+<button class="scroll-btn" id="scrollBtn" title="Ir a letra actual">♪</button>
+
+<script>
+// Timestamps desde LRC oficial (lyricsify ID #22481902)
+const LYRICS = [
+  // INTRO — Hikaru Utada
+  {t:14.36, section:"Intro",    es:"Se siente como si fuéramos las únicas dos personas en este mundo",                  ro:"Marude kono sekai de futari dake mitai da ne",          kj:"まるでこの世界で二人だけみたいだね"},
+  {t:25.11, section:"Intro",    es:"No pude resistir soñar por un momento",                                             ro:"Nante sukoshi dake yume wo mite shimatta dake",         kj:"なんて少しだけ夢をみてしまっただけ"},
+  {t:35.58, section:"Intro",    es:"La luz de la luna en nuestros dedos, el aroma de un ramo, tus dedos rozando los míos", ro:"Tsumasaki ni tsukiakari hanataba no kaori yubi ni fureru yubi", kj:"つま先に月明かり 花束の香り 指に触れる指"},
+  {t:46.72, section:"Intro",    es:"Adiós, tengo que irme ahora y desaparecer",                                         ro:"Sayonara mou ikanakya nanimokamo wasurete",             kj:"さよなら もう行かなきゃ 何もかも忘れて"},
+
+  // CORO 1 — Hikaru Utada
+  {t:58.20, section:"Coro",     es:"Camino descalza sobre vidrios rotos, la sangre gotea con cada dolor",               ro:"Garasu no ue wo hadashi no mama aruku itamu goto ni chi ga nagarete ochite iku", kj:"硝子の上を裸足のまま歩く 痛むごとに血が流れて落ちていく"},
+  {t:70.73, section:"Coro",     es:"Por favor, sigue esas huellas rojas y ven a verme",                                 ro:"Onegai sono akai ashiato wo tadotte ai ni kite",        kj:"お願い その赤い足跡を辿って 会いにきて"},
+
+  // VERSO — Kenshi Yonezu
+  {t:92.49, section:"Verso",    es:"Un pez dorado liberado a un estanque oxidado, una manzana escondida en una caja de zapatos", ro:"Sabita puuru ni hanatarete iku kingyo, kutsubako no naka kakushita ringo", kj:"錆びたpoolに放たれていく金魚 靴箱の中隠した林檎"},
+  {t:102.73, section:"Verso",   es:"Las cicatrices en tu piel marchita, perdidos, nadamos como un par de perros",       ro:"Shinabita kimi no hada ni nokoru kizuato, inu no you ni oyoida maigo", kj:"萎びた君の肌に残る傷跡 犬のように泳いだ迷子"},
+
+  // PUENTE — ambos
+  {t:112.78, section:"Puente",  es:"¿Dónde estás? (Estoy aquí) — ¿Qué estás haciendo? (Te he observado todo este tiempo)",  ro:"Doko ni iru no (Koko ni iru yo) Nani wo shite iru no (Zutto miteru yo)", kj:"どこにいるの (ここにいるよ) 何をしているの (ずっと見てるよ)"},
+  {t:118.61, section:"Puente",  es:"Llenemos este mundo de errores",                                                    ro:"Kono yo wo machigai de mitasou",                        kj:"この世を間違いで満たそう"},
+  {t:123.69, section:"Puente",  es:"Quédate a mi lado, vayamos a divertirnos",                                          ro:"Soba ni ite yo asobi ni ikou yo",                       kj:"側にいてよ 遊びに行こうよ"},
+  {t:129.36, section:"Puente",  es:"¿Dónde estás?",                                                                     ro:"Doko ni iru no",                                       kj:"どこにいるの"},
+
+  // CORO 2 — Hikaru Utada
+  {t:136.71, section:"Coro 2",  es:"Camino descalza sobre vidrios rotos, la sangre gotea con cada dolor",               ro:"Garasu no ue wo hadashi no mama aruku itamu goto ni chi ga nagarete ochite iku", kj:"硝子の上を裸足のまま歩く 痛むごとに血が流れて落ちていく"},
+  {t:149.50, section:"Coro 2",  es:"Por favor, sigue esas huellas rojas y ven a verme",                                 ro:"Onegai sono akai ashiato wo tadotte ai ni kite",        kj:"お願い その赤い足跡を辿って 会いにきて"},
+
+  // OUTRO — ambos
+  {t:161.50, section:"Outro",   es:"Se siente como si fuéramos las únicas dos personas en este mundo",                  ro:"Marude kono sekai de futari dake mitai da ne",          kj:"まるでこの世界で二人だけみたいだね"},
+  {t:172.00, section:"Outro",   es:"No pude resistir soñar por un momento",                                             ro:"Nante sukoshi dake yume wo mite shimatta dake",         kj:"なんて少しだけ夢をみてしまっただけ"},
+];
+
+(function(){
+  const audio     = document.getElementById('audio');
+  const playBtn   = document.getElementById('playBtn');
+  const scrollBtn = document.getElementById('scrollBtn');
+  let activeIdx   = -1;
+
+  // ── Construir letras ──────────────────────────────────────────────────────
+  const container = document.getElementById('lyricsContainer');
+  let curSection  = null;
+  LYRICS.forEach((line, i) => {
+    if(line.section !== curSection){
+      curSection = line.section;
+      const sl = document.createElement('div');
+      sl.className = 'section-label';
+      sl.innerHTML = `<span>${line.section}</span>`;
+      container.appendChild(sl);
+    }
+    const b = document.createElement('div');
+    b.className = 'lyric-block';
+    b.innerHTML =
+      `<div class="lyric-es">${line.es}</div>` +
+      `<div class="lyric-romaji">${line.ro}</div>` +
+      `<div class="lyric-kanji">${line.kj}</div>`;
+    b.addEventListener('click', () => { audio.currentTime = line.t; });
+    container.appendChild(b);
+  });
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
+  const fmt    = s => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+  const blocks = ()  => document.querySelectorAll('.lyric-block');
+
+  function updateActive(t){
+    document.getElementById('progressFill').style.width =
+      (audio.duration ? (t / audio.duration * 100) : 0) + '%';
+    document.getElementById('timeNow').textContent = fmt(t);
+    let newActive = -1;
+    for(let i = 0; i < LYRICS.length; i++){
+      if(t >= LYRICS[i].t) newActive = i;
+    }
+    if(newActive === activeIdx) return;
+    activeIdx = newActive;
+    blocks().forEach((b, i) => {
+      b.classList.toggle('active', i === activeIdx);
+      b.classList.toggle('past',   i < activeIdx);
+    });
+    scrollBtn.classList.toggle('active', activeIdx >= 0);
+    const el = blocks()[activeIdx];
+    if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+
+  // ── Eventos audio ─────────────────────────────────────────────────────────
+  audio.addEventListener('loadedmetadata', () => {
+    document.getElementById('timeTotal').textContent = fmt(audio.duration);
+  });
+  audio.addEventListener('error', () => {
+    document.getElementById('audioError').classList.add('show');
+  });
+  audio.addEventListener('timeupdate', () => updateActive(audio.currentTime));
+  audio.addEventListener('ended', () => {
+    document.body.classList.remove('is-playing');
+    document.getElementById('visualizer').classList.remove('playing');
+    playBtn.textContent = '▶ Play';
+    scrollBtn.classList.remove('active');
+  });
+
+  // ── Barra progreso ────────────────────────────────────────────────────────
+  document.getElementById('progressBar').addEventListener('click', e => {
+    const r = e.currentTarget.getBoundingClientRect();
+    audio.currentTime = ((e.clientX - r.left) / r.width) * (audio.duration || 0);
+  });
+
+  // ── Play / Pausa ──────────────────────────────────────────────────────────
+  playBtn.addEventListener('click', () => {
+    if(audio.paused){
+      audio.play();
+      playBtn.textContent = '⏸ Pausa';
+      document.body.classList.add('is-playing');
+      document.getElementById('visualizer').classList.add('playing');
+    } else {
+      audio.pause();
+      playBtn.textContent = '▶ Play';
+      document.body.classList.remove('is-playing');
+      document.getElementById('visualizer').classList.remove('playing');
+    }
+  });
+
+  // ── Reinicio ──────────────────────────────────────────────────────────────
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    audio.pause(); audio.currentTime = 0; activeIdx = -1;
+    playBtn.textContent = '▶ Play';
+    document.body.classList.remove('is-playing');
+    document.getElementById('visualizer').classList.remove('playing');
+    blocks().forEach(b => b.classList.remove('active','past'));
+    scrollBtn.classList.remove('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  // ── Volumen ───────────────────────────────────────────────────────────────
+  document.getElementById('vol').addEventListener('input', e => {
+    audio.volume = parseFloat(e.target.value);
+  });
+  audio.volume = 0.8;
+
+  // ── Scroll a línea activa ─────────────────────────────────────────────────
+  scrollBtn.addEventListener('click', () => {
+    const el = blocks()[activeIdx];
+    if(el) el.scrollIntoView({behavior:'smooth', block:'center'});
+  });
+
+  // ── Toggles de vista ──────────────────────────────────────────────────────
+  document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const v = btn.dataset.view;
+      document.body.className = document.body.className.replace(/\bview-\S+/g,'').trim();
+      if(v !== 'all') document.body.classList.add('view-' + v);
+      if(!audio.paused) document.body.classList.add('is-playing');
+    });
+  });
+
+  // ── Visualizador ──────────────────────────────────────────────────────────
+  const vizEl = document.getElementById('visualizer');
+  for(let i = 0; i < 48; i++){
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    const mh = 5 + Math.sin(i*0.4)*14 + Math.random()*10;
+    bar.style.cssText = `--max-h:${mh}px;--spd:${0.5+Math.random()*0.9}s;--delay:${(i/48)*-1.2}s;`;
+    vizEl.appendChild(bar);
+  }
+})();
+</script>
+</body>
+</html>
