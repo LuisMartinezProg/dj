@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>神っぽいな · Kamippoi Na — Letras</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0606;--card:#120a0a;--accent1:#cc1111;--accent2:#ffaaaa;--accent3:#660000;--text:#f0e8e8;--muted:#5a3030;--glow:rgba(204,17,17,0.35)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden;padding-bottom:40px}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 80% 10%,rgba(180,10,10,0.10) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 10% 90%,rgba(100,0,0,0.08) 0%,transparent 60%);z-index:0;pointer-events:none}
+.back-btn{position:fixed;top:1rem;left:1rem;z-index:100;background:rgba(10,6,6,0.88);border:1px solid rgba(204,17,17,0.3);color:var(--accent2);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px);transition:all 0.2s}
+.back-btn:hover{background:rgba(204,17,17,0.12)}
+header{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 1rem;border-bottom:1px solid rgba(204,17,17,0.15)}
+.song-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:600;background:linear-gradient(135deg,var(--accent2),#ffffff,var(--accent1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.05em;margin-bottom:0.3rem}
+.artist-name{color:var(--muted);font-size:0.9rem;font-weight:300;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:1rem}
+.visualizer-wrap{display:flex;justify-content:center;align-items:flex-end;gap:3px;height:50px;padding:0 2rem;margin-top:0.5rem}
+.bar{width:4px;border-radius:2px 2px 0 0;background:linear-gradient(to top,var(--accent3),var(--accent1));opacity:0.4;height:4px}
+@keyframes wave{0%,100%{height:4px}50%{height:var(--max-h)}}
+.playing .bar{opacity:1;animation:wave var(--spd) ease-in-out infinite;animation-delay:var(--delay)}
+audio{display:none}
+.progress-section{position:relative;z-index:1;padding:1rem 2rem 0.5rem;max-width:780px;margin:0 auto}
+.progress-bar-wrap{width:100%;height:6px;background:var(--card);border-radius:3px;cursor:pointer;overflow:hidden;margin-bottom:0.5rem}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent1),var(--accent2));border-radius:3px;width:0%;box-shadow:0 0 10px var(--glow);pointer-events:none}
+.time-row{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--muted);font-family:'Cormorant Garamond',serif}
+.controls{position:relative;z-index:1;display:flex;justify-content:center;gap:1rem;padding:0.8rem 2rem 0.5rem;flex-wrap:wrap}
+.btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem}
+.btn-primary{background:linear-gradient(135deg,var(--accent3),var(--accent1));color:white;padding:0.75rem 2rem;font-size:1rem;font-weight:700;box-shadow:0 0 20px var(--glow);min-width:130px;justify-content:center}
+.btn-primary:hover{transform:scale(1.05)}
+.btn-secondary{background:var(--card);color:var(--accent2);border:1px solid rgba(204,17,17,0.3);padding:0.75rem 1.3rem;font-size:0.9rem}
+.volume-row{display:flex;align-items:center;gap:0.6rem;justify-content:center;padding-bottom:0.5rem;position:relative;z-index:1}
+.volume-row span{color:var(--muted);font-size:0.8rem}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100px;height:4px;border-radius:2px;background:var(--card);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent1);cursor:pointer}
+.view-toggles{position:relative;z-index:1;display:flex;justify-content:center;gap:0.5rem;padding:0 2rem 1.2rem;flex-wrap:wrap}
+.toggle-btn{border:1px solid rgba(204,17,17,0.25);background:transparent;color:var(--muted);padding:0.35rem 1rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.78rem;transition:all 0.2s}
+.toggle-btn.active{background:rgba(204,17,17,0.12);border-color:var(--accent1);color:var(--accent2)}
+.lyrics-container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:0 1.5rem 2rem}
+.section-label{text-align:center;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);padding:1.2rem 0 0.5rem;opacity:0.5;display:flex;align-items:center;gap:0.8rem}
+.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(204,17,17,0.15)}
+.section-adj{display:flex;align-items:center;gap:0.3rem;margin-left:0.5rem}
+.btn-sadj{background:rgba(204,17,17,0.08);border:1px solid rgba(204,17,17,0.2);color:var(--accent1);padding:0.15rem 0.5rem;border-radius:999px;font-size:0.7rem;cursor:pointer}
+.sadj-val{font-size:0.7rem;color:var(--muted);min-width:28px;text-align:center}
+.lyric-block{padding:1.2rem 1.6rem;margin-bottom:0.5rem;border-radius:16px;border:1px solid transparent;transition:all 0.4s ease;cursor:pointer;opacity:0.3}
+.lyric-block.past{opacity:0.18}
+.lyric-block.active{opacity:1;background:linear-gradient(135deg,rgba(80,0,0,0.18),rgba(204,17,17,0.07));border-color:rgba(204,17,17,0.35);box-shadow:0 0 30px rgba(180,10,10,0.15);transform:translateX(6px)}
+.lyric-es{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:600;color:var(--text);line-height:1.3;margin-bottom:0.35rem}
+.lyric-block.active .lyric-es{background:linear-gradient(90deg,var(--text),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lyric-romaji{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,2.5vw,1.25rem);color:var(--accent2);margin-bottom:0.3rem}
+.lyric-kanji{font-family:'Noto Serif JP',serif;font-size:clamp(0.95rem,2vw,1.1rem);color:var(--accent2);opacity:0.75;font-weight:400;letter-spacing:0.08em}
+body.view-es .lyric-romaji,body.view-es .lyric-kanji{display:none}
+body.view-romaji .lyric-es,body.view-romaji .lyric-kanji{display:none}
+body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
+.audio-error{display:none;position:relative;z-index:1;margin:0.5rem 2rem;padding:0.8rem 1.2rem;background:rgba(204,17,17,0.12);border:1px solid rgba(204,17,17,0.3);border-radius:12px;color:var(--accent2);font-size:0.82rem;text-align:center}
+.audio-error.show{display:block}
+.scroll-btn{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--accent1));border:none;cursor:pointer;box-shadow:0 4px 20px var(--glow);display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:all 0.2s;opacity:0.5}
+.scroll-btn:hover{transform:scale(1.1);opacity:1}
+.scroll-btn.active{opacity:1}
+</style>
+</head>
+<body>
+<a class="back-btn" href="kamippoi.html">← Volver</a>
+<audio id="audio" src="Kamippoimusica" preload="auto"></audio>
+<header>
+  <div class="song-title">神っぽいな · Kamippoi Na</div>
+  <div class="artist-name">Ado · 2021</div>
+  <div class="visualizer-wrap" id="visualizer"></div>
+</header>
+<div class="audio-error" id="audioError">⚠️ Falta el archivo de audio</div>
+<div class="progress-section">
+  <div class="progress-bar-wrap" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="time-row"><span id="timeNow">0:00</span><span id="timeTotal">—</span></div>
+</div>
+<div class="controls">
+  <button class="btn btn-primary" id="playBtn">▶ Play</button>
+  <button class="btn btn-secondary" id="resetBtn">↩ Reinicio</button>
+</div>
+<div class="volume-row">
+  <span>🔈</span><input type="range" id="vol" min="0" max="1" step="0.05" value="0.8"><span>🔊</span>
+</div>
+<div class="view-toggles">
+  <button class="toggle-btn active" data-view="all">Todo</button>
+  <button class="toggle-btn" data-view="es">Español</button>
+  <button class="toggle-btn" data-view="romaji">Romaji</button>
+  <button class="toggle-btn" data-view="kanji">日本語</button>
+</div>
+<div class="lyrics-container" id="lyricsContainer"></div>
+<button class="scroll-btn" id="scrollBtn" title="Ir a letra actual">♪</button>
+
+<script>
+const STORAGE_KEY = 'musci_sync_kamippoi';
+// LRC exacto de Megalobiz — God-ish Ado [03:24.10]
+const LYRICS = [
+  {t:6.93,  section:"Intro",    es:"El spoiler del amor: «parece una separación»",                ro:"Ai no netabare \"wakare\" ppoi na",                  kj:"愛のネタバレ「別れ」っぽいな"},
+  {t:10.12, section:"Intro",    es:"El spoiler de la vida: «parece la muerte»",                    ro:"Jinsei no netabare \"shinu\" ppoi na",                kj:"人生のネタバレ「死ぬ」っぽいな"},
+  {t:13.31, section:"Intro",    es:"¿Qué es eso? Suena profundo y genial…",                        ro:"Nani sore imishin de kakkoii jan…",                  kj:"なにそれ意味深でかっこいいじゃん…"},
+  {t:16.76, section:"Intro",    es:"Bailando con vocabulario que suena a eso, qué grosero",        ro:"Sore ppoi tangoshuu de odotten da shikkei",           kj:"それっぽい単語集で踊ってんだ失敬"},
+  {t:20.48, section:"Estribillo 1", es:"Tu turu tu tu turu «fuu»",                                ro:"Tu turu tu tu turu \"fuu\"",                          kj:"ツツルツツツル「ふう」"},
+  {t:22.34, section:"Estribillo 1", es:"Tu turu tu tu turu «fuu»",                                ro:"Tu turu tu tu turu \"fuu\"",                          kj:"ツツルツツツル「ふう」"},
+  {t:23.93, section:"Estribillo 1", es:"Tu turu tu tu turu «fuu»",                                ro:"Tu turu tu tu turu \"fuu\"",                          kj:"ツツルツツツル「ふう」"},
+  {t:25.53, section:"Estribillo 1", es:"¡Poi jan poi jan!",                                        ro:"Poi jan poi jan",                                    kj:"ポイじゃんポイじゃん"},
+  {t:27.39, section:"Estribillo 1", es:"Tu turu tu tu turu «fuu»",                                ro:"Tu turu tu tu turu \"fuu\"",                          kj:"ツツルツツツル「ふう」"},
+  {t:29.24, section:"Estribillo 1", es:"Tu turu tu tu turu «fuu»",                                ro:"Tu turu tu tu turu \"fuu\"",                          kj:"ツツルツツツル「ふう」"},
+  {t:30.63, section:"Estribillo 1", es:"Tu turu tu tu turu",                                      ro:"Tu turu tu tu turu",                                 kj:"ツツルツツツル"},
+  {t:32.23, section:"Estribillo 1", es:"¡Parece un dios!",                                        ro:"Kami ppoi na",                                       kj:"神っぽいな"},
+  {t:34.12, section:"Verso 1",  es:"«Ya basta, ya basta» con eso",                                ro:"Mou ii ze mou ii ze sore",                           kj:"もういいぜもういいぜそれ"},
+  {t:35.45, section:"Verso 1",  es:"«Ya basta» — hasta me emociono al revés",                     ro:"Mou ii ze mou ii ze gyaku ni koufun shite kita naa", kj:"もういいぜもういいぜ逆に興奮してきたなあ"},
+  {t:40.27, section:"Verso 1",  es:"Qué grande, qué grande el sueño",                             ro:"Okkii ne okkii ne yume",                             kj:"おっきいねおっきいね夢"},
+  {t:42.16, section:"Verso 1",  es:"Qué grande, qué grande",                                      ro:"Okkii ne okkii ne",                                  kj:"おっきいねおっきいね"},
+  {t:43.49, section:"Verso 1",  es:"La popularidad va bien pero la naturaleza es EL FIN",          ro:"Keiki ii kedo hinsei wa THE END",                    kj:"景気いいけど本性はTHE END"},
+  {t:46.48, section:"Verso 1",  es:"¡Ueei ueei!",                                                 ro:"Ueei ueei",                                          kj:"ウェイウェイ"},
+  {t:48.89, section:"Verso 1",  es:"«Dios ha muerto»",                                            ro:"\"Gott ist tot\"",                                   kj:"「Gott ist tot」"},
+  {t:50.59, section:"Coro 1",   es:"Parece un dios — qué cobarde — parece un dios «My God»",      ro:"Kami ppoi na sore hikyou kami ppoi na sore \"My God\"",kj:"神っぽいなそれ卑怯神っぽいなそれ「My God」"},
+  {t:53.86, section:"Coro 1",   es:"Uno dos uno dos, el IQ va bajando",                           ro:"Ai won chuu won chuu IQ ga sagatte iku kanji",        kj:"愛ワンチュウワンチュウIQが下がっていく感じ"},
+  {t:57.04, section:"Coro 1",   es:"Parece un dios maligno — qué cobarde — «My God»",             ro:"Jashin poi na sore hikkyou jashin poi na sore \"My God\"",kj:"邪神っぽいなそれ卑怯邪神っぽいなそれ「My God」"},
+  {t:60.76, section:"Coro 1",   es:"Uno dos uno dos, ¿cuál es la plaga?",                         ro:"Ai hei chuu hei chuu gaichuu wa docchi",              kj:"愛ヘイチュウヘイチュウ害虫はどっち"},
+  {t:64.03, section:"Coro 1",   es:"Ese peinado, esos ojos, esa boca",                            ro:"Sono kamigata sono me sono kuchimoto",                kj:"その髪型その目その口元"},
+  {t:65.90, section:"Coro 1",   es:"Ese perfume, esa ropa, ese maquillaje",                       ro:"Sono kousui sono fuku sono meiku",                   kj:"その香水その服そのメイク"},
+  {t:67.48, section:"Coro 1",   es:"Parece eso — qué cobarde — parece eso",                       ro:"Are ppoi na sore hikyou are ppoi na sore",            kj:"あれっぽいなそれ卑怯あれっぽいなそれ"},
+  {t:70.66, section:"Coro 1",   es:"Esas palabras célebres, esas opiniones, esas críticas",       ro:"Sono meigen sono iken sono hihyou",                  kj:"その名言その意見その批評"},
+  {t:72.80, section:"Coro 1",   es:"Ese carisma, ese humor, ese sentido",                         ro:"Sono karisuma sono gyagu sono sensu",                 kj:"そのカリスマそのギャグそのセンス"},
+  {t:74.39, section:"Coro 1",   es:"Parece un dios — qué cobarde",                                ro:"Kami ppoi na sore hikyou",                            kj:"神っぽいなそれ卑怯"},
+  {t:76.25, section:"Coro 1",   es:"¡Poi na poi na poi, me enamoré!",                             ro:"Poi na poi na poi akogarechau!",                     kj:"ポイなポイなポイ憧れちゃう！"},
+  {t:78.37, section:"Estribillo 2", es:"Tu turu tu tu turu «fuu»",                               ro:"Tu turu tu tu turu \"fuu\"",                          kj:"ツツルツツツル「ふう」"},
+  {t:79.74, section:"Estribillo 2", es:"Tu turu tu tu turu «fuu»",                               ro:"Tu turu tu tu turu \"fuu\"",                          kj:"ツツルツツツル「ふう」"},
+  {t:81.34, section:"Estribillo 2", es:"Tu turu tu tu turu «fuu»",                               ro:"Tu turu tu tu turu \"fuu\"",                          kj:"ツツルツツツル「ふう」"},
+  {t:83.20, section:"Estribillo 2", es:"¡Poi jan poi jan!",                                       ro:"Poi jan poi jan",                                    kj:"ポイじゃんポイじゃん"},
+  {t:85.06, section:"Estribillo 2", es:"Tu turu tu tu turu «fuu»",                               ro:"Tu turu tu tu turu \"fuu\"",                          kj:"ツツルツツツル「ふう」"},
+  {t:86.39, section:"Estribillo 2", es:"Tu turu tu tu turu «fuu»",                               ro:"Tu turu tu tu turu \"fuu\"",                          kj:"ツツルツツツル「ふう」"},
+  {t:88.42, section:"Estribillo 2", es:"Tu turu tu tu turu",                                     ro:"Tu turu tu tu turu",                                 kj:"ツツルツツツル"},
+  {t:89.78, section:"Estribillo 2", es:"¡Parece un dios!",                                        ro:"Kami ppoi na",                                       kj:"神っぽいな"},
+  {t:91.98, section:"Puente",   es:"Pensar meta, ¿su esencia es malicia? Como burlarse de la gente, trampa arrogante",ro:"Meta shikou suru honshitsu wa akui? hito wo kobaka ni shita you na sakui",kj:"メタ思考する本質は悪意？人を小馬鹿にしたような策意"},
+  {t:96.50, section:"Puente",   es:"Sobrevivir sin esfuerzo es difícil, una luz que tiembla absorbida por el poder",  ro:"Mui ni ikinobiru no wa muzukashii kenryoku ni nomarete yuragu akari",   kj:"無為に生き延びるのは難しい権力に呑まれて揺らぐ明かり"},
+  {t:101.01,section:"Puente",   es:"Negar a dios, ocupar su lugar, trono de hipócritas caprichosos",                  ro:"Kami wo hiteishi kami ni narikawari gyokuza de hyouhen suru komono tachi",kj:"神を否定し神に成り代わり玉座で豹変する小者たち"},
+  {t:105.59,section:"Puente",   es:"Disfrazado de crítica, oración egoísta. ¿Sabes?",                                 ro:"Hihan ni misekake jikai no inori Do you know?",                        kj:"批判に見せかけ自戒の祈り Do you know?"},
+  {t:109.90,section:"Verso 2",  es:"¿Qué estás diciendo? Eso es molesto",                                            ro:"Nani itten no? sore uzai nani itten no? sore",                        kj:"何言ってんの？それうざい何言ってんの？それ"},
+  {t:114.46,section:"Verso 2",  es:"No entiendo bien y me da sueño en serio",                                        ro:"Imi ga yoku wakannai shi nemucchau yo maji",                          kj:"意味がよくわかんないし眠っちゃうよまじ"},
+  {t:119.00,section:"Verso 2",  es:"Parece aburrido — okey — todos parecen aburridos — okey",                        ro:"Aki ppoin da ookee minna aki ppoin da ookee",                         kj:"飽きっぽいんだオーケー皆飽きっぽいんだオーケー"},
+  {t:123.57,section:"Verso 2",  es:"Denme a alguien que pueda bailar, denme ese rayo",                                ro:"Odoreru yatsu choudai choudai biimu",                                 kj:"踊れるやつちょうだいちょうだいビーム"},
+  {t:128.67,section:"Verso 2",  es:"Qué molesto, qué molesto eso",                                                   ro:"Kisshoi ne kisshoi ne sore",                                         kj:"きっしょいねきっしょいねそれ"},
+  {t:130.29,section:"Verso 2",  es:"Qué molesto, qué molesto",                                                       ro:"Kisshoi ne kisshoi ne",                                               kj:"きっしょいねきっしょいね"},
+  {t:131.62,section:"Verso 2",  es:"Al revés ya me volví fan, ¿verdad?",                                             ro:"Gyaku ni fan ni natte kita jan",                                      kj:"逆にファンになってきたじゃん"},
+  {t:135.60,section:"Verso 2",  es:"Qué pequeño, qué pequeño el recipiente",                                         ro:"Chicchai ne chicchai ne utsuwa",                                      kj:"ちっちゃいねちっちゃいねうつわ"},
+  {t:136.93,section:"Verso 2",  es:"Qué pequeño, qué pequeño",                                                       ro:"Chicchai ne chicchai ne",                                             kj:"ちっちゃいねちっちゃいね"},
+  {t:138.54,section:"Verso 2",  es:"Solitario por ser genio… qué genial… qué genial…",                               ro:"Tensai yue kodoku desu ne kakkee… kakkee…",                          kj:"天才ゆえ孤独ですねかっけえ…かっけえ…"},
+  {t:143.85,section:"Verso 2",  es:"«Dios ha muerto»",                                                               ro:"\"Gott ist tot\"",                                                   kj:"「Gott ist tot」"},
+  {t:147.07,section:"Coro 2",   es:"Parece un dios — qué cobarde — parece un dios «My God»",                         ro:"Kami ppoi na sore hikyou kami ppoi na sore \"My God\"",               kj:"神っぽいなそれ卑怯神っぽいなそれ「My God」"},
+  {t:150.54,section:"Coro 2",   es:"Salud salud, el que presume acaba agotado",                                       ro:"Choukenkou kenkou iihatte kutabatte iku kanji",                       kj:"超健康健康言い張ってくたばっていく感じ"},
+  {t:153.99,section:"Coro 2",   es:"Parece quemado — qué cobarde — parece quemado «My God»",                         ro:"Yake ppoi na sore hikkyou yake ppoi na sore \"My God\"",              kj:"やけっぽいなそれ卑怯やけっぽいなそれ「My God」"},
+  {t:157.18,section:"Coro 2",   es:"Ya melancolía melancolía, el talón del epígono",                                  ro:"Mou aishuu aishuu epigoonen no hiiru",                                kj:"もう哀愁哀愁エピゴーネンのヒール"},
+  {t:160.37,section:"Coro 2",   es:"Ese título, ese cuadro, esa historia",                                           ro:"Sono taitoru sono e sono sutoorii",                                   kj:"そのタイトルその絵そのストーリー"},
+  {t:162.05,section:"Coro 2",   es:"Esa música, esa canción, esa melodía",                                           ro:"Sono ongaku sono uta sono merodi",                                   kj:"その音楽その歌そのメロディ"},
+  {t:164.17,section:"Coro 2",   es:"Parece eso — qué cobarde — parece eso",                                          ro:"Are ppoi na sore hikyou are ppoi na sore",                            kj:"あれっぽいなそれ卑怯あれっぽいなそれ"},
+  {t:167.35,section:"Coro 2",   es:"Esas palabras célebres, esas opiniones, esas críticas",                          ro:"Sono meigen sono iken sono hihyou",                                  kj:"その名言その意見その批評"},
+  {t:168.95,section:"Coro 2",   es:"Ese carisma, ese humor, ese sentido",                                            ro:"Sono karisuma sono gyagu sono sensu",                                 kj:"そのカリスマそのギャグそのセンス"},
+  {t:170.86,section:"Coro 2",   es:"Parece un dios — qué cobarde",                                                   ro:"Kami ppoi na sore hikyou",                                           kj:"神っぽいなそれ卑怯"},
+  {t:172.45,section:"Coro 2",   es:"¡Poi na poi na poi, me enamoré!",                                                ro:"Poi na poi na poi akogarechau wa!",                                  kj:"ポイなポイなポイ憧れちゃうわ！"},
+  {t:174.84,section:"Estribillo 3", es:"Tu turu tu tu turu «fuu»",                                ro:"Tu turu tu tu turu \"fuu\"",                          kj:"ツツルツツツル「ふう」"},
+  {t:176.22,section:"Estribillo 3", es:"Tu turu tu tu turu «fuu»",                                ro:"Tu turu tu tu turu \"fuu\"",                          kj:"ツツルツツツル「ふう」"},
+  {t:178.07,section:"Estribillo 3", es:"Tu turu tu tu turu «fuu»",                                ro:"Tu turu tu tu turu \"fuu\"",                          kj:"ツツルツツツル「ふう」"},
+  {t:179.67,section:"Estribillo 3", es:"¡Poi jan poi jan!",                                        ro:"Poi jan poi jan",                                    kj:"ポイじゃんポイじゃん"},
+  {t:181.53,section:"Estribillo 3", es:"Tu turu tu tu turu «fuu»",                                ro:"Tu turu tu tu turu \"fuu\"",                          kj:"ツツルツツツル「ふう」"},
+  {t:183.13,section:"Estribillo 3", es:"Tu turu tu tu turu «fuu»",                                ro:"Tu turu tu tu turu \"fuu\"",                          kj:"ツツルツツツル「ふう」"},
+  {t:185.01,section:"Estribillo 3", es:"Tu turu tu tu turu",                                      ro:"Tu turu tu tu turu",                                 kj:"ツツルツツツル"},
+  {t:186.34,section:"Estribillo 3", es:"¡Parece un dios!",                                        ro:"Kami ppoi na",                                       kj:"神っぽいな"},
+  {t:187.93,section:"Outro",    es:"El spoiler del amor: «parece una separación»",                 ro:"Ai no netabare \"wakare\" ppoi na",                  kj:"愛のネタバレ「別れ」っぽいな"},
+  {t:191.40,section:"Outro",    es:"El spoiler de la vida: «parece la muerte»",                    ro:"Jinsei no netabare \"shinu\" ppoi na",                kj:"人生のネタバレ「死ぬ」っぽいな"},
+  {t:194.34,section:"Outro",    es:"Todo lo entendí y me enfermé",                                 ro:"Subete rikai shite wazuratta",                       kj:"全て理解して患った"},
+  {t:197.92,section:"Outro",    es:"Quería bailar inocentemente toda mi vida",                     ro:"Mujaki ni odotteitakatta jinsei",                    kj:"無邪気に踊っていたかった人生"},
+];
+</script>
+
+<script>
+(function(){
+  const audio = document.getElementById('audio');
+  let activeIdx = -1, sectionOffsets = {}, lastBarIdx = -2;
+  try { const s = localStorage.getItem(STORAGE_KEY); if(s) sectionOffsets = JSON.parse(s); } catch(e){}
+  function saveOffsets(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(sectionOffsets)); }catch(e){} }
+  function adjTime(line){ return line.t + (sectionOffsets[line.section]||0); }
+
+  const container = document.getElementById('lyricsContainer');
+  let curSection = null;
+  LYRICS.forEach((line,i)=>{
+    if(line.section !== curSection){
+      curSection = line.section;
+      const sl = document.createElement('div'); sl.className='section-label'; sl.dataset.section=line.section;
+      const off=sectionOffsets[line.section]||0;
+      sl.innerHTML=`<span>${line.section}</span><div class="section-adj"><button class="btn-sadj" data-sec="${line.section}" data-d="-1">-1s</button><span class="sadj-val" id="sadj-${line.section}">${off>=0?'+':''}${off}s</span><button class="btn-sadj" data-sec="${line.section}" data-d="1">+1s</button></div>`;
+      container.appendChild(sl);
+    }
+    const b=document.createElement('div'); b.className='lyric-block'; b.dataset.idx=i;
+    let h='';
+    if(line.es) h+=`<div class="lyric-es">${line.es}</div>`;
+    if(line.ro) h+=`<div class="lyric-romaji">${line.ro}</div>`;
+    if(line.kj) h+=`<div class="lyric-kanji">${line.kj}</div>`;
+    b.innerHTML=h; b.addEventListener('click',()=>{ audio.currentTime=adjTime(line); }); container.appendChild(b);
+  });
+
+  document.querySelectorAll('.btn-sadj').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const sec=btn.dataset.sec, d=parseInt(btn.dataset.d);
+      sectionOffsets[sec]=(sectionOffsets[sec]||0)+d; saveOffsets();
+      const el=document.getElementById('sadj-'+sec);
+      if(el){ const v=sectionOffsets[sec]; el.textContent=(v>=0?'+':'')+v+'s'; }
+      updateActive(audio.currentTime);
+    });
+  });
+
+  const fmt=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+  const scrollBtn=document.getElementById('scrollBtn');
+  scrollBtn.addEventListener('click',()=>{ const blocks=document.querySelectorAll('.lyric-block'); if(activeIdx>=0&&blocks[activeIdx]) blocks[activeIdx].scrollIntoView({behavior:'smooth',block:'center'}); });
+
+  function updateActive(t){
+    document.getElementById('progressFill').style.width=(audio.duration?(t/audio.duration*100):0)+'%';
+    document.getElementById('timeNow').textContent=fmt(t);
+    let newActive=-1;
+    for(let i=0;i<LYRICS.length;i++){ if(t>=adjTime(LYRICS[i])) newActive=i; }
+    const blocks=document.querySelectorAll('.lyric-block');
+    if(newActive!==activeIdx){
+      activeIdx=newActive;
+      blocks.forEach((b,i)=>{ b.classList.toggle('active',i===activeIdx); b.classList.toggle('past',i<activeIdx); });
+      if(activeIdx>=0&&blocks[activeIdx]) blocks[activeIdx].scrollIntoView({behavior:'smooth',block:'center'});
+    }
+    if(activeIdx!==lastBarIdx){ lastBarIdx=activeIdx; scrollBtn.classList.toggle('active',activeIdx>=0); }
+  }
+
+  audio.addEventListener('loadedmetadata',()=>{ document.getElementById('timeTotal').textContent=fmt(audio.duration); });
+  audio.addEventListener('error',()=>{ document.getElementById('audioError').classList.add('show'); });
+  audio.addEventListener('timeupdate',()=>{ updateActive(audio.currentTime); });
+  audio.addEventListener('ended',()=>{ document.body.classList.remove('is-playing'); document.getElementById('visualizer').classList.remove('playing'); document.getElementById('playBtn').textContent='▶ Play'; scrollBtn.classList.remove('active'); lastBarIdx=-2; });
+  document.getElementById('progressBar').addEventListener('click',e=>{ const r=e.currentTarget.getBoundingClientRect(); audio.currentTime=((e.clientX-r.left)/r.width)*(audio.duration||0); });
+
+  const playBtn=document.getElementById('playBtn');
+  playBtn.addEventListener('click',()=>{
+    if(audio.paused){ audio.play(); playBtn.textContent='⏸ Pausa'; document.body.classList.add('is-playing'); document.getElementById('visualizer').classList.add('playing'); }
+    else { audio.pause(); playBtn.textContent='▶ Play'; document.body.classList.remove('is-playing'); document.getElementById('visualizer').classList.remove('playing'); }
+  });
+  document.getElementById('resetBtn').addEventListener('click',()=>{
+    audio.pause(); audio.currentTime=0; activeIdx=-1; lastBarIdx=-2;
+    playBtn.textContent='▶ Play'; document.body.classList.remove('is-playing'); document.getElementById('visualizer').classList.remove('playing');
+    document.querySelectorAll('.lyric-block').forEach(b=>b.classList.remove('active','past'));
+    scrollBtn.classList.remove('active'); window.scrollTo({top:0,behavior:'smooth'});
+  });
+  document.getElementById('vol').addEventListener('input',e=>{ audio.volume=parseFloat(e.target.value); }); audio.volume=0.8;
+  document.querySelectorAll('.toggle-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active');
+      const v=btn.dataset.view; document.body.className=document.body.className.replace(/\bview-\S+/g,'').trim();
+      if(v!=='all') document.body.classList.add('view-'+v); if(!audio.paused) document.body.classList.add('is-playing');
+    });
+  });
+  const vizEl=document.getElementById('visualizer');
+  for(let i=0;i<48;i++){ const bar=document.createElement('div'); bar.className='bar'; const mh=8+Math.sin(i*0.4)*22+Math.random()*16; bar.style.cssText=`--max-h:${mh}px;--spd:${0.4+Math.random()*0.8}s;--delay:${(i/48)*-1.2}s;`; vizEl.appendChild(bar); }
+})();
+</script>
+</body>
+</html>
