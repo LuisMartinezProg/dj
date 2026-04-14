@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>きらり · Kirari — Música</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080808;
+  --card: #111111;
+  --card2: #181818;
+  --accent: #c8c8c8;
+  --accent2: #f0f0f0;
+  --text: #f5f5f5;
+  --muted: #555555;
+  --border: rgba(200,200,200,0.15);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:'Noto Serif JP',serif; min-height:100vh; overflow-x:hidden; }
+body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(120,120,120,0.06) 0%,transparent 60%); pointer-events:none; z-index:0; }
+
+.back-btn { position:fixed;top:1rem;left:1rem;z-index:100;background:rgba(8,8,8,0.88);border:1px solid var(--border);color:var(--accent2);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.78rem;backdrop-filter:blur(10px);transition:all 0.2s;letter-spacing:0.05em; }
+.back-btn:hover { background:rgba(200,200,200,0.1); }
+
+/* ── TÍTULO ── */
+.title-banner { position:relative;z-index:1;text-align:center;padding:4.5rem 2rem 2.5rem; }
+.title-jp { font-family:'Noto Serif JP',serif;font-size:clamp(2.8rem,9vw,5.5rem);font-weight:700;letter-spacing:0.14em;background:linear-gradient(135deg,#ffffff 0%,#cccccc 50%,#888888 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:0.55rem; }
+.title-romaji { font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,3vw,1.45rem);color:var(--accent);opacity:0.65;letter-spacing:0.35em;margin-bottom:0.4rem; }
+.title-artist { font-size:0.72rem;color:var(--muted);letter-spacing:0.45em;text-transform:uppercase; }
+.title-line { width:50px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:1.3rem auto 0; }
+
+/* ── LAYOUT PRINCIPAL ── */
+.main-wrap {
+  position:relative; z-index:1;
+  max-width:480px;
+  margin:0 auto;
+  padding:0 1.2rem 1rem;
+}
+@media(min-width:768px){
+  .main-wrap { max-width:420px; }
+}
+
+/* ── PANELES ── */
+.panels-wrap { display:grid;grid-template-columns:1fr 1fr;gap:1rem; }
+@media(max-width:500px) { .panels-wrap { grid-template-columns:1fr;gap:0.75rem; } }
+
+.panel { display:flex;flex-direction:column;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:var(--card);box-shadow:0 4px 24px rgba(0,0,0,0.5);transition:transform 0.25s,box-shadow 0.25s,border-color 0.25s; }
+.panel:hover { transform:translateY(-4px);box-shadow:0 16px 48px rgba(150,150,150,0.12);border-color:rgba(200,200,200,0.4); }
+.panel-cover { text-decoration:none;color:inherit; }
+.panel-img-wrap { width:100%;aspect-ratio:1/1;overflow:hidden;background:var(--card2);position:relative; }
+.panel-img { width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.9) grayscale(0.1);transition:filter 0.35s,transform 0.35s; }
+.panel-cover:hover .panel-img { filter:brightness(1) grayscale(0);transform:scale(1.04); }
+.panel-img-overlay { position:absolute;inset:0;background:linear-gradient(to top,rgba(8,8,8,0.45) 0%,transparent 50%);pointer-events:none; }
+.panel-video-wrap { width:100%;aspect-ratio:1/1;background:var(--card2);position:relative;overflow:hidden; }
+.panel-video-wrap iframe { position:absolute;inset:0;width:100%;height:100%;border:none; }
+.panel-label { padding:0.7rem 1rem;font-size:0.68rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted);text-align:center;border-top:1px solid var(--border);background:var(--card2);display:flex;align-items:center;justify-content:center;gap:0.45rem;transition:color 0.2s; }
+.panel:hover .panel-label { color:var(--accent2); }
+.panel-label-icon { font-size:0.9rem; }
+
+/* ── INFO SECTION (solo desktop) ── */
+.info-section { display:none; }
+@media(min-width:768px){
+  .info-section{
+    display:flex; flex-direction:column; gap:0.5rem;
+    margin-top:1.4rem;
+    padding:1.1rem 1.3rem;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+  }
+  .info-row { display:flex; align-items:baseline; gap:0.6rem; font-size:0.78rem; }
+  .info-label {
+    font-size:0.6rem; letter-spacing:0.3em; text-transform:uppercase;
+    color:var(--muted); white-space:nowrap; min-width:64px; opacity:0.8;
+  }
+  .info-value {
+    color:var(--accent2); font-family:'Cormorant Garamond',serif;
+    font-size:0.92rem; letter-spacing:0.05em;
+  }
+  .info-divider { height:1px; background:var(--border); margin:0.2rem 0; }
+}
+
+/* ── PALETA ── */
+.palette-section { position:relative;z-index:1;max-width:420px;margin:0 auto;padding:0.5rem 1.2rem 3.5rem; }
+@media(max-width:768px){ .palette-section{ max-width:480px; } }
+.palette-section-label { font-size:0.6rem;letter-spacing:0.38em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:0.65rem;opacity:0.55; }
+.palette-bar { display:flex;border-radius:12px;overflow:visible;height:36px;border:1px solid rgba(255,255,255,0.05);box-shadow:0 4px 24px rgba(0,0,0,0.5); }
+.swatch { flex:1;position:relative;cursor:default;transition:flex 0.3s ease; }
+.swatch:first-child { border-radius:12px 0 0 12px; } .swatch:last-child { border-radius:0 12px 12px 0; }
+.swatch:hover { flex:2.2; }
+.swatch-tip { display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:rgba(8,8,8,0.95);border:1px solid var(--border);color:var(--text);font-size:0.62rem;padding:0.22rem 0.55rem;border-radius:6px;white-space:nowrap;letter-spacing:0.06em;backdrop-filter:blur(8px);z-index:10;font-family:'Cormorant Garamond',serif; }
+.swatch:hover .swatch-tip { display:block; }
+</style>
+</head>
+<body>
+<a class="back-btn" href="index.html">← Menú</a>
+
+<div class="title-banner">
+  <div class="title-jp">きらり</div>
+  <div class="title-romaji">Kirari</div>
+  <div class="title-artist">Fujii Kaze · 2021</div>
+  <div class="title-line"></div>
+</div>
+
+<div class="main-wrap">
+  <div class="panels-wrap">
+    <a class="panel panel-cover" href="kirari-letras.html">
+      <div class="panel-img-wrap">
+        <img class="panel-img" src="Kirari.jpeg" alt="きらり · Fujii Kaze" onerror="this.parentElement.style.background='#181818'">
+        <div class="panel-img-overlay"></div>
+      </div>
+      <div class="panel-label"><span class="panel-label-icon">歌詞</span> Letras</div>
+    </a>
+    <div class="panel">
+      <div class="panel-video-wrap">
+        <iframe src="https://drive.google.com/file/d/1FAntx3o1JIRbeN-QGiZMgGRudLaxZkEN/preview" allow="autoplay" allowfullscreen></iframe>
+      </div>
+      <div class="panel-label"><span class="panel-label-icon">🎬</span> Video</div>
+    </div>
+  </div>
+
+  <!-- Info solo desktop -->
+  <div class="info-section">
+    <div class="info-row">
+      <span class="info-label">Artista</span>
+      <span class="info-value">Fujii Kaze</span>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-row">
+      <span class="info-label">Fecha</span>
+      <span class="info-value">2021 · Single</span>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-row">
+      <span class="info-label">Género</span>
+      <span class="info-value">J-Pop · Soul · City Pop</span>
+    </div>
+  </div>
+</div>
+
+<div class="palette-section">
+  <div class="palette-section-label">Paleta · Fujii Kaze</div>
+  <div class="palette-bar">
+    <div class="swatch" style="background:#080808"><span class="swatch-tip">#080808</span></div>
+    <div class="swatch" style="background:#1a1a1a"><span class="swatch-tip">#1a1a1a</span></div>
+    <div class="swatch" style="background:#333333"><span class="swatch-tip">#333333</span></div>
+    <div class="swatch" style="background:#555555"><span class="swatch-tip">#555555</span></div>
+    <div class="swatch" style="background:#888888"><span class="swatch-tip">#888888</span></div>
+    <div class="swatch" style="background:#aaaaaa"><span class="swatch-tip">#aaaaaa</span></div>
+    <div class="swatch" style="background:#dddddd"><span class="swatch-tip">#dddddd</span></div>
+    <div class="swatch" style="background:#ffffff"><span class="swatch-tip">#ffffff</span></div>
+  </div>
+</div>
+</body>
+</html>
