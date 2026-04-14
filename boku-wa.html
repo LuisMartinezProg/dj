@@ -6,342 +6,65 @@
 <title>僕は… · Boku wa… — Música</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #06101e;
-  --card: #0a1628;
-  --card2: #0d1e32;
-  --accent: #2d6aad;
-  --accent2: #c8dff5;
-  --text: #e8f2ff;
-  --muted: #2e4a6e;
-  --border: rgba(45,106,173,0.18);
-  --bk1: #06101e;
-  --bk2: #0a1628;
-  --bk3: #0d2040;
-  --bk4: #1a3a6b;
-  --bk5: #2d6aad;
-  --bk6: #6aaee0;
-  --bk7: #c8dff5;
-  --bk8: #ffffff;
-}
-
-* { margin:0; padding:0; box-sizing:border-box; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Noto Serif JP', serif;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(45,106,173,0.10) 0%, transparent 60%),
-    radial-gradient(ellipse 60% 50% at 10% 80%, rgba(13,32,64,0.14) 0%, transparent 60%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Línea de horizonte luminosa inspirada en la portada */
-body::after {
-  content: '';
-  position: fixed;
-  top: 48%;
-  left: -10%;
-  width: 120%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(200,223,245,0.06) 30%, rgba(200,223,245,0.12) 50%, rgba(200,223,245,0.06) 70%, transparent 100%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-.back-btn {
-  position: fixed;
-  top: 1rem; left: 1rem;
-  z-index: 100;
-  background: rgba(6,16,30,0.85);
-  border: 1px solid var(--border);
-  color: var(--accent2);
-  padding: 0.5rem 1rem;
-  border-radius: 999px;
-  text-decoration: none;
-  font-size: 0.78rem;
-  backdrop-filter: blur(10px);
-  transition: all 0.2s;
-  letter-spacing: 0.05em;
-}
-.back-btn:hover { background: rgba(45,106,173,0.12); }
-
-/* ── TÍTULO ── */
-.title-banner {
-  position: relative;
-  z-index: 1;
-  text-align: center;
-  padding: 4.5rem 2rem 2.5rem;
-}
-
-.title-jp {
-  font-family: 'Noto Serif JP', serif;
-  font-size: clamp(2.8rem, 9vw, 5.5rem);
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  background: linear-gradient(135deg, #ffffff 0%, var(--accent2) 50%, var(--accent) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1.1;
-  margin-bottom: 0.55rem;
-}
-
-.title-romaji {
-  font-family: 'Cormorant Garamond', serif;
-  font-style: italic;
-  font-size: clamp(1rem, 3vw, 1.45rem);
-  color: var(--accent2);
-  opacity: 0.65;
-  letter-spacing: 0.35em;
-  margin-bottom: 0.4rem;
-}
-
-.title-artist {
-  font-size: 0.72rem;
-  color: var(--muted);
-  letter-spacing: 0.45em;
-  text-transform: uppercase;
-}
-
-.title-line {
-  width: 50px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--accent2), transparent);
-  margin: 1.3rem auto 0;
-}
-
-/* ── PANELES ── */
-.panels-wrap {
-  position: relative;
-  z-index: 1;
-  max-width: 820px;
-  margin: 0 auto;
-  padding: 0 1.2rem 1rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-}
-
-.panel {
-  display: flex;
-  flex-direction: column;
-  border-radius: 18px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  background: var(--card);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.35);
-  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
-}
-
-.panel:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 48px rgba(20,60,130,0.22);
-  border-color: rgba(45,106,173,0.45);
-}
-
-.panel-cover { text-decoration: none; color: inherit; }
-
-.panel-img-wrap {
-  width: 100%;
-  aspect-ratio: 1/1;
-  overflow: hidden;
-  background: var(--card2);
-  position: relative;
-}
-
-.panel-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  filter: brightness(0.88) saturate(0.9);
-  transition: filter 0.35s, transform 0.35s;
-}
-
-.panel-cover:hover .panel-img {
-  filter: brightness(1) saturate(1.05);
-  transform: scale(1.04);
-}
-
-.panel-img-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(6,16,30,0.5) 0%, transparent 50%);
-  pointer-events: none;
-}
-
-.panel-video-wrap {
-  width: 100%;
-  aspect-ratio: 1/1;
-  background: var(--card2);
-  position: relative;
-  overflow: hidden;
-}
-
-.panel-video-wrap iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-/* Placeholder video */
-.panel-video-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.6rem;
-  color: var(--muted);
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-}
-
-.panel-video-placeholder .icon { font-size: 2rem; opacity: 0.35; }
-
-.panel-label {
-  padding: 0.7rem 1rem;
-  font-size: 0.68rem;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-align: center;
-  border-top: 1px solid var(--border);
-  background: var(--card2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-  transition: color 0.2s;
-}
-
-.panel:hover .panel-label { color: var(--accent2); }
-.panel-label-icon { font-size: 0.9rem; }
-
-/* ── PALETA ── */
-.palette-section {
-  position: relative;
-  z-index: 1;
-  max-width: 820px;
-  margin: 0 auto;
-  padding: 0.5rem 1.2rem 3.5rem;
-}
-
-.palette-section-label {
-  font-size: 0.6rem;
-  letter-spacing: 0.38em;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-align: center;
-  margin-bottom: 0.65rem;
-  opacity: 0.55;
-}
-
-.palette-bar {
-  display: flex;
-  border-radius: 12px;
-  overflow: visible;
-  height: 36px;
-  border: 1px solid rgba(255,255,255,0.05);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.5);
-  position: relative;
-}
-
-.swatch {
-  flex: 1;
-  position: relative;
-  cursor: default;
-  transition: flex 0.3s ease;
-}
-
-.swatch:first-child { border-radius: 12px 0 0 12px; }
-.swatch:last-child { border-radius: 0 12px 12px 0; }
-.swatch:hover { flex: 2.2; }
-
-.swatch-tip {
-  display: none;
-  position: absolute;
-  bottom: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(6,16,30,0.95);
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-size: 0.62rem;
-  padding: 0.22rem 0.55rem;
-  border-radius: 6px;
-  white-space: nowrap;
-  letter-spacing: 0.06em;
-  backdrop-filter: blur(8px);
-  z-index: 10;
-  font-family: 'Cormorant Garamond', serif;
-}
-
-.swatch:hover .swatch-tip { display: block; }
-
-@media (max-width: 500px) {
-  .panels-wrap { grid-template-columns: 1fr; gap: 0.75rem; }
-  .title-banner { padding: 3.5rem 1.2rem 2rem; }
-  .panels-wrap, .palette-section { padding-left: 1rem; padding-right: 1rem; }
-}
+:root{--bg:#06101e;--card:#0a1628;--card2:#0d1e32;--accent:#2d6aad;--accent2:#c8dff5;--text:#e8f2ff;--muted:#2e4a6e;--border:rgba(45,106,173,0.18)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 40% at 50% 0%,rgba(45,106,173,0.10) 0%,transparent 60%),radial-gradient(ellipse 60% 50% at 10% 80%,rgba(13,32,64,0.14) 0%,transparent 60%);pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;top:48%;left:-10%;width:120%;height:1px;background:linear-gradient(90deg,transparent 0%,rgba(200,223,245,0.06) 30%,rgba(200,223,245,0.12) 50%,rgba(200,223,245,0.06) 70%,transparent 100%);pointer-events:none;z-index:0}
+.back-btn{position:fixed;top:1rem;left:1rem;z-index:100;background:rgba(6,16,30,0.85);border:1px solid var(--border);color:var(--accent2);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.78rem;backdrop-filter:blur(10px);transition:all 0.2s;letter-spacing:0.05em}
+.back-btn:hover{background:rgba(45,106,173,0.12)}
+.title-banner{position:relative;z-index:1;text-align:center;padding:4.5rem 2rem 2.5rem}
+.title-jp{font-family:'Noto Serif JP',serif;font-size:clamp(2.8rem,9vw,5.5rem);font-weight:700;letter-spacing:0.14em;background:linear-gradient(135deg,#ffffff 0%,var(--accent2) 50%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:0.55rem}
+.title-romaji{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,3vw,1.45rem);color:var(--accent2);opacity:0.65;letter-spacing:0.35em;margin-bottom:0.4rem}
+.title-artist{font-size:0.72rem;color:var(--muted);letter-spacing:0.45em;text-transform:uppercase}
+.title-line{width:50px;height:1px;background:linear-gradient(90deg,transparent,var(--accent2),transparent);margin:1.3rem auto 0}
+.panels-wrap{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:0 1.2rem 1rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.panel{display:flex;flex-direction:column;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:var(--card);box-shadow:0 4px 24px rgba(0,0,0,0.35);transition:transform 0.25s,box-shadow 0.25s,border-color 0.25s}
+.panel:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(20,60,130,0.22);border-color:rgba(45,106,173,0.45)}
+.panel-cover{text-decoration:none;color:inherit}
+.panel-img-wrap{width:100%;aspect-ratio:1/1;overflow:hidden;background:var(--card2);position:relative}
+.panel-img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.88) saturate(0.9);transition:filter 0.35s,transform 0.35s}
+.panel-cover:hover .panel-img{filter:brightness(1) saturate(1.05);transform:scale(1.04)}
+.panel-img-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(6,16,30,0.5) 0%,transparent 50%);pointer-events:none}
+.panel-video-wrap{width:100%;aspect-ratio:1/1;background:var(--card2);position:relative;overflow:hidden}
+.panel-video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+.panel-label{padding:0.7rem 1rem;font-size:0.68rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted);text-align:center;border-top:1px solid var(--border);background:var(--card2);display:flex;align-items:center;justify-content:center;gap:0.45rem;transition:color 0.2s}
+.panel:hover .panel-label{color:var(--accent2)}
+.panel-label-icon{font-size:0.9rem}
+.palette-section{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:0.5rem 1.2rem 3.5rem}
+.palette-section-label{font-size:0.6rem;letter-spacing:0.38em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:0.65rem;opacity:0.55}
+.palette-bar{display:flex;border-radius:12px;overflow:visible;height:36px;border:1px solid rgba(255,255,255,0.05);box-shadow:0 4px 24px rgba(0,0,0,0.5)}
+.swatch{flex:1;position:relative;cursor:default;transition:flex 0.3s ease}
+.swatch:first-child{border-radius:12px 0 0 12px}.swatch:last-child{border-radius:0 12px 12px 0}
+.swatch:hover{flex:2.2}
+.swatch-tip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:rgba(6,16,30,0.95);border:1px solid var(--border);color:var(--text);font-size:0.62rem;padding:0.22rem 0.55rem;border-radius:6px;white-space:nowrap;letter-spacing:0.06em;backdrop-filter:blur(8px);z-index:10;font-family:'Cormorant Garamond',serif}
+.swatch:hover .swatch-tip{display:block}
+@media(max-width:500px){.panels-wrap{grid-template-columns:1fr;gap:0.75rem}.title-banner{padding:3.5rem 1.2rem 2rem}}
 </style>
 </head>
 <body>
-
 <a class="back-btn" href="index.html">← Menú</a>
-
 <div class="title-banner">
   <div class="title-jp">僕は…</div>
   <div class="title-romaji">Boku wa…</div>
   <div class="title-artist">Atarayo · 2024</div>
   <div class="title-line"></div>
 </div>
-
 <div class="panels-wrap">
-
-  <!-- Izquierdo: portada → letras -->
   <a class="panel panel-cover" href="boku-wa-letras.html">
     <div class="panel-img-wrap">
-      <img class="panel-img" src="Boku-imagen.jpeg" alt="僕は… · Atarayo"
-           onerror="this.parentElement.style.background='#0d1e32'">
+      <img class="panel-img" src="Boku-imagen.jpeg" alt="僕は… · Atarayo" onerror="this.parentElement.style.background='#0d1e32'">
       <div class="panel-img-overlay"></div>
     </div>
-    <div class="panel-label">
-      <span class="panel-label-icon">歌詞</span> Letras
-    </div>
+    <div class="panel-label"><span class="panel-label-icon">歌詞</span> Letras</div>
   </a>
-
-  <!-- Derecho: video (pendiente de subir) -->
   <div class="panel">
     <div class="panel-video-wrap">
-      <!-- Reemplaza el src con el ID de Google Drive cuando subas el video -->
-      <!-- <iframe src="https://drive.google.com/file/d/TU_ID_AQUI/preview" allow="autoplay" allowfullscreen></iframe> -->
-      <div class="panel-video-placeholder">
-        <span class="icon">🎬</span>
-        <span>Video próximamente</span>
-      </div>
+      <iframe src="https://drive.google.com/file/d/1TLk9Ffp6AJOXpvfeoQ0c2gCDv7_lAzIv/preview" allow="autoplay" allowfullscreen></iframe>
     </div>
-    <div class="panel-label">
-      <span class="panel-label-icon">🎬</span> Video
-    </div>
+    <div class="panel-label"><span class="panel-label-icon">🎬</span> Video</div>
   </div>
-
 </div>
-
 <div class="palette-section">
   <div class="palette-section-label">Paleta · Atarayo</div>
   <div class="palette-bar">
@@ -355,6 +78,5 @@ body::after {
     <div class="swatch" style="background:#ffffff"><span class="swatch-tip">#ffffff</span></div>
   </div>
 </div>
-
 </body>
 </html>
