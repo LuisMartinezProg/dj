@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>阿修羅ちゃん · Ashura-chan — Música</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#100005;--card:#1a0008;--card2:#220010;--accent:#cc1a14;--accent2:#ff8070;--text:#fff0ee;--muted:#5a1010;--border:rgba(204,26,20,0.18);--glow:rgba(204,26,20,0.3)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 15% 10%,rgba(150,0,20,0.12) 0%,transparent 60%),radial-gradient(ellipse 50% 70% at 85% 90%,rgba(40,60,200,0.06) 0%,transparent 60%);pointer-events:none;z-index:0}
+.back-btn{position:fixed;top:1rem;left:1rem;z-index:100;background:rgba(16,0,5,0.85);border:1px solid var(--border);color:var(--accent);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.78rem;backdrop-filter:blur(10px);transition:all 0.2s}
+.back-btn:hover{background:rgba(204,26,20,0.12)}
+.title-banner{position:relative;z-index:1;text-align:center;padding:4.5rem 2rem 2.5rem}
+.title-jp{font-family:'Noto Serif JP',serif;font-size:clamp(2rem,7vw,4.5rem);font-weight:700;letter-spacing:0.14em;background:linear-gradient(135deg,#ffffff 0%,var(--accent2) 50%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:0.55rem}
+.title-romaji{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,3vw,1.45rem);color:var(--accent2);opacity:0.65;letter-spacing:0.35em;margin-bottom:0.4rem}
+.title-artist{font-size:0.72rem;color:var(--muted);letter-spacing:0.45em;text-transform:uppercase}
+.title-line{width:50px;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:1.3rem auto 0}
+.panels-wrap{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:0 1.2rem 1rem;display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.panel{display:flex;flex-direction:column;border-radius:18px;overflow:hidden;border:1px solid var(--border);background:var(--card);box-shadow:0 4px 24px rgba(0,0,0,0.4);transition:transform 0.25s,box-shadow 0.25s,border-color 0.25s}
+.panel:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(150,0,20,0.2);border-color:rgba(204,26,20,0.4)}
+.panel-cover{text-decoration:none;color:inherit}
+.panel-img-wrap{width:100%;aspect-ratio:1/1;overflow:hidden;background:var(--card2);position:relative}
+.panel-img{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.85) saturate(0.85);transition:filter 0.35s,transform 0.35s}
+.panel-cover:hover .panel-img{filter:brightness(1) saturate(1.1);transform:scale(1.04)}
+.panel-img-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(16,0,5,0.55) 0%,transparent 50%);pointer-events:none}
+.panel-video-wrap{width:100%;aspect-ratio:1/1;background:var(--card2);position:relative;overflow:hidden}
+.panel-video-wrap iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
+.panel-label{padding:0.7rem 1rem;font-size:0.68rem;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted);text-align:center;border-top:1px solid var(--border);background:var(--card2);display:flex;align-items:center;justify-content:center;gap:0.45rem;transition:color 0.2s}
+.panel:hover .panel-label{color:var(--accent2)}
+.ado-section{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:0.5rem 1.2rem 3.5rem}
+.ado-section-label{font-size:0.6rem;letter-spacing:0.38em;text-transform:uppercase;color:var(--muted);text-align:center;margin-bottom:0.65rem;opacity:0.55}
+.ado-palette{display:flex;border-radius:12px;overflow:visible;height:36px;border:1px solid rgba(255,255,255,0.05);box-shadow:0 4px 24px rgba(0,0,0,0.5)}
+.ado-swatch{flex:1;position:relative;cursor:default;transition:flex 0.3s ease}
+.ado-swatch:first-child{border-radius:12px 0 0 12px}.ado-swatch:last-child{border-radius:0 12px 12px 0}
+.ado-swatch:hover{flex:2.2}
+.ado-tip{display:none;position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:rgba(16,0,5,0.95);border:1px solid var(--border);color:var(--text);font-size:0.62rem;padding:0.22rem 0.55rem;border-radius:6px;white-space:nowrap;letter-spacing:0.06em;backdrop-filter:blur(8px);z-index:10;font-family:'Cormorant Garamond',serif}
+.ado-swatch:hover .ado-tip{display:block}
+@media(max-width:500px){.panels-wrap{grid-template-columns:1fr;gap:0.75rem}.title-banner{padding:3.5rem 1.2rem 2rem}}
+</style>
+</head>
+<body>
+<a class="back-btn" href="index.html">← Menú</a>
+<div class="title-banner">
+  <div class="title-jp">阿修羅ちゃん</div>
+  <div class="title-romaji">Ashura-chan</div>
+  <div class="title-artist">Ado · 2021</div>
+  <div class="title-line"></div>
+</div>
+<div class="panels-wrap">
+  <a class="panel panel-cover" href="ashura-letras.html">
+    <div class="panel-img-wrap">
+      <img class="panel-img" src="As-p.png" alt="Ashura-chan · Ado" onerror="this.parentElement.style.background='#220010'">
+      <div class="panel-img-overlay"></div>
+    </div>
+    <div class="panel-label"><span>歌詞</span> Letras</div>
+  </a>
+  <div class="panel">
+    <div class="panel-video-wrap">
+      <iframe src="https://drive.google.com/file/d/1H0ynIsfLvZhyjvi-UOYy6_iQCS4MR1qU/preview" allow="autoplay" allowfullscreen></iframe>
+    </div>
+    <div class="panel-label"><span>🎬</span> Video</div>
+  </div>
+</div>
+<div class="ado-section">
+  <div class="ado-section-label">Paleta · Ado</div>
+  <div class="ado-palette">
+    <div class="ado-swatch" style="background:#100005"><span class="ado-tip">#100005</span></div>
+    <div class="ado-swatch" style="background:#1a0008"><span class="ado-tip">#1a0008</span></div>
+    <div class="ado-swatch" style="background:#cc1a14"><span class="ado-tip">#cc1a14</span></div>
+    <div class="ado-swatch" style="background:#4060c8"><span class="ado-tip">#4060c8</span></div>
+    <div class="ado-swatch" style="background:#e87890"><span class="ado-tip">#e87890</span></div>
+    <div class="ado-swatch" style="background:#ff8070"><span class="ado-tip">#ff8070</span></div>
+    <div class="ado-swatch" style="background:#ffc0b0"><span class="ado-tip">#ffc0b0</span></div>
+    <div class="ado-swatch" style="background:#ffffff"><span class="ado-tip">#ffffff</span></div>
+  </div>
+</div>
+</body>
+</html>
