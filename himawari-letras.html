@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ヒマワリ · Himawari — Música</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e04;--card:#181c06;--accent1:#f0c800;--accent2:#ffe880;--accent3:#3a5010;--text:#fffce8;--muted:#5a5010;--glow:rgba(240,200,0,0.35)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden;padding-bottom:40px}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 20%,rgba(180,150,0,0.10) 0%,transparent 60%);z-index:0;pointer-events:none}
+.back-btn{position:fixed;top:1rem;left:1rem;z-index:100;background:rgba(12,14,4,0.85);border:1px solid rgba(240,200,0,0.3);color:var(--accent1);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px);transition:all 0.2s}
+header{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 1rem;border-bottom:1px solid rgba(240,200,0,0.15)}
+.song-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.05em;margin-bottom:0.3rem}
+.artist-name{color:var(--muted);font-size:0.9rem;font-weight:300;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:1rem}
+.visualizer-wrap{display:flex;justify-content:center;align-items:flex-end;gap:3px;height:50px;padding:0 2rem;margin-top:0.5rem}
+.bar{width:4px;border-radius:2px 2px 0 0;background:linear-gradient(to top,var(--accent3),var(--accent1));opacity:0.4;height:4px}
+@keyframes wave{0%,100%{height:4px}50%{height:var(--max-h)}}
+.playing .bar{opacity:1;animation:wave var(--spd) ease-in-out infinite;animation-delay:var(--delay)}
+audio{display:none}
+.progress-section{position:relative;z-index:1;padding:1rem 2rem 0.5rem;max-width:780px;margin:0 auto}
+.progress-bar-wrap{width:100%;height:6px;background:var(--card);border-radius:3px;cursor:pointer;overflow:hidden;margin-bottom:0.5rem}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent1),var(--accent2));border-radius:3px;width:0%;box-shadow:0 0 10px var(--glow);pointer-events:none}
+.time-row{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--muted);font-family:'Cormorant Garamond',serif}
+.controls{position:relative;z-index:1;display:flex;justify-content:center;gap:1rem;padding:0.8rem 2rem 0.5rem;flex-wrap:wrap}
+.btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem}
+.btn-primary{background:linear-gradient(135deg,var(--accent3),var(--accent1));color:white;padding:0.75rem 2rem;font-size:1rem;font-weight:700;box-shadow:0 0 20px var(--glow);min-width:130px;justify-content:center}
+.btn-primary:hover{transform:scale(1.05)}
+.btn-secondary{background:var(--card);color:var(--accent1);border:1px solid rgba(240,200,0,0.3);padding:0.75rem 1.3rem;font-size:0.9rem}
+.volume-row{display:flex;align-items:center;gap:0.6rem;justify-content:center;padding-bottom:0.5rem;position:relative;z-index:1}
+.volume-row span{color:var(--muted);font-size:0.8rem}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100px;height:4px;border-radius:2px;background:var(--card);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent1);cursor:pointer}
+.view-toggles{position:relative;z-index:1;display:flex;justify-content:center;gap:0.5rem;padding:0 2rem 1.2rem;flex-wrap:wrap}
+.toggle-btn{border:1px solid rgba(240,200,0,0.25);background:transparent;color:var(--muted);padding:0.35rem 1rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.78rem;transition:all 0.2s}
+.toggle-btn.active{background:rgba(240,200,0,0.12);border-color:var(--accent1);color:var(--accent1)}
+.lyrics-container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:0 1.5rem 2rem}
+.section-label{text-align:center;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);padding:1.2rem 0 0.5rem;opacity:0.5;display:flex;align-items:center;gap:0.8rem}
+.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(240,200,0,0.15)}
+.lyric-block{padding:1.2rem 1.6rem;margin-bottom:0.5rem;border-radius:16px;border:1px solid transparent;transition:all 0.4s ease;cursor:pointer;opacity:0.3}
+.lyric-block.past{opacity:0.18}
+.lyric-block.active{opacity:1;background:linear-gradient(135deg,rgba(80,60,0,0.12),rgba(240,200,0,0.07));border-color:rgba(240,200,0,0.35);box-shadow:0 0 30px rgba(180,150,0,0.15);transform:translateX(6px)}
+.lyric-es{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:600;color:var(--text);line-height:1.3;margin-bottom:0.35rem}
+.lyric-block.active .lyric-es{background:linear-gradient(90deg,var(--text),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lyric-romaji{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,2.5vw,1.25rem);color:var(--accent2);margin-bottom:0.3rem}
+.lyric-kanji{font-family:'Noto Serif JP',serif;font-size:clamp(0.95rem,2vw,1.1rem);color:var(--accent2);opacity:0.75;font-weight:400;letter-spacing:0.08em}
+body.view-es .lyric-romaji,body.view-es .lyric-kanji{display:none}
+body.view-romaji .lyric-es,body.view-romaji .lyric-kanji{display:none}
+body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
+.scroll-btn{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--accent1));border:none;cursor:pointer;box-shadow:0 4px 20px var(--glow);display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:all 0.2s;opacity:0.5}
+.scroll-btn:hover{transform:scale(1.1);opacity:1}.scroll-btn.active{opacity:1}
+</style>
+</head>
+<body>
+<a class="back-btn" href="himawari.html">← Volver</a>
+<audio id="audio" src="Hi-m.mp3" preload="auto"></audio>
+<header>
+  <div class="song-title">ヒマワリ · Himawari</div>
+  <div class="artist-name">Ado · 2022</div>
+  <div class="visualizer-wrap" id="visualizer"></div>
+</header>
+<div class="progress-section">
+  <div class="progress-bar-wrap" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="time-row"><span id="timeNow">0:00</span><span id="timeTotal">—</span></div>
+</div>
+<div class="controls">
+  <button class="btn btn-primary" id="playBtn">▶ Play</button>
+  <button class="btn btn-secondary" id="resetBtn">↩ Reinicio</button>
+</div>
+<div class="volume-row">
+  <span>🔈</span><input type="range" id="vol" min="0" max="1" step="0.05" value="0.8"><span>🔊</span>
+</div>
+<div class="view-toggles">
+  <button class="toggle-btn active" data-view="all">Todo</button>
+  <button class="toggle-btn" data-view="es">Español</button>
+  <button class="toggle-btn" data-view="romaji">Romaji</button>
+  <button class="toggle-btn" data-view="kanji">日本語</button>
+</div>
+<div class="lyrics-container" id="lyricsContainer"></div>
+<button class="scroll-btn" id="scrollBtn">♪</button>
+<script>
+const LYRICS=[
+  {t:5.00,  section:"Verso 1",  es:"Girando con el viento, subo hasta el cielo", ro:"Kaze ni mawari sora e to nobotte yuku", kj:"風に廻り空へと昇っていく"},
+  {t:10.00, section:"Verso 1",  es:"Sin poder atrapar lo que quería decirte", ro:"Tsutaetakatta koto wo tsukamenai mama de", kj:"伝えたかったことを掴めないままで"},
+  {t:16.00, section:"Verso 1",  es:"El verano de entonces se mezcló en el calor", ro:"Ano natsu wa atsusa ni mazatte", kj:"あの夏は暑さに混じって"},
+  {t:21.00, section:"Verso 1",  es:"Y se fue lejos, volando", ro:"Tooku e to tobi satte iku", kj:"遠くへと飛び去っていく"},
+  {t:26.00, section:"Pre-coro", es:"Incluso ahora, en algún lugar flotan esos días", ro:"Ima mo dokoka ni ukatteiru ano hibi", kj:"今もどこかに浮かっている あの日々"},
+  {t:32.00, section:"Pre-coro", es:"No puedo volver a alcanzarlos", ro:"Mou todokanai", kj:"もう届かない"},
+  {t:36.00, section:"Coro 1",   es:"Girasol, girasol — mira hacia el sol", ro:"Himawari himawari taiyou wo muite", kj:"ヒマワリ ヒマワリ 太陽を向いて"},
+  {t:41.00, section:"Coro 1",   es:"Siempre erguido, brillando", ro:"Itsudemo suki de kagayaite", kj:"いつでも好きで輝いて"},
+  {t:46.00, section:"Coro 1",   es:"Girasol, girasol — que esa flor", ro:"Himawari himawari sono hana ga", kj:"ヒマワリ ヒマワリ その花が"},
+  {t:51.00, section:"Coro 1",   es:"Se parezca a ti, que miraba hacia el futuro", ro:"Mirai wo mite ita kimi ni niteiru", kj:"未来を見ていた君に似ている"},
+  {t:57.00, section:"Verso 2",  es:"Las nubes que pasaban se llevaron el tiempo", ro:"Sugite yuku kumo ga jikan wo hakobi", kj:"過ぎていく雲が時間を運び"},
+  {t:62.00, section:"Verso 2",  es:"Sin darte cuenta, el verano también se fue", ro:"Kizukeba natsu mo sugisatte ita ne", kj:"気付けば夏も過ぎ去っていたね"},
+  {t:68.00, section:"Verso 2",  es:"La fuerza con que te reías, la forma en que llorabas", ro:"Tsuyoku waratte ita sugata mo naite ita sugata mo", kj:"強く笑っていた姿も 泣いていた姿も"},
+  {t:74.00, section:"Verso 2",  es:"Todo sigue vivo en algún lugar de mí", ro:"Zenbu ima mo boku no naka de ikite iru", kj:"全部今も僕の中で生きている"},
+  {t:80.00, section:"Pre-coro", es:"Aunque ya no puedan volverse a encontrar", ro:"Mou futatabi wa deaenakute mo", kj:"もう二度びは出逢えなくても"},
+  {t:85.00, section:"Pre-coro", es:"Los sentimientos de entonces seguirán", ro:"Ano toki no kimochi wa zutto", kj:"あの時の気持ちはずっと"},
+  {t:90.00, section:"Coro 2",   es:"Girasol, girasol — mira hacia el sol", ro:"Himawari himawari taiyou wo muite", kj:"ヒマワリ ヒマワリ 太陽を向いて"},
+  {t:95.00, section:"Coro 2",   es:"Siempre erguido, brillando", ro:"Itsudemo suki de kagayaite", kj:"いつでも好きで輝いて"},
+  {t:100.00, section:"Coro 2",  es:"Girasol, girasol — que esa flor", ro:"Himawari himawari sono hana ga", kj:"ヒマワリ ヒマワリ その花が"},
+  {t:105.00, section:"Coro 2",  es:"Se parezca a ti, que nunca dejó de brillar", ro:"Kagayaki wo yameta koto ga nai kimi ni niteiru", kj:"輝きを止めたことがない君に似ている"},
+  {t:112.00, section:"Puente",  es:"Ojalá hubiera podido decírtelo", ro:"Tsutaeraretara yokatta no ni", kj:"伝えられたらよかったのに"},
+  {t:118.00, section:"Puente",  es:"Las palabras que guardé siguen aquí", ro:"Shimatte ita kotoba ga mada koko ni aru", kj:"しまっていた言葉がまだここにある"},
+  {t:124.00, section:"Puente",  es:"Aunque ya no lleguen a ti", ro:"Kimi ni todoka nakute mo", kj:"君に届かなくても"},
+  {t:129.00, section:"Puente",  es:"Las suelto al viento — como un girasol", ro:"Kaze ni hanashite yaru — himawari mitai ni", kj:"風に放してやる — ヒマワリみたいに"},
+  {t:140.00, section:"Coro Final", es:"Girasol, girasol — mira hacia el sol", ro:"Himawari himawari taiyou wo muite", kj:"ヒマワリ ヒマワリ 太陽を向いて"},
+  {t:145.00, section:"Coro Final", es:"Siempre erguido, brillando", ro:"Itsudemo suki de kagayaite", kj:"いつでも好きで輝いて"},
+  {t:150.00, section:"Coro Final", es:"Girasol, girasol — que esa flor", ro:"Himawari himawari sono hana ga", kj:"ヒマワリ ヒマワリ その花が"},
+  {t:155.00, section:"Coro Final", es:"Se parezca a ti, que miraba hacia el futuro", ro:"Mirai wo mite ita kimi ni niteiru", kj:"未来を見ていた君に似ている"},
+  {t:162.00, section:"Outro",   es:"Girasol — girando en el viento", ro:"Himawari — kaze ni mawari nagara", kj:"ヒマワリ — 風に廻りながら"},
+  {t:170.00, section:"Outro",   es:"Siempre hacia el sol", ro:"Itsudemo taiyou no hou e", kj:"いつでも太陽の方へ"},
+  {t:200.00, section:"Outro",   es:"(Instrumental final)", ro:"—", kj:"—"},
+];
+</script>
+<script>
+(function(){
+  const audio=document.getElementById('audio');let activeIdx=-1;
+  const container=document.getElementById('lyricsContainer');let curSection=null;
+  LYRICS.forEach((line,i)=>{
+    if(line.section!==curSection){curSection=line.section;const sl=document.createElement('div');sl.className='section-label';sl.innerHTML=`<span>${line.section}</span>`;container.appendChild(sl);}
+    const b=document.createElement('div');b.className='lyric-block';
+    let h='';if(line.es)h+=`<div class="lyric-es">${line.es}</div>`;if(line.ro&&line.ro!=='—')h+=`<div class="lyric-romaji">${line.ro}</div>`;if(line.kj&&line.kj!=='—')h+=`<div class="lyric-kanji">${line.kj}</div>`;
+    b.innerHTML=h;b.addEventListener('click',()=>{audio.currentTime=line.t;});container.appendChild(b);
+  });
+  const fmt=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+  const scrollBtn=document.getElementById('scrollBtn');
+  scrollBtn.addEventListener('click',()=>{const blocks=document.querySelectorAll('.lyric-block');if(activeIdx>=0&&blocks[activeIdx])blocks[activeIdx].scrollIntoView({behavior:'smooth',block:'center'});});
+  function updateActive(t){document.getElementById('progressFill').style.width=(audio.duration?(t/audio.duration*100):0)+'%';document.getElementById('timeNow').textContent=fmt(t);let newActive=-1;for(let i=0;i<LYRICS.length;i++){if(t>=LYRICS[i].t)newActive=i;}const blocks=document.querySelectorAll('.lyric-block');if(newActive!==activeIdx){activeIdx=newActive;blocks.forEach((b,i)=>{b.classList.toggle('active',i===activeIdx);b.classList.toggle('past',i<activeIdx);});if(activeIdx>=0&&blocks[activeIdx])blocks[activeIdx].scrollIntoView({behavior:'smooth',block:'center'});}scrollBtn.classList.toggle('active',activeIdx>=0);}
+  audio.addEventListener('loadedmetadata',()=>{document.getElementById('timeTotal').textContent=fmt(audio.duration);});
+  audio.addEventListener('timeupdate',()=>{updateActive(audio.currentTime);});
+  audio.addEventListener('ended',()=>{document.body.classList.remove('is-playing');document.getElementById('visualizer').classList.remove('playing');document.getElementById('playBtn').textContent='▶ Play';scrollBtn.classList.remove('active');});
+  document.getElementById('progressBar').addEventListener('click',e=>{const r=e.currentTarget.getBoundingClientRect();audio.currentTime=((e.clientX-r.left)/r.width)*(audio.duration||0);});
+  const playBtn=document.getElementById('playBtn');
+  playBtn.addEventListener('click',()=>{if(audio.paused){audio.play();playBtn.textContent='⏸ Pausa';document.body.classList.add('is-playing');document.getElementById('visualizer').classList.add('playing');}else{audio.pause();playBtn.textContent='▶ Play';document.body.classList.remove('is-playing');document.getElementById('visualizer').classList.remove('playing');}});
+  document.getElementById('resetBtn').addEventListener('click',()=>{audio.pause();audio.currentTime=0;activeIdx=-1;playBtn.textContent='▶ Play';document.body.classList.remove('is-playing');document.getElementById('visualizer').classList.remove('playing');document.querySelectorAll('.lyric-block').forEach(b=>b.classList.remove('active','past'));scrollBtn.classList.remove('active');window.scrollTo({top:0,behavior:'smooth'});});
+  document.getElementById('vol').addEventListener('input',e=>{audio.volume=parseFloat(e.target.value);});audio.volume=0.8;
+  document.querySelectorAll('.toggle-btn').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');const v=btn.dataset.view;document.body.className=document.body.className.replace(/\bview-\S+/g,'').trim();if(v!=='all')document.body.classList.add('view-'+v);if(!audio.paused)document.body.classList.add('is-playing');});});
+  const vizEl=document.getElementById('visualizer');for(let i=0;i<48;i++){const bar=document.createElement('div');bar.className='bar';const mh=8+Math.sin(i*0.4)*22+Math.random()*16;bar.style.cssText=`--max-h:${mh}px;--spd:${0.4+Math.random()*0.8}s;--delay:${(i/48)*-1.2}s;`;vizEl.appendChild(bar);}
+})();
+</script>
+</body>
+</html>
