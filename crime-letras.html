@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>罪と罰 · Crime and Punishment — Música</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#060606;--card:#101010;--accent1:#d8d8d8;--accent2:#ffffff;--accent3:#282828;--text:#f0f0f0;--muted:#505050;--glow:rgba(200,200,200,0.2)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden;padding-bottom:40px}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 20%,rgba(60,60,60,0.06) 0%,transparent 70%);z-index:0;pointer-events:none}
+.back-btn{position:fixed;top:1rem;left:1rem;z-index:100;background:rgba(6,6,6,0.85);border:1px solid rgba(200,200,200,0.2);color:var(--accent1);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px);transition:all 0.2s}
+header{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 1rem;border-bottom:1px solid rgba(200,200,200,0.12)}
+.song-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,4.5vw,2.8rem);font-weight:600;background:linear-gradient(135deg,#808080,#ffffff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.05em;margin-bottom:0.3rem}
+.artist-name{color:var(--muted);font-size:0.9rem;font-weight:300;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:1rem}
+.visualizer-wrap{display:flex;justify-content:center;align-items:flex-end;gap:3px;height:50px;padding:0 2rem;margin-top:0.5rem}
+.bar{width:4px;border-radius:2px 2px 0 0;background:linear-gradient(to top,var(--accent3),var(--accent1));opacity:0.4;height:4px}
+@keyframes wave{0%,100%{height:4px}50%{height:var(--max-h)}}
+.playing .bar{opacity:1;animation:wave var(--spd) ease-in-out infinite;animation-delay:var(--delay)}
+audio{display:none}
+.progress-section{position:relative;z-index:1;padding:1rem 2rem 0.5rem;max-width:780px;margin:0 auto}
+.progress-bar-wrap{width:100%;height:6px;background:var(--card);border-radius:3px;cursor:pointer;overflow:hidden;margin-bottom:0.5rem}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent1),var(--accent2));border-radius:3px;width:0%;box-shadow:0 0 10px var(--glow);pointer-events:none}
+.time-row{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--muted);font-family:'Cormorant Garamond',serif}
+.controls{position:relative;z-index:1;display:flex;justify-content:center;gap:1rem;padding:0.8rem 2rem 0.5rem;flex-wrap:wrap}
+.btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem}
+.btn-primary{background:linear-gradient(135deg,var(--accent3),var(--accent1));color:var(--bg);padding:0.75rem 2rem;font-size:1rem;font-weight:700;box-shadow:0 0 20px var(--glow);min-width:130px;justify-content:center}
+.btn-primary:hover{transform:scale(1.05)}
+.btn-secondary{background:var(--card);color:var(--accent1);border:1px solid rgba(200,200,200,0.2);padding:0.75rem 1.3rem;font-size:0.9rem}
+.volume-row{display:flex;align-items:center;gap:0.6rem;justify-content:center;padding-bottom:0.5rem;position:relative;z-index:1}
+.volume-row span{color:var(--muted);font-size:0.8rem}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100px;height:4px;border-radius:2px;background:var(--card);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent1);cursor:pointer}
+.view-toggles{position:relative;z-index:1;display:flex;justify-content:center;gap:0.5rem;padding:0 2rem 1.2rem;flex-wrap:wrap}
+.toggle-btn{border:1px solid rgba(200,200,200,0.18);background:transparent;color:var(--muted);padding:0.35rem 1rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.78rem;transition:all 0.2s}
+.toggle-btn.active{background:rgba(200,200,200,0.08);border-color:var(--accent1);color:var(--accent1)}
+.lyrics-container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:0 1.5rem 2rem}
+.section-label{text-align:center;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);padding:1.2rem 0 0.5rem;opacity:0.5;display:flex;align-items:center;gap:0.8rem}
+.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(200,200,200,0.10)}
+.lyric-block{padding:1.2rem 1.6rem;margin-bottom:0.5rem;border-radius:16px;border:1px solid transparent;transition:all 0.4s ease;cursor:pointer;opacity:0.3}
+.lyric-block.past{opacity:0.15}
+.lyric-block.active{opacity:1;background:rgba(255,255,255,0.04);border-color:rgba(200,200,200,0.25);box-shadow:0 0 30px rgba(100,100,100,0.12);transform:translateX(6px)}
+.lyric-es{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:600;color:var(--text);line-height:1.3;margin-bottom:0.35rem}
+.lyric-block.active .lyric-es{background:linear-gradient(90deg,#c0c0c0,#ffffff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lyric-romaji{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,2.5vw,1.25rem);color:var(--accent1);margin-bottom:0.3rem}
+.lyric-kanji{font-family:'Noto Serif JP',serif;font-size:clamp(0.95rem,2vw,1.1rem);color:var(--accent1);opacity:0.6;font-weight:400;letter-spacing:0.08em}
+body.view-es .lyric-romaji,body.view-es .lyric-kanji{display:none}
+body.view-romaji .lyric-es,body.view-romaji .lyric-kanji{display:none}
+body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
+.scroll-btn{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--accent1));border:none;cursor:pointer;box-shadow:0 4px 20px var(--glow);display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:var(--bg);transition:all 0.2s;opacity:0.5}
+.scroll-btn:hover{transform:scale(1.1);opacity:1}.scroll-btn.active{opacity:1}
+
+.landscape-layout{display:none}
+@media(orientation:landscape) and (max-height:600px){
+  body{padding-bottom:0;overflow:hidden;height:100dvh}
+  .header-v,.ctrl-v,.lyrics-container,.scroll-btn{display:none}
+  .landscape-layout{display:flex;height:100dvh;overflow:hidden;position:relative;z-index:1}
+  .land-left{width:200px;min-width:180px;flex-shrink:0;display:flex;flex-direction:column;padding:0.6rem 0.8rem;border-right:1px solid rgba(255,255,255,0.08);background:rgba(0,0,0,0.5);backdrop-filter:blur(10px);gap:0.4rem;overflow:hidden}
+  .land-title{font-family:'Cormorant Garamond',serif;font-size:0.85rem;font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-bottom:0.1rem}
+  .land-artist{font-size:0.55rem;color:var(--muted);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:0.3rem}
+  .land-viz{display:flex;align-items:flex-end;gap:2px;height:28px;margin-bottom:0.3rem}
+  .land-viz .bar{width:3px}
+  .land-progress-wrap{width:100%;height:4px;background:var(--card);border-radius:2px;cursor:pointer;overflow:hidden;margin-bottom:0.2rem}
+  .land-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3,#444),var(--accent1));border-radius:2px;width:0%;pointer-events:none}
+  .land-time{display:flex;justify-content:space-between;font-size:0.6rem;color:var(--muted);font-family:'Cormorant Garamond',serif;margin-bottom:0.4rem}
+  .land-btn-row{display:flex;gap:0.4rem;margin-bottom:0.3rem}
+  .land-btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;transition:all 0.2s;font-size:0.7rem;padding:0.35rem 0.7rem;flex:1;text-align:center}
+  .land-btn-play{background:linear-gradient(135deg,var(--accent3,#333),var(--accent1));color:white;font-weight:700}
+  .land-btn-reset{background:var(--card);color:var(--accent1);border:1px solid rgba(255,255,255,0.15)}
+  .land-vol-row{display:flex;align-items:center;gap:0.3rem;margin-bottom:0.4rem}
+  .land-vol-row span{color:var(--muted);font-size:0.65rem}
+  .land-vol{-webkit-appearance:none;appearance:none;flex:1;height:3px;border-radius:2px;background:var(--card);outline:none;cursor:pointer}
+  .land-vol::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--accent1);cursor:pointer}
+  .land-toggles{display:flex;flex-wrap:wrap;gap:0.25rem}
+  .land-toggle{border:1px solid rgba(255,255,255,0.12);background:transparent;color:var(--muted);padding:0.2rem 0.5rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.6rem;transition:all 0.2s}
+  .land-toggle.active{background:rgba(255,255,255,0.08);border-color:var(--accent1);color:var(--accent1)}
+  .land-right{flex:1;overflow-y:auto;padding:0.5rem 1rem 0.5rem 0.8rem;scroll-behavior:smooth}
+  .land-right::-webkit-scrollbar{width:3px}
+  .land-right::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:2px}
+  .land-right .section-label{font-size:0.55rem;padding:0.6rem 0 0.3rem}
+  .land-right .lyric-block{padding:0.5rem 0.8rem;margin-bottom:0.25rem;border-radius:10px}
+  .land-right .lyric-es{font-size:0.88rem;margin-bottom:0.12rem}
+  .land-right .lyric-romaji{font-size:0.75rem;margin-bottom:0.08rem}
+  .land-right .lyric-kanji{font-size:0.7rem}
+  .land-right .lyric-block.active{transform:translateX(3px)}
+}
+
+
+@media(orientation:landscape) and (max-height:600px){
+  header, .header-v { display:none !important; }
+  .progress-section, .controls, .volume-row, .view-toggles { display:none !important; }
+  #lyricsContainer, .lyrics-container { display:none !important; }
+  .scroll-btn { display:none !important; }
+}
+
+</style>
+</head>
+<body>
+<a class="back-btn" href="crime.html">← Volver</a>
+<audio id="audio" src="C-m.mp3" preload="auto"></audio>
+<header>
+  <div class="song-title">罪と罰 · Crime and Punishment</div>
+  <div class="artist-name">Ado · 2021</div>
+  <div class="visualizer-wrap" id="visualizer"></div>
+</header>
+<div class="progress-section">
+  <div class="progress-bar-wrap" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="time-row"><span id="timeNow">0:00</span><span id="timeTotal">—</span></div>
+</div>
+<div class="controls">
+  <button class="btn btn-primary" id="playBtn">▶ Play</button>
+  <button class="btn btn-secondary" id="resetBtn">↩ Reinicio</button>
+</div>
+<div class="volume-row">
+  <span>🔈</span><input type="range" id="vol" min="0" max="1" step="0.05" value="0.8"><span>🔊</span>
+</div>
+<div class="view-toggles">
+  <button class="toggle-btn active" data-view="all">Todo</button>
+  <button class="toggle-btn" data-view="es">Español</button>
+  <button class="toggle-btn" data-view="romaji">Romaji</button>
+  <button class="toggle-btn" data-view="kanji">日本語</button>
+</div>
+<div class="lyrics-container" id="lyricsContainer"></div>
+<button class="scroll-btn" id="scrollBtn">♪</button>
+<script>
+const LYRICS=[
+  {t:8.00,  section:"Verso 1",  es:"Ahora mismo, lo que me sale de dentro — ¿es crimen o castigo?", ro:"Ima boku no naka kara dete kuru no wa tsumi nano ka batsu nano ka", kj:"今僕の中から出てくるのは罪なのか罰なのか"},
+  {t:16.00, section:"Verso 1",  es:"Por favor, no me mires así", ro:"Sonnna me de minaide kure yo", kj:"そんな目で見ないでくれよ"},
+  {t:21.00, section:"Verso 1",  es:"Aunque yo me odie a mí mismo", ro:"Watashi ga watashi wo kirai demo", kj:"私が私を嫌いでも"},
+  {t:26.00, section:"Verso 1",  es:"Los demás no tienen por qué hacerlo también", ro:"Hoka no hito made kirawanakute ii", kj:"他の人まで嫌わなくていい"},
+  {t:32.00, section:"Verso 1",  es:"El tiempo que perdí mirando el techo", ro:"Tenjou wo mite ita jikan ga mottainakatta", kj:"天井を見ていた時間がもったいなかった"},
+  {t:38.00, section:"Verso 1",  es:"Saber que todo eso fue mío me corroe", ro:"Sore ga zenbu jibun no mono da to wakaru to tsurai", kj:"それが全部自分のものだと分かると辛い"},
+  {t:45.00, section:"Pre-coro", es:"¿La soledad que siento ahora es un crimen?", ro:"Ima kanjiteiru kodoku wa tsumi na no darou ka", kj:"今感じている孤独は罪なのだろうか"},
+  {t:51.00, section:"Pre-coro", es:"¿O es el castigo que me corresponde?", ro:"Soretomo watashi ni ataeru beki batsu na no darou ka", kj:"それとも私に与えるべき罰なのだろうか"},
+  {t:58.00, section:"Coro 1",   es:"Crimen y castigo — las palabras flotan en mi cabeza", ro:"Tsumi to batsu kotoba ga atama no naka de ukabu", kj:"罪と罰 言葉が頭の中で浮かぶ"},
+  {t:64.00, section:"Coro 1",   es:"Ni siquiera sé cuándo me volví así", ro:"Itsu kara konnani natte shimatta no ka mo wakaranai", kj:"いつからこんなになってしまったのかも分からない"},
+  {t:70.00, section:"Coro 1",   es:"Pero incluso así, sigo queriendo vivir", ro:"Demo soredemo ikite ikitai to omou", kj:"でもそれでも生きていきたいと思う"},
+  {t:76.00, section:"Coro 1",   es:"Y eso, ¿es un crimen?", ro:"Sore mo tsumi na no ka", kj:"それも罪なのか"},
+  {t:84.00, section:"Verso 2",  es:"La gente que me rodea parece brillar", ro:"Mawari no hito wa kagayaite mieru", kj:"周りの人は輝いて見える"},
+  {t:89.00, section:"Verso 2",  es:"Yo solo me revuelco en la oscuridad", ro:"Watashi dake ga yami no naka de mogaite iru", kj:"私だけが闇の中でもがいている"},
+  {t:95.00, section:"Verso 2",  es:"Ese pensamiento también — ¿será un crimen?", ro:"Sono kangae mo tsumi na no darou ka", kj:"その考えも罪なのだろうか"},
+  {t:100.00, section:"Verso 2", es:"Comparar mi vida con la de los demás", ro:"Hito to jibun wo kuraberu koto wa", kj:"人と自分を比べることは"},
+  {t:106.00, section:"Verso 2", es:"Es lo peor que puedo hacer — lo sé", ro:"Saite da to wakatte iru kedo yamerarenai", kj:"最低だと分かっているけどやめられない"},
+  {t:113.00, section:"Pre-coro", es:"¿Hasta cuándo voy a seguir huyendo de mí mismo?", ro:"Itsu made jibun kara nigete iru n darou", kj:"いつまで自分から逃げているんだろう"},
+  {t:119.00, section:"Pre-coro", es:"Ya no me aguanto ni a mí mismo", ro:"Mou jibun jishin ni mo ake ga aku", kj:"もう自分自身にも飽きが来る"},
+  {t:126.00, section:"Coro 2",  es:"Crimen y castigo — las palabras flotan en mi cabeza", ro:"Tsumi to batsu kotoba ga atama no naka de ukabu", kj:"罪と罰 言葉が頭の中で浮かぶ"},
+  {t:132.00, section:"Coro 2",  es:"Ni siquiera sé cuándo me volví así", ro:"Itsu kara konnani natte shimatta no ka mo wakaranai", kj:"いつからこんなになってしまったのかも分からない"},
+  {t:138.00, section:"Coro 2",  es:"Pero incluso así, sigo queriendo vivir", ro:"Demo soredemo ikite ikitai to omou", kj:"でもそれでも生きていきたいと思う"},
+  {t:144.00, section:"Coro 2",  es:"¿Y eso también es un crimen?", ro:"Sore mo tsumi na no ka", kj:"それも罪なのか"},
+  {t:152.00, section:"Puente",  es:"¿Por qué — simplemente no puedo ser yo mismo?", ro:"Doushite tada no jibun de irarenain darou", kj:"どうしてただの自分でいられないんだろう"},
+  {t:159.00, section:"Puente",  es:"¿Por qué — sigo destruyendo lo que construyo?", ro:"Doushite tsukuri ageta mono wo kowashite shimau n darou", kj:"どうして作り上げたものを壊してしまうんだろう"},
+  {t:166.00, section:"Puente",  es:"Sin embargo — todavía quiero ser humano", ro:"Soredemo ningen de aritai", kj:"それでも人間でありたい"},
+  {t:172.00, section:"Puente",  es:"Aunque no sepa qué clase de persona soy", ro:"Donna ningen ka wakaranakute mo", kj:"どんな人間か分からなくても"},
+  {t:184.00, section:"Coro Final", es:"Crimen y castigo — las palabras flotan en mi cabeza", ro:"Tsumi to batsu kotoba ga atama no naka de ukabu", kj:"罪と罰 言葉が頭の中で浮かぶ"},
+  {t:190.00, section:"Coro Final", es:"Ni siquiera sé cuándo me volví así", ro:"Itsu kara konnani natte shimatta no ka mo wakaranai", kj:"いつからこんなになってしまったのかも分からない"},
+  {t:196.00, section:"Coro Final", es:"Pero incluso así, sigo queriendo vivir", ro:"Demo soredemo ikite ikitai to omou", kj:"でもそれでも生きていきたいと思う"},
+  {t:202.00, section:"Coro Final", es:"Sigo queriéndolo — ¿eso también es un crimen?", ro:"Mada omotte iru — sore mo tsumi na no ka", kj:"まだ思っている — それも罪なのか"},
+  {t:215.00, section:"Outro",   es:"(Instrumental — fade out)", ro:"—", kj:"—"},
+];
+</script>
+<script>
+(function(){
+  const audio=document.getElementById('audio');let activeIdx=-1;
+  const container=document.getElementById('lyricsContainer');let curSection=null;
+  LYRICS.forEach((line,i)=>{
+    if(line.section!==curSection){curSection=line.section;const sl=document.createElement('div');sl.className='section-label';sl.innerHTML=`<span>${line.section}</span>`;container.appendChild(sl);}
+    const b=document.createElement('div');b.className='lyric-block';
+    let h='';if(line.es)h+=`<div class="lyric-es">${line.es}</div>`;if(line.ro&&line.ro!=='—')h+=`<div class="lyric-romaji">${line.ro}</div>`;if(line.kj&&line.kj!=='—')h+=`<div class="lyric-kanji">${line.kj}</div>`;
+    b.innerHTML=h;b.addEventListener('click',()=>{audio.currentTime=line.t;});container.appendChild(b);
+  });
+  const fmt=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+  const scrollBtn=document.getElementById('scrollBtn');
+  scrollBtn.addEventListener('click',()=>{const blocks=document.querySelectorAll('.lyric-block');if(activeIdx>=0&&blocks[activeIdx])blocks[activeIdx].scrollIntoView({behavior:'smooth',block:'center'});});
+  function updateActive(t){document.getElementById('progressFill').style.width=(audio.duration?(t/audio.duration*100):0)+'%';document.getElementById('timeNow').textContent=fmt(t);let newActive=-1;for(let i=0;i<LYRICS.length;i++){if(t>=LYRICS[i].t)newActive=i;}const blocks=document.querySelectorAll('.lyric-block');if(newActive!==activeIdx){activeIdx=newActive;blocks.forEach((b,i)=>{b.classList.toggle('active',i===activeIdx);b.classList.toggle('past',i<activeIdx);});if(activeIdx>=0&&blocks[activeIdx])blocks[activeIdx].scrollIntoView({behavior:'smooth',block:'center'});}scrollBtn.classList.toggle('active',activeIdx>=0);}
+  audio.addEventListener('loadedmetadata',()=>{document.getElementById('timeTotal').textContent=fmt(audio.duration);});
+  audio.addEventListener('timeupdate',()=>{updateActive(audio.currentTime);});
+  audio.addEventListener('ended',()=>{document.body.classList.remove('is-playing');document.getElementById('visualizer').classList.remove('playing');document.getElementById('playBtn').textContent='▶ Play';scrollBtn.classList.remove('active');});
+  document.getElementById('progressBar').addEventListener('click',e=>{const r=e.currentTarget.getBoundingClientRect();audio.currentTime=((e.clientX-r.left)/r.width)*(audio.duration||0);});
+  const playBtn=document.getElementById('playBtn');
+  playBtn.addEventListener('click',()=>{if(audio.paused){audio.play();playBtn.textContent='⏸ Pausa';document.body.classList.add('is-playing');document.getElementById('visualizer').classList.add('playing');}else{audio.pause();playBtn.textContent='▶ Play';document.body.classList.remove('is-playing');document.getElementById('visualizer').classList.remove('playing');}});
+  document.getElementById('resetBtn').addEventListener('click',()=>{audio.pause();audio.currentTime=0;activeIdx=-1;playBtn.textContent='▶ Play';document.body.classList.remove('is-playing');document.getElementById('visualizer').classList.remove('playing');document.querySelectorAll('.lyric-block').forEach(b=>b.classList.remove('active','past'));scrollBtn.classList.remove('active');window.scrollTo({top:0,behavior:'smooth'});});
+  document.getElementById('vol').addEventListener('input',e=>{audio.volume=parseFloat(e.target.value);});audio.volume=0.8;
+  document.querySelectorAll('.toggle-btn').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');const v=btn.dataset.view;document.body.className=document.body.className.replace(/\bview-\S+/g,'').trim();if(v!=='all')document.body.classList.add('view-'+v);if(!audio.paused)document.body.classList.add('is-playing');});});
+  const vizEl=document.getElementById('visualizer');for(let i=0;i<48;i++){const bar=document.createElement('div');bar.className='bar';const mh=8+Math.sin(i*0.4)*22+Math.random()*16;bar.style.cssText=`--max-h:${mh}px;--spd:${0.4+Math.random()*0.8}s;--delay:${(i/48)*-1.2}s;`;vizEl.appendChild(bar);}
+})();
+</script>
+<script>
+// ── LANDSCAPE LOGIC ──
+(function(){
+  // Copy title/artist to landscape panel
+  var titleEl = document.querySelector('.song-title');
+  var artistEl = document.querySelector('.artist-name');
+  var lt = document.getElementById('landTitle');
+  var la = document.getElementById('landArtist');
+  if(titleEl && lt) lt.textContent = titleEl.textContent;
+  if(artistEl && la) la.textContent = artistEl.textContent;
+
+  // Build lyrics in landscape container
+  var lyricsL = document.getElementById('lyricsL');
+  var lyricsV = document.getElementById('lyricsContainer');
+  if(lyricsL && lyricsV && LYRICS){
+    var curSec = null;
+    LYRICS.forEach(function(line, i){
+      if(line.section !== curSec){
+        curSec = line.section;
+        var sl = document.createElement('div'); sl.className = 'section-label';
+        sl.innerHTML = '<span>' + line.section + '</span>'; lyricsL.appendChild(sl);
+      }
+      var b = document.createElement('div'); b.className = 'lyric-block'; b.dataset.idx = i;
+      var h = '';
+      if(line.es) h += '<div class="lyric-es">' + line.es + '</div>';
+      if(line.ro) h += '<div class="lyric-romaji">' + line.ro + '</div>';
+      if(line.kj) h += '<div class="lyric-kanji">' + line.kj + '</div>';
+      b.innerHTML = h;
+      b.addEventListener('click', function(){ audio.currentTime = line.t; });
+      lyricsL.appendChild(b);
+    });
+  }
+
+  // Sync progress to landscape
+  var origUpdate = window._origTimeUpdate;
+  var audio = document.getElementById('audio');
+  var pfL = document.getElementById('pfL');
+  var tnL = document.getElementById('tnL');
+  var ttL = document.getElementById('ttL');
+  var pbL = document.getElementById('pbL');
+  var playL = document.getElementById('playL');
+  var resetL = document.getElementById('resetL');
+  var volL = document.getElementById('volL');
+  var vizL = document.getElementById('vizL');
+  var activeIdxL = -1;
+
+  var fmt = function(s){ return Math.floor(s/60) + ':' + String(Math.floor(s%60)).padStart(2,'0'); };
+
+  function syncL(t){
+    if(!audio) return;
+    pfL.style.width = (audio.duration ? (t/audio.duration*100) : 0) + '%';
+    tnL.textContent = fmt(t);
+    var newActive = -1;
+    if(window.LYRICS) for(var i=0;i<LYRICS.length;i++){ if(t>=LYRICS[i].t) newActive=i; }
+    if(newActive !== activeIdxL){
+      activeIdxL = newActive;
+      var blocks = lyricsL ? lyricsL.querySelectorAll('.lyric-block') : [];
+      blocks.forEach(function(b,i){ b.classList.toggle('active',i===activeIdxL); b.classList.toggle('past',i<activeIdxL); });
+      if(activeIdxL>=0 && blocks[activeIdxL] && lyricsL){
+        lyricsL.scrollTo({top: blocks[activeIdxL].offsetTop - lyricsL.clientHeight/2, behavior:'smooth'});
+      }
+    }
+  }
+
+  audio.addEventListener('timeupdate', function(){ syncL(audio.currentTime); });
+  audio.addEventListener('loadedmetadata', function(){ if(ttL) ttL.textContent = fmt(audio.duration); });
+  audio.addEventListener('ended', function(){
+    vizL.classList.remove('playing');
+    playL.textContent = '▶';
+  });
+
+  pbL.addEventListener('click', function(e){
+    var r = pbL.getBoundingClientRect();
+    audio.currentTime = ((e.clientX - r.left)/r.width) * (audio.duration||0);
+  });
+
+  playL.addEventListener('click', function(){
+    var playV = document.getElementById('playBtn') || document.getElementById('playV');
+    if(playV) playV.click();
+    playL.textContent = audio.paused ? '▶' : '⏸';
+    vizL.classList.toggle('playing', !audio.paused);
+  });
+
+  resetL.addEventListener('click', function(){
+    var resetV = document.getElementById('resetBtn') || document.getElementById('resetV');
+    if(resetV) resetV.click();
+    playL.textContent = '▶';
+    vizL.classList.remove('playing');
+    activeIdxL = -1;
+  });
+
+  volL.addEventListener('input', function(e){
+    audio.volume = parseFloat(e.target.value);
+    var volV = document.getElementById('vol') || document.getElementById('volV');
+    if(volV) volV.value = e.target.value;
+  });
+
+  // Sync view toggles
+  document.querySelectorAll('.land-toggle').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.land-toggle').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var v = btn.dataset.view;
+      document.body.className = document.body.className.replace(/\bview-\S+/g,'').trim();
+      if(v !== 'all') document.body.classList.add('view-' + v);
+      // sync vertical toggles
+      document.querySelectorAll('.toggle-btn, .view-toggles .toggle-btn').forEach(function(b){
+        b.classList.toggle('active', b.dataset.view === v);
+      });
+    });
+  });
+
+  // Build vizL bars
+  for(var i=0;i<24;i++){
+    var bar = document.createElement('div'); bar.className='bar';
+    var mh = 8+Math.sin(i*0.4)*22+Math.random()*16;
+    bar.style.cssText='--max-h:'+mh+'px;--spd:'+(0.4+Math.random()*0.8)+'s;--delay:'+((i/24)*-1.2)+'s;';
+    vizL.appendChild(bar);
+  }
+})();
+</script>
+</body>
+</html>
