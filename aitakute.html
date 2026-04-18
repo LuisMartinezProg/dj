@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>会いたくて · Aitakute — Ado</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#120e0e;color:#f0e8ec;font-family:'Noto Serif JP',serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;overflow:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 30% 30%,rgba(180,80,100,0.09) 0%,transparent 60%);z-index:0;pointer-events:none}
+.back-btn{position:fixed;top:1rem;left:1rem;z-index:100;background:rgba(18,14,14,0.9);border:1px solid rgba(212,160,168,0.2);color:#d4a0a8;padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px)}
+.card{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:2rem;max-width:380px;width:100%}
+.cover-wrap{position:relative;width:100%;aspect-ratio:1;border-radius:8px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.7),0 0 0 1px rgba(212,160,168,0.1)}
+.cover-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.cover-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(18,14,14,0.55) 100%)}
+.info{text-align:center}
+.song-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,6vw,2.8rem);font-weight:600;background:linear-gradient(135deg,#d4a0a8,#f0c8d0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.06em;margin-bottom:0.3rem}
+.song-sub{font-family:'Cormorant Garamond',serif;font-size:0.9rem;color:#d4a0a8;opacity:0.6;font-style:italic;margin-bottom:0.3rem}
+.artist-name{font-size:0.78rem;letter-spacing:0.4em;text-transform:uppercase;color:#4a3038}
+.btn-lyrics{display:inline-flex;align-items:center;gap:0.6rem;margin-top:1.8rem;padding:0.85rem 2.4rem;border:1px solid rgba(212,160,168,0.3);border-radius:999px;color:#d4a0a8;text-decoration:none;font-family:'Cormorant Garamond',serif;font-size:1rem;letter-spacing:0.12em;transition:all 0.3s;background:transparent}
+.btn-lyrics:hover{background:rgba(212,160,168,0.08);border-color:rgba(212,160,168,0.6);color:#f0c8d0}
+.dot{width:6px;height:6px;border-radius:50%;background:#d4a0a8;box-shadow:0 0 8px rgba(212,160,168,0.7)}
+</style>
+</head>
+<body>
+<a class="back-btn" href="index.html">← Inicio</a>
+<div class="card">
+  <div class="cover-wrap">
+    <img src="Ait-p.png" alt="Aitakute">
+    <div class="cover-overlay"></div>
+  </div>
+  <div class="info">
+    <div class="song-title">会いたくて</div>
+    <div class="song-sub">Aitakute</div>
+    <div class="artist-name">Ado · 2021</div>
+    <a class="btn-lyrics" href="aitakute-letras.html"><span class="dot"></span>Ver letra sincronizada</a>
+  </div>
+</div>
+</body>
+</html>

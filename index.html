@@ -10,36 +10,51 @@
 <meta name="apple-mobile-web-app-title" content="Música">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#09070f;--card:#1a1230;--accent1:#c084fc;--accent2:#f472b6;--accent3:#818cf8;--text:#f1e9ff;--muted:#6b5e8c}
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 10% 10%,rgba(192,132,252,0.1) 0%,transparent 60%),radial-gradient(ellipse 60% 70% at 90% 90%,rgba(244,114,182,0.08) 0%,transparent 60%);z-index:0;pointer-events:none}
-header{position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 2rem}
-.logo-kanji{font-size:0.75rem;letter-spacing:0.4em;color:var(--muted);text-transform:uppercase;margin-bottom:0.6rem}
-.logo-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.5rem,8vw,4.5rem);font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:0.5rem}
-.logo-sub{font-size:0.8rem;color:var(--muted);letter-spacing:0.25em;font-weight:300}
-.deco-line{display:flex;align-items:center;gap:1rem;max-width:300px;margin:1.8rem auto 0;opacity:0.4}
-.deco-line::before,.deco-line::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--accent1))}
-.deco-line::after{background:linear-gradient(90deg,var(--accent1),transparent)}
-.deco-line span{color:var(--accent1);font-size:0.7rem;letter-spacing:0.2em;white-space:nowrap}
-.songs-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem;max-width:900px;margin:2.5rem auto 0;padding:0 1.5rem 5rem}
-.song-card{background:var(--card);border:1px solid rgba(192,132,252,0.15);border-radius:20px;overflow:hidden;cursor:pointer;transition:all 0.3s ease;text-decoration:none;color:inherit;display:block;position:relative}
-.song-card:hover{transform:translateY(-4px);border-color:rgba(192,132,252,0.5);box-shadow:0 12px 40px rgba(192,132,252,0.15)}
-.card-cover{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;max-height:180px}
-.card-cover-fallback{width:100%;aspect-ratio:1/1;max-height:180px;display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;overflow:hidden}
-.card-cover-fallback::before{content:'';position:absolute;inset:0;background:var(--grad);opacity:0.9}
-.card-cover-fallback span{position:relative;z-index:1}
-.card-body{padding:1.2rem 1.4rem 1.4rem}
-.card-anime{font-size:0.68rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent1);margin-bottom:0.3rem;opacity:0.8}
-.card-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;margin-bottom:0.2rem;line-height:1.2}
-.card-title-jp{font-family:'Noto Serif JP',serif;font-size:0.8rem;color:var(--muted);margin-bottom:0.5rem;font-weight:300}
-.card-artist{font-size:0.82rem;color:var(--muted);display:flex;align-items:center;gap:0.4rem}
-.card-artist::before{content:'';width:18px;height:1px;background:var(--accent2);opacity:0.6}
-.card-play-hint{position:absolute;top:0.8rem;right:0.8rem;background:rgba(192,132,252,0.15);border:1px solid rgba(192,132,252,0.3);backdrop-filter:blur(8px);border-radius:999px;padding:0.25rem 0.7rem;font-size:0.7rem;color:var(--accent1);opacity:0;transition:opacity 0.2s}
-.song-card:hover .card-play-hint{opacity:1}
-footer{position:relative;z-index:1;text-align:center;padding:1rem;color:var(--muted);font-size:0.7rem;letter-spacing:0.15em;opacity:0.5}
-.petal{position:fixed;width:8px;height:8px;border-radius:0 50% 50% 50%;background:rgba(244,114,182,0.3);pointer-events:none;animation:fall linear infinite;z-index:0}
-@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:0.8}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+  :root{--bg:#09070f;--card:#1a1230;--accent1:#c084fc;--accent2:#f472b6;--accent3:#818cf8;--text:#f1e9ff;--muted:#6b5e8c}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden}
+  body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 10% 10%,rgba(192,132,252,0.1) 0%,transparent 60%),radial-gradient(ellipse 60% 70% at 90% 90%,rgba(244,114,182,0.08) 0%,transparent 60%);z-index:0;pointer-events:none}
+  header{position:relative;z-index:1;text-align:center;padding:3.5rem 2rem 1.5rem}
+  .logo-kanji{font-size:0.75rem;letter-spacing:0.4em;color:var(--muted);text-transform:uppercase;margin-bottom:0.6rem}
+  .logo-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2.5rem,8vw,4.5rem);font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:0.5rem}
+  .logo-sub{font-size:0.8rem;color:var(--muted);letter-spacing:0.25em;font-weight:300}
+  .deco-line{display:flex;align-items:center;gap:1rem;max-width:300px;margin:1.8rem auto 0;opacity:0.4}
+  .deco-line::before,.deco-line::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--accent1))}
+  .deco-line::after{background:linear-gradient(90deg,var(--accent1),transparent)}
+  .deco-line span{color:var(--accent1);font-size:0.7rem;letter-spacing:0.2em;white-space:nowrap}
+
+  /* BÚSQUEDA */
+  .search-wrap{position:relative;z-index:1;max-width:480px;margin:2rem auto 0;padding:0 1.5rem}
+  .search-box{width:100%;background:rgba(26,18,48,0.8);border:1px solid rgba(192,132,252,0.25);border-radius:999px;padding:0.75rem 1.4rem 0.75rem 3rem;color:var(--text);font-family:'Noto Serif JP',serif;font-size:0.9rem;outline:none;transition:border-color 0.2s;backdrop-filter:blur(8px)}
+  .search-box::placeholder{color:var(--muted)}
+  .search-box:focus{border-color:rgba(192,132,252,0.6)}
+  .search-icon{position:absolute;left:2.5rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.9rem;pointer-events:none}
+  .no-results{display:none;text-align:center;color:var(--muted);font-size:0.85rem;padding:2rem;position:relative;z-index:1}
+
+  /* GRID */
+  .songs-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;max-width:960px;margin:2rem auto 0;padding:0 1.5rem 5rem}
+  @media(max-width:700px){.songs-grid{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:440px){.songs-grid{grid-template-columns:1fr}}
+
+  .song-card{background:var(--card);border:1px solid rgba(192,132,252,0.15);border-radius:16px;overflow:hidden;cursor:pointer;transition:all 0.3s ease;text-decoration:none;color:inherit;display:block;position:relative}
+  .song-card:hover{transform:translateY(-4px);border-color:rgba(192,132,252,0.5);box-shadow:0 12px 40px rgba(192,132,252,0.15)}
+  .song-card.hidden{display:none}
+  .card-cover{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;max-height:160px}
+  .card-cover-fallback{width:100%;aspect-ratio:1/1;max-height:160px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;position:relative;overflow:hidden}
+  .card-cover-fallback::before{content:'';position:absolute;inset:0;background:var(--grad);opacity:0.9}
+  .card-cover-fallback span{position:relative;z-index:1}
+  .card-body{padding:1rem 1.2rem 1.2rem}
+  .card-anime{font-size:0.62rem;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent1);margin-bottom:0.25rem;opacity:0.8}
+  .card-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;margin-bottom:0.15rem;line-height:1.2}
+  .card-title-jp{font-family:'Noto Serif JP',serif;font-size:0.75rem;color:var(--muted);margin-bottom:0.4rem;font-weight:300}
+  .card-artist{font-size:0.78rem;color:var(--muted);display:flex;align-items:center;gap:0.4rem}
+  .card-artist::before{content:'';width:14px;height:1px;background:var(--accent2);opacity:0.6}
+  .card-play-hint{position:absolute;top:0.7rem;right:0.7rem;background:rgba(192,132,252,0.15);border:1px solid rgba(192,132,252,0.3);backdrop-filter:blur(8px);border-radius:999px;padding:0.2rem 0.6rem;font-size:0.65rem;color:var(--accent1);opacity:0;transition:opacity 0.2s}
+  .song-card:hover .card-play-hint{opacity:1}
+
+  footer{position:relative;z-index:1;text-align:center;padding:1rem;color:var(--muted);font-size:0.7rem;letter-spacing:0.15em;opacity:0.5}
+  .petal{position:fixed;width:8px;height:8px;border-radius:0 50% 50% 50%;background:rgba(244,114,182,0.3);pointer-events:none;animation:fall linear infinite;z-index:0}
+  @keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:0.8}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
 </style>
 </head>
 <body>
@@ -50,10 +65,16 @@ footer{position:relative;z-index:1;text-align:center;padding:1rem;color:var(--mu
   <div class="deco-line"><span>✦ selecciona una canción ✦</span></div>
 </header>
 
-<div class="songs-grid">
+<!-- BÚSQUEDA -->
+<div class="search-wrap">
+  <span class="search-icon">🔍</span>
+  <input class="search-box" id="searchBox" type="search" placeholder="Buscar canción o artista…" autocomplete="off">
+</div>
+<div class="no-results" id="noResults">No se encontraron canciones</div>
 
-  <!-- VIVARIUM -->
-  <a class="song-card" href="vivarium.html">
+<div class="songs-grid" id="songsGrid">
+
+  <a class="song-card" href="vivarium.html" data-search="vivarium ado 2026 single">
     <div class="card-play-hint">▶ Play</div>
     <img class="card-cover" src="vivarium-cover.jpg" alt="Vivarium" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
     <div class="card-cover-fallback" style="--grad:linear-gradient(135deg,#04060f,#1a3a8f,#4f8ef7);display:none"><span>🫧</span></div>
@@ -65,23 +86,21 @@ footer{position:relative;z-index:1;text-align:center;padding:1rem;color:var(--mu
     </div>
   </a>
 
-  <!-- EIEN -->
-  <a class="song-card" href="eien.html">
+  <a class="song-card" href="eien.html" data-search="eien no akuruhi ado 2022 永遠">
     <div class="card-play-hint">▶ Play</div>
     <img class="card-cover" src="Eien.jpg" alt="Eien" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
     <div class="card-cover-fallback" style="--grad:linear-gradient(135deg,#020d12,#006080,#00d4e8);display:none"><span>🩵</span></div>
     <div class="card-body">
-      <div class="card-anime">Single 2024</div>
+      <div class="card-anime">Single 2022</div>
       <div class="card-title">Eien no Akuruhi</div>
-      <div class="card-title-jp">永遠の明日へ</div>
+      <div class="card-title-jp">永遠のあくる日</div>
       <div class="card-artist">Ado</div>
     </div>
   </a>
 
-  <!-- JANE DOE -->
-  <a class="song-card" href="jane.html">
+  <a class="song-card" href="jane.html" data-search="jane doe kenshi yonezu hikaru utada chainsaw man 2025">
     <div class="card-play-hint">▶ Play</div>
-    <img class="card-cover" src="Jane imagen.jpg" alt="JANE DOE" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <img class="card-cover" src="jane-imagen.jpg" alt="JANE DOE" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
     <div class="card-cover-fallback" style="--grad:linear-gradient(135deg,#050505,#1a0505,#3a0a0a);display:none"><span>🩸</span></div>
     <div class="card-body">
       <div class="card-anime">Chainsaw Man · 2025</div>
@@ -91,93 +110,50 @@ footer{position:relative;z-index:1;text-align:center;padding:1rem;color:var(--mu
     </div>
   </a>
 
-  <!-- HIKARU NARA -->
-  <a class="song-card" href="hikaru.html">
+  <a class="song-card" href="aitakute.html" data-search="aitakute ado 2021 会いたくて kaguya sama">
     <div class="card-play-hint">▶ Play</div>
-    <img class="card-cover" src="H-p.png" alt="Hikaru Nara" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-    <div class="card-cover-fallback" style="--grad:linear-gradient(135deg,#0a1e2e,#1a7ab0,#5bb8d4);display:none"><span>🎻</span></div>
+    <img class="card-cover" src="Ait-p.png" alt="Aitakute" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="card-cover-fallback" style="--grad:linear-gradient(135deg,#120e0e,#6b3040,#d4a0a8);display:none"><span>🌸</span></div>
     <div class="card-body">
-      <div class="card-anime">Shigatsu wa Kimi no Uso · 2014</div>
-      <div class="card-title">Hikaru Nara</div>
-      <div class="card-title-jp">光るなら</div>
-      <div class="card-artist">Goose House</div>
-    </div>
-  </a>
-
-  <!-- ANO YUME WO NAZOTTE -->
-  <a class="song-card" href="anoyume.html">
-    <div class="card-play-hint">▶ Play</div>
-    <img class="card-cover" src="A-p.png" alt="Ano Yume wo Nazotte" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-    <div class="card-cover-fallback" style="--grad:linear-gradient(135deg,#050500,#1a1400,#c8940a);display:none"><span>🎆</span></div>
-    <div class="card-body">
-      <div class="card-anime">Single 2020</div>
-      <div class="card-title">Ano Yume wo Nazotte</div>
-      <div class="card-title-jp">あの夢をなぞって</div>
-      <div class="card-artist">YOASOBI</div>
-    </div>
-  </a>
-
-  <!-- USSEEWA -->
-  <a class="song-card" href="usseewa.html">
-    <div class="card-play-hint">▶ Play</div>
-    <img class="card-cover" src="U-p.png" alt="Usseewa" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-    <div class="card-cover-fallback" style="--grad:linear-gradient(135deg,#0d0d1a,#3a2fd4,#6a10c0);display:none"><span>💢</span></div>
-    <div class="card-body">
-      <div class="card-anime">Single 2020</div>
-      <div class="card-title">Usseewa</div>
-      <div class="card-title-jp">うっせぇわ</div>
+      <div class="card-anime">Kaguya-sama Final · 2021</div>
+      <div class="card-title">Aitakute</div>
+      <div class="card-title-jp">会いたくて</div>
       <div class="card-artist">Ado</div>
     </div>
   </a>
 
-  <!-- ODO -->
-  <a class="song-card" href="odo.html">
+  <a class="song-card" href="bouquet.html" data-search="bouquet for me ado watashi ni hanataba 2024 花束">
     <div class="card-play-hint">▶ Play</div>
-    <img class="card-cover" src="O-p.png" alt="Odo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-    <div class="card-cover-fallback" style="--grad:linear-gradient(135deg,#1a0030,#e0145a,#f5c800);display:none"><span>踊</span></div>
+    <img class="card-cover" src="Bo-p.png" alt="Bouquet for Me" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="card-cover-fallback" style="--grad:linear-gradient(135deg,#0f0e04,#c87800,#f5c842);display:none"><span>💐</span></div>
     <div class="card-body">
-      <div class="card-anime">Single 2021</div>
-      <div class="card-title">Odo</div>
-      <div class="card-title-jp">踊</div>
+      <div class="card-anime">Single 2024</div>
+      <div class="card-title">Bouquet for Me</div>
+      <div class="card-title-jp">わたしに花束を</div>
       <div class="card-artist">Ado</div>
     </div>
   </a>
 
-  <!-- AISHITE AISHITE AISHITE -->
-  <a class="song-card" href="aishite.html">
+  <a class="song-card" href="dignity.html" data-search="dignity ado 2024 diguniti">
     <div class="card-play-hint">▶ Play</div>
-    <img class="card-cover" src="Ai-p.png" alt="Aishite Aishite Aishite" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-    <div class="card-cover-fallback" style="--grad:linear-gradient(135deg,#080810,#1a2050,#4060c8);display:none"><span>愛</span></div>
+    <img class="card-cover" src="Di-p.jpg" alt="DIGNITY" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="card-cover-fallback" style="--grad:linear-gradient(135deg,#030c18,#0a5580,#38b6e8);display:none"><span>⛓️</span></div>
     <div class="card-body">
-      <div class="card-anime">Cover · Kikuo · 2023</div>
-      <div class="card-title">Aishite Aishite Aishite</div>
-      <div class="card-title-jp">愛して愛して愛して</div>
+      <div class="card-anime">Single 2024</div>
+      <div class="card-title">DIGNITY</div>
+      <div class="card-title-jp">ディグニティ</div>
       <div class="card-artist">Ado</div>
     </div>
   </a>
 
-  <!-- ASHURA-CHAN -->
-  <a class="song-card" href="ashura.html">
+  <a class="song-card" href="zero.html" data-search="0 zero ado rap 2023">
     <div class="card-play-hint">▶ Play</div>
-    <img class="card-cover" src="As-p.png" alt="Ashura-chan" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-    <div class="card-cover-fallback" style="--grad:linear-gradient(135deg,#1a0000,#cc1a14,#4060c8);display:none"><span>🔥</span></div>
+    <img class="card-cover" src="0-p.jpg" alt="0" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="card-cover-fallback" style="--grad:linear-gradient(135deg,#060806,#3a6010,#7ecb35);display:none"><span>0</span></div>
     <div class="card-body">
-      <div class="card-anime">Single 2021</div>
-      <div class="card-title">Ashura-chan</div>
-      <div class="card-title-jp">阿修羅ちゃん</div>
-      <div class="card-artist">Ado</div>
-    </div>
-  </a>
-
-  <!-- SENBONZAKURA -->
-  <a class="song-card" href="senbonzakura.html">
-    <div class="card-play-hint">▶ Play</div>
-    <img class="card-cover" src="Se-p.png" alt="Senbonzakura" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-    <div class="card-cover-fallback" style="--grad:linear-gradient(135deg,#1a0a20,#e890b4,#5a8a50);display:none"><span>🌸</span></div>
-    <div class="card-body">
-      <div class="card-anime">Cover · Kurousa-P · 2023</div>
-      <div class="card-title">Senbonzakura</div>
-      <div class="card-title-jp">千本桜</div>
+      <div class="card-anime">Single 2023</div>
+      <div class="card-title">0</div>
+      <div class="card-title-jp">ゼロ</div>
       <div class="card-artist">Ado</div>
     </div>
   </a>
@@ -187,9 +163,25 @@ footer{position:relative;z-index:1;text-align:center;padding:1rem;color:var(--mu
 <footer>Música · Barranquilla 🇨🇴 · 2026</footer>
 
 <script>
+// Búsqueda
+const searchBox = document.getElementById('searchBox');
+const noResults = document.getElementById('noResults');
+searchBox.addEventListener('input', () => {
+  const q = searchBox.value.toLowerCase().trim();
+  const cards = document.querySelectorAll('.song-card');
+  let visible = 0;
+  cards.forEach(card => {
+    const text = (card.dataset.search + ' ' + card.textContent).toLowerCase();
+    const match = !q || text.includes(q);
+    card.classList.toggle('hidden', !match);
+    if(match) visible++;
+  });
+  noResults.style.display = visible === 0 ? 'block' : 'none';
+});
+
+// Pétalos
 for(let i=0;i<12;i++){
-  const p=document.createElement('div');
-  p.className='petal';
+  const p=document.createElement('div');p.className='petal';
   p.style.cssText=`left:${Math.random()*100}%;animation-duration:${6+Math.random()*10}s;animation-delay:${Math.random()*8}s;width:${5+Math.random()*6}px;height:${5+Math.random()*6}px;opacity:${0.2+Math.random()*0.4}`;
   document.body.appendChild(p);
 }
