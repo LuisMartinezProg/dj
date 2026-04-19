@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>光るなら · Hikaru Nara — Música</title>
+<title>あの夢をなぞって · Ano Yume wo Nazotte — Música</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#06121c;--card:#0a1e2e;--accent1:#5bb8d4;--accent2:#b8e4f0;--accent3:#1a6080;--text:#e8f4ff;--muted:#3a6070;--glow:rgba(91,184,212,0.35)}
+:root{--bg:#050500;--card:#0a0900;--accent1:#c8940a;--accent2:#e8d080;--accent3:#3a2a00;--text:#fff8e8;--muted:#5a4e10;--glow:rgba(200,148,10,0.35)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden;padding-bottom:40px}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 20%,rgba(30,120,180,0.10) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 80% 80%,rgba(10,80,130,0.08) 0%,transparent 60%);z-index:0;pointer-events:none}
-.back-btn{position:fixed;top:1rem;left:1rem;z-index:100;background:rgba(6,18,28,0.85);border:1px solid rgba(91,184,212,0.3);color:var(--accent1);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px);transition:all 0.2s}
-header{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 1rem;border-bottom:1px solid rgba(91,184,212,0.15)}
-.song-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.05em;margin-bottom:0.3rem}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 20%,rgba(180,120,0,0.10) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 80% 80%,rgba(0,180,180,0.06) 0%,transparent 60%);z-index:0;pointer-events:none}
+.back-btn{position:fixed;top:1rem;left:1rem;z-index:100;background:rgba(5,5,0,0.85);border:1px solid rgba(200,148,10,0.3);color:var(--accent1);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px);transition:all 0.2s}
+header{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 1rem;border-bottom:1px solid rgba(200,148,10,0.15)}
+.song-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,5vw,2.8rem);font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2),#f07090);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.05em;margin-bottom:0.3rem}
 .artist-name{color:var(--muted);font-size:0.9rem;font-weight:300;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:1rem}
 .visualizer-wrap{display:flex;justify-content:center;align-items:flex-end;gap:3px;height:50px;padding:0 2rem;margin-top:0.5rem}
 .bar{width:4px;border-radius:2px 2px 0 0;background:linear-gradient(to top,var(--accent3),var(--accent1));opacity:0.4;height:4px}
@@ -27,20 +27,20 @@ audio{display:none}
 .btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem}
 .btn-primary{background:linear-gradient(135deg,var(--accent3),var(--accent1));color:white;padding:0.75rem 2rem;font-size:1rem;font-weight:700;box-shadow:0 0 20px var(--glow);min-width:130px;justify-content:center}
 .btn-primary:hover{transform:scale(1.05)}
-.btn-secondary{background:var(--card);color:var(--accent1);border:1px solid rgba(91,184,212,0.3);padding:0.75rem 1.3rem;font-size:0.9rem}
+.btn-secondary{background:var(--card);color:var(--accent1);border:1px solid rgba(200,148,10,0.3);padding:0.75rem 1.3rem;font-size:0.9rem}
 .volume-row{display:flex;align-items:center;gap:0.6rem;justify-content:center;padding-bottom:0.5rem;position:relative;z-index:1}
 .volume-row span{color:var(--muted);font-size:0.8rem}
 input[type=range]{-webkit-appearance:none;appearance:none;width:100px;height:4px;border-radius:2px;background:var(--card);outline:none;cursor:pointer}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent1);cursor:pointer}
 .view-toggles{position:relative;z-index:1;display:flex;justify-content:center;gap:0.5rem;padding:0 2rem 1.2rem;flex-wrap:wrap}
-.toggle-btn{border:1px solid rgba(91,184,212,0.25);background:transparent;color:var(--muted);padding:0.35rem 1rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.78rem;transition:all 0.2s}
-.toggle-btn.active{background:rgba(91,184,212,0.12);border-color:var(--accent1);color:var(--accent1)}
+.toggle-btn{border:1px solid rgba(200,148,10,0.25);background:transparent;color:var(--muted);padding:0.35rem 1rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.78rem;transition:all 0.2s}
+.toggle-btn.active{background:rgba(200,148,10,0.12);border-color:var(--accent1);color:var(--accent1)}
 .lyrics-container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:0 1.5rem 2rem}
 .section-label{text-align:center;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);padding:1.2rem 0 0.5rem;opacity:0.5;display:flex;align-items:center;gap:0.8rem}
-.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(91,184,212,0.15)}
+.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(200,148,10,0.15)}
 .lyric-block{padding:1.2rem 1.6rem;margin-bottom:0.5rem;border-radius:16px;border:1px solid transparent;transition:all 0.4s ease;cursor:pointer;opacity:0.3}
 .lyric-block.past{opacity:0.18}
-.lyric-block.active{opacity:1;background:linear-gradient(135deg,rgba(30,100,160,0.12),rgba(91,184,212,0.07));border-color:rgba(91,184,212,0.35);box-shadow:0 0 30px rgba(30,120,200,0.15);transform:translateX(6px)}
+.lyric-block.active{opacity:1;background:linear-gradient(135deg,rgba(100,70,0,0.12),rgba(200,148,10,0.07));border-color:rgba(200,148,10,0.35);box-shadow:0 0 30px rgba(180,120,0,0.15);transform:translateX(6px)}
 .lyric-es{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:600;color:var(--text);line-height:1.3;margin-bottom:0.35rem}
 .lyric-block.active .lyric-es{background:linear-gradient(90deg,var(--text),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .lyric-romaji{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,2.5vw,1.25rem);color:var(--accent2);margin-bottom:0.3rem}
@@ -183,11 +183,11 @@ body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
 </style>
 </head>
 <body>
-<a class="back-btn" href="hikaru.html">← Volver</a>
-<audio id="audio" src="H-m.mp3" preload="auto"></audio>
+<a class="back-btn" href="anoyume.html">← Volver</a>
+<audio id="audio" src="A-m.mp3" preload="auto"></audio>
 <header>
-  <div class="song-title">光るなら · Hikaru Nara</div>
-  <div class="artist-name">Goose House · 2014</div>
+  <div class="song-title">あの夢をなぞって · Ano Yume wo Nazotte</div>
+  <div class="artist-name">YOASOBI · 2020</div>
   <div class="visualizer-wrap" id="visualizer"></div>
 </header>
 <div class="progress-section">
@@ -347,15 +347,15 @@ body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
       <button class="land-toggle" data-view="kanji">JP</button>
     </div>
     <div class="land-nav-row">
-      <a class="land-nav-btn land-nav-prev" href="jane-letras.html">
-        <img class="land-nav-img" src="Jane imagen.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <a class="land-nav-btn land-nav-prev" href="hikaru-letras.html">
+        <img class="land-nav-img" src="H-p.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="land-nav-fallback">←</div>
-        <div class="land-nav-label"><span class="land-nav-dir">← Anterior</span><span class="land-nav-name">JANE DOE</span></div>
+        <div class="land-nav-label"><span class="land-nav-dir">← Anterior</span><span class="land-nav-name">Hikaru Nara</span></div>
       </a>
-      <a class="land-nav-btn land-nav-next" href="anoyume-letras.html">
-        <img class="land-nav-img" src="A-p.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <a class="land-nav-btn land-nav-next" href="usseewa-letras.html">
+        <img class="land-nav-img" src="U-p.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="land-nav-fallback">→</div>
-        <div class="land-nav-label"><span class="land-nav-dir">Siguiente →</span><span class="land-nav-name">Ano Yume wo Nazotte</span></div>
+        <div class="land-nav-label"><span class="land-nav-dir">Siguiente →</span><span class="land-nav-name">Usseewa</span></div>
       </a>
     </div>
   </div>
