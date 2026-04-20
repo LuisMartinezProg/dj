@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>0 · Zero — Música</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+/* ZERO — paleta extraída de la portada:
+   Negro profundo / azul-negro (fondo, cabello oscuro) → bg dominante
+   Blanco frío brillante (luz central en piel) → accent principal
+   Lavanda / lila muy pálido (piel bajo la luz) → accent secundario
+   Azul pizarra medianoche (cabello, oscuridad) → card/accent3
+   Gris azulado (sombras de piel, detalles) → muted
+   Rosa grisáceo muy suave (herida, labios) → detalles finos
+   Azul acero (adorno floral) → hover/bordes */
+:root{
+  --bg:#05060e;
+  --card:#0c0e1a;
+  --accent1:#c8c0e0;       /* lavanda pálido: piel bajo la luz, color más visible tras el negro */
+  --accent2:#e8e4f4;       /* casi blanco lavanda: luz central en la piel */
+  --accent3:#1a1c38;       /* azul-pizarra oscuro: cabello profundo */
+  --text:#f0eef8;          /* blanco frío: luz máxima */
+  --muted:#5060a0;         /* azul medianoche medio: sombras del cabello */
+  --rose:#a06070;          /* rosa grisáceo oscuro: herida, labios */
+  --steel:#2040a0;         /* azul acero: adorno floral azul */
+  --glow:rgba(200,192,224,0.28)  /* glow lavanda suave */
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden;padding-bottom:40px}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 50% 60% at 50% 50%,rgba(200,192,224,0.06) 0%,rgba(20,24,56,0.04) 50%,transparent 70%);z-index:0;pointer-events:none}
+.back-btn{position:fixed;top:1rem;left:1rem;z-index:200;background:rgba(5,6,14,0.90);border:1px solid rgba(200,192,224,0.28);color:var(--accent1);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px)}
+.header-v{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 1rem;border-bottom:1px solid rgba(200,192,224,0.12)}
+.song-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,6vw,3.5rem);font-weight:300;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.3em;margin-bottom:0.3rem}
+.artist-name{color:var(--muted);font-size:0.9rem;font-weight:300;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:1rem}
+.visualizer-wrap{display:flex;justify-content:center;align-items:flex-end;gap:3px;height:50px;padding:0 2rem;margin-top:0.5rem}
+.bar{width:4px;border-radius:2px 2px 0 0;background:linear-gradient(to top,var(--accent3),var(--accent1));opacity:0.4;height:4px}
+@keyframes wave{0%,100%{height:4px}50%{height:var(--max-h)}}
+.playing .bar{opacity:1;animation:wave var(--spd) ease-in-out infinite;animation-delay:var(--delay)}
+audio{display:none}
+.ctrl-v{position:relative;z-index:1}
+.progress-section{padding:1rem 2rem 0.5rem;max-width:780px;margin:0 auto}
+.progress-bar-wrap{width:100%;height:6px;background:var(--card);border-radius:3px;cursor:pointer;overflow:hidden;margin-bottom:0.5rem}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--muted),var(--accent1),var(--accent2));border-radius:3px;width:0%;box-shadow:0 0 10px var(--glow);pointer-events:none}
+.time-row{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--muted);font-family:'Cormorant Garamond',serif}
+.controls{display:flex;justify-content:center;gap:1rem;padding:0.8rem 2rem 0.5rem;flex-wrap:wrap}
+.btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem}
+.btn-primary{background:linear-gradient(135deg,var(--accent3),var(--muted),var(--accent1));color:white;padding:0.75rem 2rem;font-size:1rem;font-weight:700;box-shadow:0 0 20px var(--glow);min-width:130px;justify-content:center}
+.btn-primary:hover{transform:scale(1.05)}
+.btn-secondary{background:var(--card);color:var(--accent1);border:1px solid rgba(200,192,224,0.22);padding:0.75rem 1.3rem;font-size:0.9rem}
+.volume-row{display:flex;align-items:center;gap:0.6rem;justify-content:center;padding-bottom:0.5rem}
+.volume-row span{color:var(--muted);font-size:0.8rem}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100px;height:4px;border-radius:2px;background:var(--card);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent1);cursor:pointer}
+.view-toggles{display:flex;justify-content:center;gap:0.5rem;padding:0 2rem 1.2rem;flex-wrap:wrap}
+.toggle-btn{border:1px solid rgba(200,192,224,0.18);background:transparent;color:var(--muted);padding:0.35rem 1rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.78rem;transition:all 0.2s}
+.toggle-btn.active{background:rgba(200,192,224,0.08);border-color:var(--accent1);color:var(--accent1)}
+.lyrics-container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:0 1.5rem 2rem}
+.section-label{text-align:center;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);padding:1.2rem 0 0.5rem;opacity:0.5;display:flex;align-items:center;gap:0.8rem}
+.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(80,96,160,0.22)}
+.lyric-block{padding:1.2rem 1.6rem;margin-bottom:0.5rem;border-radius:16px;border:1px solid transparent;transition:all 0.4s ease;cursor:pointer;opacity:0.3}
+.lyric-block.past{opacity:0.18}
+.lyric-block.active{opacity:1;background:linear-gradient(135deg,rgba(26,28,56,0.18),rgba(200,192,224,0.06));border-color:rgba(200,192,224,0.30);box-shadow:0 0 30px rgba(200,192,224,0.12);transform:translateX(6px)}
+.lyric-es{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:600;color:var(--text);line-height:1.3;margin-bottom:0.35rem}
+.lyric-block.active .lyric-es{background:linear-gradient(90deg,var(--text),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lyric-romaji{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,2.5vw,1.25rem);color:var(--accent1);margin-bottom:0.3rem}
+.lyric-kanji{font-family:'Noto Serif JP',serif;font-size:clamp(0.95rem,2vw,1.1rem);color:var(--accent1);opacity:0.75;font-weight:400;letter-spacing:0.08em}
+body.view-es .lyric-romaji,body.view-es .lyric-kanji{display:none}
+body.view-romaji .lyric-es,body.view-romaji .lyric-kanji{display:none}
+body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
+.scroll-btn{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--muted),var(--accent1));border:none;cursor:pointer;box-shadow:0 4px 20px var(--glow);display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:all 0.2s;opacity:0.5}
+.scroll-btn:hover{transform:scale(1.1);opacity:1}.scroll-btn.active{opacity:1}
+.landscape-layout{display:none}
+/* ═══ LANDSCAPE ═══ */
+.landscape-layout{display:none}
+@media(orientation:landscape) and (max-height:600px){
+  .back-btn{display:none !important}
+  .scroll-btn{display:none !important}
+  body{padding-bottom:0;overflow:hidden;height:100dvh}
+  header,.header-v,.ctrl-v,.progress-section,.controls,.volume-row,
+  .view-toggles,#lyricsContainer,.lyrics-container{display:none !important}
+  .landscape-layout{display:flex;height:100dvh;overflow:hidden;position:relative;z-index:1}
+  .land-left{
+    width:50%;flex-shrink:0;
+    display:flex;flex-direction:column;
+    padding:0.55rem 0.8rem;
+    border-right:1px solid rgba(200,192,224,0.12);
+    background:rgba(5,6,14,0.75);backdrop-filter:blur(12px);
+    gap:0.3rem;overflow:hidden
+  }
+  .land-back-btn{
+    display:inline-flex;align-items:center;gap:0.3rem;
+    text-decoration:none;color:var(--accent1);
+    background:rgba(200,192,224,0.06);border:1px solid rgba(200,192,224,0.18);
+    border-radius:999px;padding:0.2rem 0.65rem;
+    font-size:0.62rem;font-family:'Cormorant Garamond',serif;
+    letter-spacing:0.05em;transition:all 0.2s;align-self:flex-start;flex-shrink:0
+  }
+  .land-back-btn:hover{background:rgba(32,64,160,0.14);border-color:var(--steel)}
+  .land-title{font-family:'Cormorant Garamond',serif;font-size:0.9rem;font-weight:600;
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .land-artist{font-size:0.54rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:0.05rem}
+  .land-viz{display:flex;align-items:flex-end;gap:2px;height:22px}
+  .land-viz .bar{width:3px}
+  .land-progress-wrap{width:100%;height:4px;background:var(--card);border-radius:2px;cursor:pointer;overflow:hidden}
+  .land-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--muted),var(--accent1),var(--accent2));border-radius:2px;width:0%;pointer-events:none}
+  .land-time{display:flex;justify-content:space-between;font-size:0.58rem;color:var(--muted);font-family:'Cormorant Garamond',serif}
+  .land-btn-row{display:flex;gap:0.4rem}
+  .land-btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.7rem;padding:0.32rem 0.6rem;flex:1;text-align:center;transition:all 0.2s}
+  .land-btn-play{background:linear-gradient(135deg,var(--accent3),var(--muted),var(--accent1));color:white;font-weight:700;box-shadow:0 0 10px var(--glow)}
+  .land-btn-reset{background:var(--card);color:var(--accent1);border:1px solid rgba(200,192,224,0.18)}
+  .land-vol-row{display:flex;align-items:center;gap:0.3rem}
+  .land-vol-row span{color:var(--muted);font-size:0.62rem}
+  .land-vol{-webkit-appearance:none;appearance:none;flex:1;height:3px;border-radius:2px;background:var(--card);outline:none;cursor:pointer}
+  .land-vol::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--accent1);cursor:pointer}
+  .land-toggles{display:flex;flex-wrap:wrap;gap:0.22rem}
+  .land-toggle{border:1px solid rgba(200,192,224,0.14);background:transparent;color:var(--muted);padding:0.18rem 0.45rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.58rem;transition:all 0.2s}
+  .land-toggle.active{background:rgba(200,192,224,0.08);border-color:var(--accent1);color:var(--accent1)}
+  .land-nav-row{
+    display:flex;gap:0.4rem;
+    padding-top:0.3rem;border-top:1px solid rgba(80,96,160,0.18);
+    flex-shrink:0;margin-top:auto
+  }
+  .land-nav-btn{
+    display:flex;align-items:center;gap:0;flex:1;
+    text-decoration:none;
+    background:rgba(200,192,224,0.03);border:1px solid rgba(200,192,224,0.10);
+    border-radius:8px;overflow:hidden;
+    transition:all 0.2s;min-width:0;height:38px
+  }
+  .land-nav-btn:hover{border-color:var(--steel);box-shadow:0 0 14px rgba(32,64,160,0.22)}
+  .land-nav-btn:hover .land-nav-arrow{background:rgba(32,64,160,0.16);color:var(--accent2)}
+  .land-nav-arrow{
+    display:flex;align-items:center;justify-content:center;
+    width:24px;flex-shrink:0;height:100%;
+    background:rgba(200,192,224,0.06);
+    color:var(--accent1);font-size:0.85rem;
+    border-right:1px solid rgba(200,192,224,0.10);
+    transition:all 0.2s
+  }
+  .land-nav-next .land-nav-arrow{border-right:none;border-left:1px solid rgba(200,192,224,0.10)}
+  .land-nav-img{width:38px;height:38px;object-fit:cover;flex-shrink:0;display:block}
+  .land-nav-fallback{
+    width:38px;height:38px;flex-shrink:0;
+    background:rgba(160,96,112,0.10);
+    display:none;align-items:center;justify-content:center;
+    font-size:1rem;color:var(--rose)
+  }
+  .land-nav-label{
+    display:flex;flex-direction:column;min-width:0;overflow:hidden;
+    padding:0 0.3rem;flex:1
+  }
+  .land-nav-dir{font-size:0.44rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap}
+  .land-nav-name{font-size:0.58rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Cormorant Garamond',serif;font-weight:600}
+  .land-nav-next{flex-direction:row-reverse}
+  .land-nav-next .land-nav-label{align-items:flex-end;text-align:right}
+  .land-right{flex:1;overflow-y:auto;padding:0.5rem 0.8rem 0.5rem 0.7rem;scroll-behavior:smooth}
+  .land-right::-webkit-scrollbar{width:2px}
+  .land-right::-webkit-scrollbar-thumb{background:rgba(160,96,112,0.32);border-radius:2px}
+  .land-right .section-label{font-size:0.52rem;padding:0.5rem 0 0.25rem;opacity:0.38}
+  .land-right .lyric-block{padding:0.38rem 0.6rem;margin-bottom:0.18rem;border-radius:9px}
+  .land-right .lyric-es{font-size:0.88rem;margin-bottom:0.12rem;line-height:1.25}
+  .land-right .lyric-romaji{font-size:0.72rem;margin-bottom:0.08rem}
+  .land-right .lyric-kanji{font-size:0.66rem}
+  .land-right .lyric-block.active{transform:translateX(3px)}
+}
+</style>
+</head>
+<body>
+<a class="back-btn" href="zero.html">← Volver</a>
+<audio id="audio" src="0-m.mp3" preload="auto"></audio>
+<div class="header-v">
+  <div class="song-title">0 · Zero</div>
+  <div class="artist-name">Ado · 2022</div>
+  <div class="visualizer-wrap" id="vizV"></div>
+</div>
+<div class="ctrl-v">
+  <div class="progress-section">
+    <div class="progress-bar-wrap" id="pbV"><div class="progress-fill" id="pfV"></div></div>
+    <div class="time-row"><span id="tnV">0:00</span><span id="ttV">—</span></div>
+  </div>
+  <div class="controls">
+    <button class="btn btn-primary" id="playV">▶ Play</button>
+    <button class="btn btn-secondary" id="resetV">↩ Reinicio</button>
+  </div>
+  <div class="volume-row"><span>🔈</span><input type="range" id="volV" min="0" max="1" step="0.05" value="0.8"><span>🔊</span></div>
+  <div class="view-toggles">
+    <button class="toggle-btn active" data-view="all">Todo</button>
+    <button class="toggle-btn" data-view="es">Español</button>
+    <button class="toggle-btn" data-view="romaji">Romaji</button>
+    <button class="toggle-btn" data-view="kanji">日本語</button>
+  </div>
+</div>
+<div class="lyrics-container" id="lyricsV"></div>
+<button class="scroll-btn" id="scrollBtn">♪</button>
+<div class="landscape-layout">
+  <div class="land-left">
+    <a class="land-back-btn" href="zero.html">← Volver</a>
+    <div class="land-title" id="landTitle"></div>
+    <div class="land-artist" id="landArtist"></div>
+    <div class="land-viz" id="vizL"></div>
+    <div class="land-progress-wrap" id="pbL"><div class="land-progress-fill" id="pfL"></div></div>
+    <div class="land-time"><span id="tnL">0:00</span><span id="ttL">—</span></div>
+    <div class="land-btn-row">
+      <button class="land-btn land-btn-play" id="playL">▶</button>
+      <button class="land-btn land-btn-reset" id="resetL">↩</button>
+    </div>
+    <div class="land-vol-row"><span>🔈</span><input type="range" class="land-vol" id="volL" min="0" max="1" step="0.05" value="0.8"><span>🔊</span></div>
+    <div class="land-toggles">
+      <button class="land-toggle active" data-view="all">Todo</button>
+      <button class="land-toggle" data-view="es">ES</button>
+      <button class="land-toggle" data-view="romaji">Roma</button>
+      <button class="land-toggle" data-view="kanji">JP</button>
+    </div>
+    <div class="land-nav-row">
+      <a class="land-nav-btn land-nav-prev" href="dignity-letras.html">
+        <div class="land-nav-arrow">←</div>
+        <img class="land-nav-img" src="Di-p.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="land-nav-fallback">♪</div>
+        <div class="land-nav-label"><span class="land-nav-dir">Anterior</span><span class="land-nav-name">DIGNITY</span></div>
+      </a>
+      <a class="land-nav-btn land-nav-next" href="vivarium-letras.html">
+        <div class="land-nav-arrow">→</div>
+        <img class="land-nav-img" src="vivarium-cover.jpg" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="land-nav-fallback">♪</div>
+        <div class="land-nav-label"><span class="land-nav-dir">Siguiente</span><span class="land-nav-name">Vivarium</span></div>
+      </a>
+    </div>
+  </div>
+  <div class="land-right" id="lyricsL"></div>
+</div>
+<script>
+const LYRICS=[
+  {t:10.92, es:'Ah, en el colmo del éxtasis, embriagada a diestra y siniestra,', ro:'Aa, tōsui no kiwami, etsu ni hitari migi hidari,', kj:'嗚呼、陶酔の極み、悦に浸り右左、'},
+  {t:13.66, es:'Una capacidad rellena de ficción,', ro:'Kyokō de umaru kyapashiti,', kj:'虚構で埋まるキャパシティ、'},
+  {t:15.07, es:'Parece que QWERTY es tu única arma ← realidad, ja.', ro:'QWERTY dake ga buki rashii ← riaritī, wara', kj:'QWERTYだけが武器らしい←リアリティ、笑'},
+  {t:16.55, es:'¿Y qué? ¿Solo tú tienes la razón?', ro:'Nde nani, omae dake ga tadashii?', kj:'んで何、お前だけが正しい？'},
+  {t:19.36, es:'Qué vacío, un ego que no puede aceptar la imperfección,', ro:'Munashii ne, fukanzen wo kōtei dekinai ego no katamari,', kj:'虚しいね、不完全を肯定できないエゴの塊、'},
+  {t:21.80, es:'«¡Esto, eso es la respuesta correcta absoluta!»', ro:'"Kore, sore ga zettai seikai desu!"', kj:'「コレ、ソレが絶対正解です！」'},
+  {t:23.27, es:'Proclamando cosas así todos los días,', ro:'Toka nantoka notte wa mainichi,', kj:'とかなんとか宣っては毎日、'},
+  {t:24.63, es:'Vendiendo a trozos una fachada hiper-potenciada,', ro:'Hyper na furonto wo kiuri,', kj:'Hyperなフロントを切り売り、'},
+  {t:25.81, es:'Toda responsabilidad, abandonada.', ro:'Sekinin wa issai gassai hōchi.', kj:'責任は一切合切放置。'},
+  {t:27.47, es:'Recogiendo solo la superficie como un adulto hecho y derecho,', ro:'Hyōsō dake ichinimae ni sukutteru,', kj:'表層だけ一人前に掬ってる、'},
+  {t:28.95, es:'La lógica del coleccionista de datos,', ro:'Dēta korekutā no dōri,', kj:'データコレクターの道理、'},
+  {t:30.32, es:'Hace mucho, solo atropellando y dando vueltas,', ro:'Tōni, hiki mawasu dake mawasare,', kj:'とうに、轢き回すだけ回され、'},
+  {t:31.50, es:'El orgullo agitado de la generación del año 2000.', ro:'Areta zero-zero sedai no kyōji.', kj:'荒れた00世代の矜持。'},
+  {t:33.65, es:'Me cuesta escribir lo que siento por dentro,', ro:'Shinchū wo tsuzuru ni wa komaru,', kj:'心中を綴るには困る、'},
+  {t:35.02, es:'El margen es demasiado estrecho,', ro:'Dō ni mo semasugiru yohaku,', kj:'どうにも狭すぎる余白、'},
+  {t:36.47, es:'No parece cosa de preocupaciones sin fundamento,', ro:'Kiyū de wa sumanasou na,', kj:'杞憂では済まなそうな、'},
+  {t:37.71, es:'Masticando una sociedad de brutalidad,', ro:'Burūtaritī na shakai wo soshaku,', kj:'ブルータリティな社会を咀嚼、'},
+  {t:39.16, es:'Con una mentalidad sin resiliencia,', ro:'Jinsei no iro wo burū ni kogasu,', kj:'靭性ないメンタリティで、'},
+  {t:40.59, es:'Chamuscando de azul el color de la vida,', ro:'Jinsei no iro wo burū ni kogasu,', kj:'人生の色をブルーに焦がす、'},
+  {t:42.10, es:'Sin saber siquiera dónde estoy ahora,', ro:'Genzaichi mo fumei no mama,', kj:'現在地も不明なまま、'},
+  {t:43.17, es:'Avanzo por el camino que surgió por casualidad.', ro:'Gūzen dekita michi wo susumu.', kj:'偶然できた道を進む。'},
+  {t:44.30, es:'Fallible', ro:'Fallible', kj:'Fallible'},
+  {t:47.23, es:'Fallible', ro:'Fallible', kj:'Fallible'},
+  {t:50.01, es:'Fallible', ro:'Fallible', kj:'Fallible'},
+  {t:52.71, es:'Fallible', ro:'Fallible', kj:'Fallible'},
+  {t:54.38, es:'En el juego de la vida, somos falibles', ro:'In life\'s gamble, we are fallible', kj:'In life\'s gamble, we are fallible'},
+  {t:58.40, es:'Fallible', ro:'Fallible', kj:'Fallible'},
+  {t:61.25, es:'Fallible', ro:'Fallible', kj:'Fallible'},
+  {t:64.25, es:'Fallible', ro:'Fallible', kj:'Fallible'},
+  {t:65.56, es:'En el juego de la vida, somos falibles', ro:'In life\'s gamble, we are fallible', kj:'In life\'s gamble, we are fallible'},
+  {t:67.25, es:'Algo como la rectitud que habita en las cosas,', ro:'Nani ka ni yadoru tadashisa nante,', kj:'何かに宿る正しさなんて、'},
+  {t:68.89, es:'En realidad no existe,', ro:'Hontou wa nain da tte,', kj:'本当は無いんだって、'},
+  {t:69.92, es:'No es algo que exista, sino algo por lo que se reza,', ro:'Aru mono ja naku inoru mono nan da tte,', kj:'在るものじゃなく祈るものなんだって、'},
+  {t:71.33, es:'Incluso ahora, porque estoy rezando para «ser correcto»,', ro:'Ima datte, "tadashiku are" to inotte iru kara,', kj:'今だって、「正しくあれ」と祈っているから、'},
+  {t:73.63, es:'Voy a empezar desde cero,', ro:'Zero kara yatte iku kara,', kj:'0からやっていくから、'},
+  {t:75.18, es:'Voy a cargarlo todo,', ro:'Zenbu kakaete iku kara,', kj:'全部抱えていくから、'},
+  {t:76.53, es:'Por eso voy sin miedo más allá.', ro:'Sono ue wo kowagara zu iku kara.', kj:'その上を怖がらず行くから。'},
+  {t:78.90, es:'Siempre revisando mi manera de hacer las cosas,', ro:'Tsune ni minaoshite iku jibun no yarikata,', kj:'常に見直していく自分のやり方、'},
+  {t:80.92, es:'Ey, esta forma de ser que acepta también al que está del otro lado,', ro:'Ey, hantai gawa ni iru yatsu mo ukeireru kono arikata,', kj:'Ey, 反対側に居る奴も受け入れるこの在り方、'},
+  {t:83.83, es:'Ah, este corazón que late en medio del bullicio,', ro:'Aa, kensou no naka ni aru kono shinzou,', kj:'嗚呼、喧騒の最中にあるこの心臓、'},
+  {t:85.99, es:'De él extraigo la voluntad,', ro:'Kara kunde iku ishi,', kj:'から汲んでいく意志、'},
+  {t:87.07, es:'El orgullo de la generación del año 2000 que coexiste con la contradicción.', ro:'Mujun to kyōzon shite iku zero-zero sedai no kyōji.', kj:'矛盾と共存していく00世代の矜持。'},
+  {t:112.15, es:'Me cuesta escribir lo que siento por dentro,', ro:'Shinchū wo tsuzuru ni wa komaru,', kj:'心中を綴るには困る、'},
+  {t:113.79, es:'El margen es demasiado estrecho,', ro:'Dō ni mo semasugiru yohaku,', kj:'どうにも狭すぎる余白、'},
+  {t:115.03, es:'No parece cosa de preocupaciones sin fundamento,', ro:'Kiyū de wa sumanasou na,', kj:'杞憂では済まなそうな、'},
+  {t:116.28, es:'Masticando una sociedad de brutalidad,', ro:'Burūtaritī na shakai wo soshaku,', kj:'ブルータリティな社会を咀嚼、'},
+  {t:117.76, es:'Con una mentalidad sin resiliencia,', ro:'Jinsei no iro wo burū ni kogasu,', kj:'靭性ないメンタリティで、'},
+  {t:119.05, es:'Chamuscando de azul el color de la vida,', ro:'Jinsei no iro wo burū ni kogasu,', kj:'人生の色をブルーに焦がす、'},
+  {t:120.73, es:'Sin saber siquiera dónde estoy ahora,', ro:'Genzaichi mo fumei no mama,', kj:'現在地も不明なまま、'},
+  {t:121.85, es:'Avanzo por el camino que surgió por casualidad.', ro:'Gūzen dekita michi wo susumu.', kj:'偶然できた道を進む。'},
+  {t:123.24, es:'Estoy buscando la dirección hacia la que apunta este corazón,', ro:'Sagashite iru, kono shinzou no muku hōkō wo,', kj:'探している、この心臓の向く方向を、'},
+  {t:127.90, es:'Solo deseo poder afirmarlo algún día.', ro:'Tada tada negatte iru, itsuka kōtei dekiru you ni.', kj:'ただただ願っている、いつか肯定できるように。'},
+  {t:134.26, es:'Hola, luz que se apagó sin que me diera cuenta,', ro:'Harō, shirazu ushinatta tomoshi yo,', kj:'ハロー、知らず失った灯よ、'},
+  {t:137.77, es:'Campo de visión que olvidé.', ro:'Wasurete shimatta shikai yo.', kj:'忘れてしまった視界よ。'},
+  {t:140.51, es:'Incluso ahora que ya no entiendo nada,', ro:'Nani mo wakaranaku natta ima mo,', kj:'何も分からなくなった今も、'},
+  {t:143.08, es:'Solo la plegaria sigue resonando sin cambiar.', ro:'Inori dake wa kawarazu hibite iru.', kj:'祈りだけは変わらず響いている。'},
+  {t:166.56, es:'En el juego de la vida, somos falibles', ro:'In life\'s gamble, we are fallible', kj:'In life\'s gamble, we are fallible'},
+  {t:170.81, es:'Fallible', ro:'Fallible', kj:'Fallible'},
+  {t:173.54, es:'Fallible', ro:'Fallible', kj:'Fallible'},
+  {t:176.41, es:'Fallible', ro:'Fallible', kj:'Fallible'},
+  {t:177.97, es:'En el juego de la vida, somos falibles', ro:'In life\'s gamble, we are fallible', kj:'In life\'s gamble, we are fallible'}
+];
+</script>
+<script>
+(function(){
+  const audio=document.getElementById('audio');let activeIdx=-1;
+  function buildLyrics(container){let curSec=null;LYRICS.forEach((line,i)=>{if(line.section!==curSec){curSec=line.section;const sl=document.createElement('div');sl.className='section-label';sl.innerHTML=`<span>${line.section}</span>`;container.appendChild(sl);}const b=document.createElement('div');b.className='lyric-block';b.dataset.idx=i;let h='';if(line.es)h+=`<div class="lyric-es">${line.es}</div>`;if(line.ro)h+=`<div class="lyric-romaji">${line.ro}</div>`;if(line.kj)h+=`<div class="lyric-kanji">${line.kj}</div>`;b.innerHTML=h;b.addEventListener('click',()=>{audio.currentTime=line.t;});container.appendChild(b);});}
+  buildLyrics(document.getElementById('lyricsV'));buildLyrics(document.getElementById('lyricsL'));
+  const fmt=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+  const scrollBtn=document.getElementById('scrollBtn');
+  function setProgress(t){const pct=(audio.duration?(t/audio.duration*100):0)+'%';document.getElementById('pfV').style.width=pct;document.getElementById('pfL').style.width=pct;document.getElementById('tnV').textContent=fmt(t);document.getElementById('tnL').textContent=fmt(t);}
+  function updateActive(t){setProgress(t);let newActive=-1;for(let i=0;i<LYRICS.length;i++){if(t>=LYRICS[i].t)newActive=i;}if(newActive===activeIdx)return;activeIdx=newActive;['lyricsV','lyricsL'].forEach(id=>{const blocks=document.getElementById(id).querySelectorAll('.lyric-block');blocks.forEach((b,i)=>{b.classList.toggle('active',i===activeIdx);b.classList.toggle('past',i<activeIdx);});if(activeIdx>=0&&blocks[activeIdx]){if(id==='lyricsL'){const lr=document.getElementById('lyricsL');lr.scrollTo({top:blocks[activeIdx].offsetTop-lr.clientHeight/2,behavior:'smooth'});}else{blocks[activeIdx].scrollIntoView({behavior:'smooth',block:'center'});}}});scrollBtn.classList.toggle('active',activeIdx>=0);}
+  audio.addEventListener('loadedmetadata',()=>{const d=fmt(audio.duration);document.getElementById('ttV').textContent=d;document.getElementById('ttL').textContent=d;});
+  audio.addEventListener('timeupdate',()=>updateActive(audio.currentTime));
+  audio.addEventListener('ended',()=>{document.body.classList.remove('is-playing');['vizV','vizL'].forEach(id=>document.getElementById(id).classList.remove('playing'));document.getElementById('playV').textContent='▶ Play';document.getElementById('playL').textContent='▶';scrollBtn.classList.remove('active');});
+  ['pbV','pbL'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{const r=e.currentTarget.getBoundingClientRect();audio.currentTime=((e.clientX-r.left)/r.width)*(audio.duration||0);});});
+  function togglePlay(){if(audio.paused){audio.play();document.getElementById('playV').textContent='⏸ Pausa';document.getElementById('playL').textContent='⏸';document.body.classList.add('is-playing');['vizV','vizL'].forEach(id=>document.getElementById(id).classList.add('playing'));}else{audio.pause();document.getElementById('playV').textContent='▶ Play';document.getElementById('playL').textContent='▶';document.body.classList.remove('is-playing');['vizV','vizL'].forEach(id=>document.getElementById(id).classList.remove('playing'));}}
+  function doReset(){audio.pause();audio.currentTime=0;activeIdx=-1;document.getElementById('playV').textContent='▶ Play';document.getElementById('playL').textContent='▶';document.body.classList.remove('is-playing');['vizV','vizL'].forEach(id=>document.getElementById(id).classList.remove('playing'));['lyricsV','lyricsL'].forEach(id=>{document.getElementById(id).querySelectorAll('.lyric-block').forEach(b=>b.classList.remove('active','past'));});scrollBtn.classList.remove('active');window.scrollTo({top:0,behavior:'smooth'});}
+  document.getElementById('playV').addEventListener('click',togglePlay);document.getElementById('playL').addEventListener('click',togglePlay);
+  document.getElementById('resetV').addEventListener('click',doReset);document.getElementById('resetL').addEventListener('click',doReset);
+  document.getElementById('volV').addEventListener('input',e=>{audio.volume=parseFloat(e.target.value);document.getElementById('volL').value=e.target.value;});
+  document.getElementById('volL').addEventListener('input',e=>{audio.volume=parseFloat(e.target.value);document.getElementById('volV').value=e.target.value;});
+  audio.volume=0.8;
+  scrollBtn.addEventListener('click',()=>{const blocks=document.getElementById('lyricsV').querySelectorAll('.lyric-block');if(activeIdx>=0&&blocks[activeIdx])blocks[activeIdx].scrollIntoView({behavior:'smooth',block:'center'});});
+  function setView(v){document.body.className=document.body.className.replace(/\bview-\S+/g,'').trim();if(v!=='all')document.body.classList.add('view-'+v);if(!audio.paused)document.body.classList.add('is-playing');}
+  document.querySelectorAll('.toggle-btn').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.land-toggle').forEach(b=>{b.classList.toggle('active',b.dataset.view===btn.dataset.view);});setView(btn.dataset.view);});});
+  document.querySelectorAll('.land-toggle').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.land-toggle').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.toggle-btn').forEach(b=>{b.classList.toggle('active',b.dataset.view===btn.dataset.view);});setView(btn.dataset.view);});});
+  ['vizV','vizL'].forEach(id=>{const vizEl=document.getElementById(id);const count=id==='vizL'?24:48;for(let i=0;i<count;i++){const bar=document.createElement('div');bar.className='bar';const mh=8+Math.sin(i*0.4)*22+Math.random()*16;bar.style.cssText=`--max-h:${mh}px;--spd:${0.4+Math.random()*0.8}s;--delay:${(i/count)*-1.2}s;`;vizEl.appendChild(bar);}});
+})();
+</script>
+<script>
+(function(){
+  var audio=document.getElementById('audio');
+  if(!audio) return;
+  // Copiar título y artista
+  var st=document.querySelector('.song-title');var an=document.querySelector('.artist-name');
+  var lt=document.getElementById('landTitle');var la=document.getElementById('landArtist');
+  if(st&&lt) lt.textContent=st.textContent;
+  if(an&&la) la.textContent=an.textContent;
+  // Build letras landscape
+  var lyricsL=document.getElementById('lyricsL');
+  if(lyricsL&&typeof LYRICS!=='undefined'){
+    var curSec=null;
+    LYRICS.forEach(function(line,i){
+      if(line.section!==curSec){curSec=line.section;var sl=document.createElement('div');sl.className='section-label';sl.innerHTML='<span>'+line.section+'</span>';lyricsL.appendChild(sl);}
+      var b=document.createElement('div');b.className='lyric-block';
+      var h='';
+      if(line.es) h+='<div class="lyric-es">'+line.es+'</div>';
+      if(line.ro&&line.ro!=='—') h+='<div class="lyric-romaji">'+line.ro+'</div>';
+      if(line.kj&&line.kj!=='—') h+='<div class="lyric-kanji">'+line.kj+'</div>';
+      b.innerHTML=h;
+      b.addEventListener('click',function(){audio.currentTime=line.t;});
+      lyricsL.appendChild(b);
+    });
+  }
+  var pfL=document.getElementById('pfL'),tnL=document.getElementById('tnL'),ttL=document.getElementById('ttL');
+  var pbL=document.getElementById('pbL'),playL=document.getElementById('playL'),resetL=document.getElementById('resetL');
+  var volL=document.getElementById('volL'),vizL=document.getElementById('vizL');
+  var activeIdxL=-1;
+  var fmt=function(s){return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');};
+  function syncL(t){
+    if(!lyricsL||typeof LYRICS==='undefined') return;
+    if(pfL) pfL.style.width=(audio.duration?(t/audio.duration*100):0)+'%';
+    if(tnL) tnL.textContent=fmt(t);
+    var na=-1; for(var i=0;i<LYRICS.length;i++){if(t>=LYRICS[i].t)na=i;}
+    if(na===activeIdxL) return;
+    activeIdxL=na;
+    var blocks=lyricsL.querySelectorAll('.lyric-block');
+    blocks.forEach(function(b,i){b.classList.toggle('active',i===activeIdxL);b.classList.toggle('past',i<activeIdxL);});
+    if(activeIdxL>=0&&blocks[activeIdxL]) lyricsL.scrollTo({top:blocks[activeIdxL].offsetTop-lyricsL.clientHeight/2,behavior:'smooth'});
+  }
+  audio.addEventListener('timeupdate',function(){syncL(audio.currentTime);});
+  audio.addEventListener('loadedmetadata',function(){if(ttL)ttL.textContent=fmt(audio.duration);});
+  audio.addEventListener('ended',function(){if(vizL)vizL.classList.remove('playing');if(playL)playL.textContent='▶';});
+  if(pbL) pbL.addEventListener('click',function(e){var r=pbL.getBoundingClientRect();audio.currentTime=((e.clientX-r.left)/r.width)*(audio.duration||0);});
+  if(playL) playL.addEventListener('click',function(){
+    if(audio.paused){
+      audio.play();
+      playL.textContent='⏸';
+      document.getElementById('playV').textContent='⏸ Pausa';
+      document.body.classList.add('is-playing');
+      ['vizV','vizL'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.add('playing');});
+    } else {
+      audio.pause();
+      playL.textContent='▶';
+      document.getElementById('playV').textContent='▶ Play';
+      document.body.classList.remove('is-playing');
+      ['vizV','vizL'].forEach(function(id){var el=document.getElementById(id);if(el)el.classList.remove('playing');});
+    }
+  });
+  if(resetL) resetL.addEventListener('click',function(){
+    audio.pause();audio.currentTime=0;activeIdxL=-1;
+    if(playL)playL.textContent='▶';if(vizL)vizL.classList.remove('playing');
+    if(lyricsL)lyricsL.querySelectorAll('.lyric-block').forEach(function(b){b.classList.remove('active','past');});
+    var rv=document.getElementById('resetBtn')||document.getElementById('resetV');if(rv)rv.click();
+  });
+  if(volL) volL.addEventListener('input',function(e){
+    audio.volume=parseFloat(e.target.value);
+    var vv=document.getElementById('vol')||document.getElementById('volV');if(vv)vv.value=e.target.value;
+  });
+  document.querySelectorAll('.land-toggle').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      document.querySelectorAll('.land-toggle').forEach(function(b){b.classList.remove('active');});
+      btn.classList.add('active');
+      var v=btn.dataset.view;
+      document.body.className=document.body.className.replace(/view-\S+/g,'').trim();
+      if(v!=='all') document.body.classList.add('view-'+v);
+      document.querySelectorAll('.toggle-btn').forEach(function(b){b.classList.toggle('active',b.dataset.view===v);});
+    });
+  });
+  if(vizL){for(var i=0;i<24;i++){var bar=document.createElement('div');bar.className='bar';var mh=8+Math.sin(i*0.4)*22+Math.random()*16;bar.style.cssText='--max-h:'+mh+'px;--spd:'+(0.4+Math.random()*0.8)+'s;--delay:'+((i/24)*-1.2)+'s;';vizL.appendChild(bar);}}
+})();
+</script>
+</body>
+</html>
