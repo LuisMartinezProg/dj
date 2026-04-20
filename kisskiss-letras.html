@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ヒマワリ · Himawari — Música</title>
+<title>kissKisskiss — Música</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0c0e04;--card:#181c06;--accent1:#f0c800;--accent2:#ffe880;--accent3:#3a5010;--text:#fffce8;--muted:#5a5010;--glow:rgba(240,200,0,0.35)}
+:root{--bg:#1a0808;--card:#280c0c;--accent1:#f07070;--accent2:#ffc0b0;--accent3:#602020;--text:#fff0ee;--muted:#602020;--glow:rgba(240,112,112,0.35)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden;padding-bottom:40px}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 20%,rgba(180,150,0,0.10) 0%,transparent 60%);z-index:0;pointer-events:none}
-.back-btn{position:fixed;top:1rem;left:1rem;z-index:100;background:rgba(12,14,4,0.85);border:1px solid rgba(240,200,0,0.3);color:var(--accent1);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px);transition:all 0.2s}
-header{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 1rem;border-bottom:1px solid rgba(240,200,0,0.15)}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 20%,rgba(200,60,60,0.10) 0%,transparent 60%);z-index:0;pointer-events:none}
+.back-btn{position:fixed;top:1rem;left:1rem;z-index:100;background:rgba(26,8,8,0.85);border:1px solid rgba(240,112,112,0.3);color:var(--accent1);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px);transition:all 0.2s}
+header{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 1rem;border-bottom:1px solid rgba(240,112,112,0.15)}
 .song-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.05em;margin-bottom:0.3rem}
 .artist-name{color:var(--muted);font-size:0.9rem;font-weight:300;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:1rem}
 .visualizer-wrap{display:flex;justify-content:center;align-items:flex-end;gap:3px;height:50px;padding:0 2rem;margin-top:0.5rem}
@@ -27,20 +27,20 @@ audio{display:none}
 .btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem}
 .btn-primary{background:linear-gradient(135deg,var(--accent3),var(--accent1));color:white;padding:0.75rem 2rem;font-size:1rem;font-weight:700;box-shadow:0 0 20px var(--glow);min-width:130px;justify-content:center}
 .btn-primary:hover{transform:scale(1.05)}
-.btn-secondary{background:var(--card);color:var(--accent1);border:1px solid rgba(240,200,0,0.3);padding:0.75rem 1.3rem;font-size:0.9rem}
+.btn-secondary{background:var(--card);color:var(--accent1);border:1px solid rgba(240,112,112,0.3);padding:0.75rem 1.3rem;font-size:0.9rem}
 .volume-row{display:flex;align-items:center;gap:0.6rem;justify-content:center;padding-bottom:0.5rem;position:relative;z-index:1}
 .volume-row span{color:var(--muted);font-size:0.8rem}
 input[type=range]{-webkit-appearance:none;appearance:none;width:100px;height:4px;border-radius:2px;background:var(--card);outline:none;cursor:pointer}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent1);cursor:pointer}
 .view-toggles{position:relative;z-index:1;display:flex;justify-content:center;gap:0.5rem;padding:0 2rem 1.2rem;flex-wrap:wrap}
-.toggle-btn{border:1px solid rgba(240,200,0,0.25);background:transparent;color:var(--muted);padding:0.35rem 1rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.78rem;transition:all 0.2s}
-.toggle-btn.active{background:rgba(240,200,0,0.12);border-color:var(--accent1);color:var(--accent1)}
+.toggle-btn{border:1px solid rgba(240,112,112,0.25);background:transparent;color:var(--muted);padding:0.35rem 1rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.78rem;transition:all 0.2s}
+.toggle-btn.active{background:rgba(240,112,112,0.12);border-color:var(--accent1);color:var(--accent1)}
 .lyrics-container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:0 1.5rem 2rem}
 .section-label{text-align:center;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);padding:1.2rem 0 0.5rem;opacity:0.5;display:flex;align-items:center;gap:0.8rem}
-.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(240,200,0,0.15)}
+.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(240,112,112,0.15)}
 .lyric-block{padding:1.2rem 1.6rem;margin-bottom:0.5rem;border-radius:16px;border:1px solid transparent;transition:all 0.4s ease;cursor:pointer;opacity:0.3}
 .lyric-block.past{opacity:0.18}
-.lyric-block.active{opacity:1;background:linear-gradient(135deg,rgba(80,60,0,0.12),rgba(240,200,0,0.07));border-color:rgba(240,200,0,0.35);box-shadow:0 0 30px rgba(180,150,0,0.15);transform:translateX(6px)}
+.lyric-block.active{opacity:1;background:linear-gradient(135deg,rgba(120,20,20,0.12),rgba(240,112,112,0.07));border-color:rgba(240,112,112,0.35);box-shadow:0 0 30px rgba(200,60,60,0.15);transform:translateX(6px)}
 .lyric-es{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:600;color:var(--text);line-height:1.3;margin-bottom:0.35rem}
 .lyric-block.active .lyric-es{background:linear-gradient(90deg,var(--text),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .lyric-romaji{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,2.5vw,1.25rem);color:var(--accent2);margin-bottom:0.3rem}
@@ -149,11 +149,11 @@ body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
 </style>
 </head>
 <body>
-<a class="back-btn" href="himawari.html">← Volver</a>
-<audio id="audio" src="Hi-m.mp3" preload="auto"></audio>
+<a class="back-btn" href="kisskiss.html">← Volver</a>
+<audio id="audio" src="K-m.mp3" preload="auto"></audio>
 <header>
-  <div class="song-title">ヒマワリ · Himawari</div>
-  <div class="artist-name">Ado · 2022</div>
+  <div class="song-title">kissKisskiss</div>
+  <div class="artist-name">Akasaki · 2023</div>
   <div class="visualizer-wrap" id="visualizer"></div>
 </header>
 <div class="progress-section">
@@ -178,55 +178,38 @@ body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
 
 <script>
 const LYRICS=[
-  {t:13.19, ro:'Suki na noni "waruku nai" to', kj:'好きなのに「悪くない」と', es:'Aunque te quiero, «no está mal»'},
-  {t:17.89, ro:'Sunao ni yorokobe nai watashi ni', kj:'素直に喜べない私に', es:'Para mí que no puedo alegrarme sin reservas'},
-  {t:23.28, ro:'Natsu no hi no umi mi nagara', kj:'夏の日の海見ながら', es:'Mirando el mar en un día de verano'},
-  {t:27.61, ro:'"Rashikute ii ne" to waraikaketa', kj:'「らしくていいね」と笑いかけた', es:'Me sonreíste diciendo «te queda bien ser así»'},
-  {t:33.54, ro:'Taiyou ga terashi sugite mo', kj:'太陽が照らしすぎても', es:'Aunque el sol brille demasiado'},
-  {t:42.32, ro:'Namida ga kareru made', kj:'涙が枯れるまで', es:'Hasta que se sequen las lágrimas'},
-  {t:46.92, ro:'Yorisoi ai sasaete kureta', kj:'寄り添い合い支えてくれた', es:'Me sostuviste arrimándote a mí'},
-  {t:53.18, ro:'Aa himawari no you ni saite', kj:'ああ 向日葵のように咲いて', es:'Ah, florecer como un girasol'},
-  {t:56.20, ro:'Ten wo aoide waratte', kj:'天を仰いで笑って', es:'Mirar al cielo y reír'},
-  {t:58.66, ro:'Tada massugu na', kj:'ただ真っ直ぐな', es:'Solo recto hacia adelante'},
-  {t:61.06, ro:'Anata no you ni naritai', kj:'あなたのようになりたい', es:'Quiero ser como tú'},
-  {t:63.75, ro:'Okubyou na watashi mo', kj:'臆病な私も', es:'Incluso yo, que soy cobarde'},
-  {t:66.35, ro:'Sukoshi dake senobi shite', kj:'少しだけ背伸びして', es:'Esforzándome un poquito más'},
-  {t:68.98, ro:'Hikari no sasu hou e aruite ikou oh', kj:'光の差す方へ歩いて行こう oh', es:'Voy a caminar hacia donde brilla la luz, oh'},
-  {t:84.03, ro:'"Moshi itsuka umarekawaru', kj:'「もしいつか生まれ変わる', es:'«Si algún día renazco'},
-  {t:88.83, ro:'Toki ga kite mo mata watashi ga ii"', kj:'時が来てもまた私がいい」', es:'cuando llegue ese momento, quiero ser yo de nuevo»'},
-  {t:94.03, ro:'Sou yatte mayoi mo naku', kj:'そうやって迷いもなく', es:'Respondiendo así sin dudar'},
-  {t:98.38, ro:'Kotaete shimau anata ga suki', kj:'答えてしまうあなたが好き', es:'Me gustas tú, que respondes así'},
-  {t:104.33, ro:'Taiyou ga shizunde shimatte mo', kj:'太陽が沈んでしまっても', es:'Aunque el sol se haya puesto'},
-  {t:113.01, ro:'Terashite kiramei te kagayaiteru', kj:'照らして煌めいて輝いてる', es:'Iluminas, destellas y resplandeces'},
-  {t:119.92, ro:'Anata ga ireba', kj:'あなたがいれば', es:'Si estás tú'},
-  {t:123.83, ro:'Aa shita wo muku you na hi wa', kj:'ああ 下を向くような日は', es:'Ah, los días en que bajas la mirada'},
-  {t:127.08, ro:'Hoshi wo miagete nai te', kj:'星を見上げて泣いて', es:'Mira las estrellas y llora'},
-  {t:129.38, ro:'Tsuyoku narenai watashi no mama aishite', kj:'強くなれない私のまま愛して', es:'Ámame tal como soy, incapaz de ser fuerte'},
-  {t:134.46, ro:'Bukiyou na natsu no hi mo', kj:'不器用な夏の日も', es:'También en los días de verano torpes'},
-  {t:137.19, ro:'Itoshisa de afureru you ni', kj:'愛しさで溢れるように', es:'De modo que rebosen de ternura'},
-  {t:139.53, ro:'Hikari no sasu hou e aruite ikou oh', kj:'光の差す方へ歩いて行こう oh', es:'Voy a caminar hacia donde brilla la luz, oh'},
-  {t:155.07, ro:'Doushitatte mucha na koto datte aru kedo', kj:'どうしたって無茶なことだってあるけど', es:'Aunque siempre habrá cosas imposibles'},
-  {t:161.47, ro:'Yuka ni chitta tisshu ga', kj:'床に散ったティッシュが', es:'Los pañuelos esparcidos en el suelo'},
-  {t:166.06, ro:'Watashi no shinjiru natsu no daisankaku', kj:'私の信じる夏の大三角', es:'Son el triángulo de verano en el que creo'},
-  {t:174.33, ro:'Aa himawari no you ni saite', kj:'ああ 向日葵のように咲いて', es:'Ah, florecer como un girasol'},
-  {t:177.55, ro:'Ten wo aoide waratte', kj:'天を仰いで笑って', es:'Mirar al cielo y reír'},
-  {t:179.95, ro:'Tada massugu na', kj:'ただ真っ直ぐな', es:'Solo recto hacia adelante'},
-  {t:182.31, ro:'Anata no you ni naritai', kj:'あなたのようになりたい', es:'Quiero ser como tú'},
-  {t:184.97, ro:'Okubyou na watashi mo', kj:'臆病な私も', es:'Incluso yo, que soy cobarde'},
-  {t:187.67, ro:'Sukoshi dake senobi shite', kj:'少しだけ背伸びして', es:'Esforzándome un poquito más'},
-  {t:189.91, ro:'Hikari no sasu hou e', kj:'光の差す方へ', es:'Hacia donde brilla la luz'},
-  {t:193.99, ro:'Aa himawari no you na ai wo', kj:'ああ 向日葵のような愛を', es:'Ah, un amor como el girasol'},
-  {t:197.75, ro:'Karenai koto no nai toki wo', kj:'枯れることない時を', es:'Un tiempo que nunca se marchita'},
-  {t:200.31, ro:'Tada massugu na', kj:'ただ真っ直ぐな', es:'Solo recto hacia adelante'},
-  {t:202.44, ro:'Anata ga kureta kara', kj:'あなたがくれたから', es:'Porque tú me lo diste'},
-  {t:205.12, ro:'Okubyou na watashi mo', kj:'臆病な私も', es:'Incluso yo, que soy cobarde'},
-  {t:207.78, ro:'Sukoshi wa tsuyoku nareta yo', kj:'少しは強くなれたよ', es:'He podido volverme un poco más fuerte'},
-  {t:210.50, ro:'Hikari no sasu hou e aruite ikou oh', kj:'光の差す方へ歩いて行こう oh', es:'Voy a caminar hacia donde brilla la luz, oh'},
-  {t:219.60, ro:'Oh, ah', kj:'Oh, ah', es:'Oh, ah'},
-  {t:225.59, ro:'Himawari no you ni saite', kj:'向日葵のように咲いて', es:'Florecer como un girasol'},
-  {t:227.92, ro:'Ten wo aoide waratte', kj:'天を仰いで笑って', es:'Mirar al cielo y reír'},
-  {t:235.34, ro:'Himawari no you na ai wo', kj:'向日葵のような愛を', es:'Un amor como el girasol'},
-  {t:238.09, ro:'Karenai koto no nai toki wo', kj:'枯れることない時を', es:'Un tiempo que nunca se marchita'}
+  {t:5.23, ro:'Kocchi muitara nabiku kaminoke ga', kj:'こっち向いたら靡く髪の毛が', es:'Cuando giras, tu cabello ondea'},
+  {t:10.21, ro:'Niji wo egaiteru mitai', kj:'虹を描いてるみたい', es:'Como si estuvieras dibujando un arcoíris'},
+  {t:15.17, ro:'Kagami goshi ni utsuru kimi no iro', kj:'鏡越しにうつる君の色', es:'El color de tu reflejo en el espejo'},
+  {t:19.69, ro:'Boku wo someru you na kuchizuke wo', kj:'僕を染めるような口付けを', es:'Un beso que me tiñe por completo'},
+  {t:24.99, ro:'(Kiss, kiss, kiss) Kocchi wo muite', kj:'(Kiss, kiss, kiss) こっちを向いて', es:'(Kiss, kiss, kiss) Mírame a mí'},
+  {t:27.39, ro:'(Kiss, kiss, kiss) Iro mi sasete', kj:'(Kiss, kiss, kiss) 色見させて', es:'(Kiss, kiss, kiss) Déjame ver tu color'},
+  {t:30.02, ro:'(Kiss, kiss, kiss) Boku wa kitto nibansenji no koi', kj:'(Kiss, kiss, kiss) 僕はきっと 二番煎じの恋', es:'(Kiss, kiss, kiss) Seguramente soy un amor de segunda mano'},
+  {t:34.63, ro:'Suki suki suki suki no kimochi ga tomaranakute', kj:'好き好き好き好き の気持ちが止まらなくて', es:'Este sentimiento de querer no para'},
+  {t:38.98, ro:'Yoake no hizashi demo wakaru no', kj:'夜明けの日差しでも分かるの', es:'Incluso con la luz del amanecer lo sé'},
+  {t:41.65, ro:'Kimi no aisou ni Guraccche', kj:'君の愛想にグラッチェ', es:'Grazie por tu encanto'},
+  {t:44.54, ro:'Kocchi muite yo jazzu no aidoru mitai ni', kj:'こっち向いてよ ジャズのアイドルみたいに', es:'Mírame, como un ídolo del jazz'},
+  {t:49.40, ro:'Niji wo egaiteru mitai yo ne', kj:'虹を描いてるみたいよね', es:'Es como si estuvieras dibujando un arcoíris, ¿verdad?'},
+  {t:54.39, ro:'Nureta kesaki wa kitto boku no tame, nante', kj:'濡れた毛先はきっと僕のため、なんて', es:'Las puntas mojadas de tu pelo son para mí... qué va'},
+  {t:58.82, ro:'Gikochinai shigusa ni kuchizuke wo', kj:'ぎこちない仕草に口付けを', es:'Un beso en ese gesto torpe'},
+  {t:64.18, ro:'(Kiss, kiss, kiss) Kocchi wo muite', kj:'(Kiss, kiss, kiss) こっちを向いて', es:'(Kiss, kiss, kiss) Mírame a mí'},
+  {t:66.65, ro:'(Kiss, kiss, kiss) Iro mi sasete', kj:'(Kiss, kiss, kiss) 色見させて', es:'(Kiss, kiss, kiss) Déjame ver tu color'},
+  {t:69.03, ro:'(Kiss, kiss, kiss) Kimi wa kitto somaru bakari no hibi', kj:'(Kiss, kiss, kiss) 君はきっと 染まるばかりの日々', es:'(Kiss, kiss, kiss) Días en que tú no haces más que teñirte'},
+  {t:73.91, ro:'Suki suki suki suki no kimochi ga tomaranakute', kj:'好き好き好き好き の気持ちが止まらなくて', es:'Este sentimiento de querer no para'},
+  {t:78.12, ro:'Yoake no hizashi demo odoru no', kj:'夜明けの日差しでも踊るの', es:'Incluso con la luz del amanecer bailo'},
+  {t:80.99, ro:'Kimi no aisou ni Guraccche', kj:'君の愛想にグラッチェ', es:'Grazie por tu encanto'},
+  {t:83.77, ro:'Oorora ga sukoshi dake sora wo yogiru no yo', kj:'オーロラが少しだけ空をよぎるのよ', es:'La aurora cruza apenas el cielo'},
+  {t:88.25, ro:'Itaikena boku wo mitsumete', kj:'いたいけな僕を見つめて', es:'Obsérvame a mí, que soy tan vulnerable'},
+  {t:93.54, ro:'Basutaoru ni nokoru kaori sura', kj:'バスタオルに残る香りすら', es:'Hasta el aroma que queda en la toalla de baño'},
+  {t:97.91, ro:'Koi wo someru you na kuchizuke wo', kj:'恋を染めるような口付けを', es:'Un beso que tiñe el amor'},
+  {t:103.35, ro:'(Kiss, kiss, kiss) Kocchi wo muite', kj:'(Kiss, kiss, kiss) こっちを向いて', es:'(Kiss, kiss, kiss) Mírame a mí'},
+  {t:105.70, ro:'(Kiss, kiss, kiss) Iro mi sasete', kj:'(Kiss, kiss, kiss) 色見させて', es:'(Kiss, kiss, kiss) Déjame ver tu color'},
+  {t:108.28, ro:'(Kiss, kiss, kiss) Boku wa kitto nibansenji no koi', kj:'(Kiss, kiss, kiss) 僕はきっと 二番煎じの恋', es:'(Kiss, kiss, kiss) Seguramente soy un amor de segunda mano'},
+  {t:113.06, ro:'Suki suki suki suki no kimochi ga tomaranakute', kj:'好き好き好き好き の気持ちが止まらなくて', es:'Este sentimiento de querer no para'},
+  {t:117.38, ro:'Yoake no hizashi demo wakaru no', kj:'夜明けの日差しでも分かるの', es:'Incluso con la luz del amanecer lo sé'},
+  {t:120.04, ro:'Kimi no aisou ni Guraccche', kj:'君の愛想にグラッチェ', es:'Grazie por tu encanto'},
+  {t:122.28, ro:'Yoake no hizashi demo odoru no', kj:'夜明けの日差しでも踊るの', es:'Incluso con la luz del amanecer bailo'},
+  {t:124.92, ro:'Kimi no aisou ni Guraccche', kj:'君の愛想にグラッチェ', es:'Grazie por tu encanto'}
 ];
 </script>
 <script>
@@ -476,7 +459,7 @@ const LYRICS=[
 
 <div class="landscape-layout">
   <div class="land-left">
-    <a class="land-back-btn" href="himawari.html">← Volver</a>
+    <a class="land-back-btn" href="kisskiss.html">← Volver</a>
     <div class="land-title" id="landTitle"></div>
     <div class="land-artist" id="landArtist"></div>
     <div class="land-viz" id="vizL"></div>
@@ -494,17 +477,17 @@ const LYRICS=[
       <button class="land-toggle" data-view="kanji">JP</button>
     </div>
     <div class="land-nav-row">
-      <a class="land-nav-btn land-nav-prev" href="senbonzakura-letras.html">
+      <a class="land-nav-btn land-nav-prev" href="crime-letras.html">
         <div class="land-nav-arrow">←</div>
-        <img class="land-nav-img" src="Se-p.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-        <div class="land-nav-fallback">♪</div>
-        <div class="land-nav-label"><span class="land-nav-dir">Anterior</span><span class="land-nav-name">Senbonzakura</span></div>
-      </a>
-      <a class="land-nav-btn land-nav-next" href="crime-letras.html">
-        <div class="land-nav-arrow">→</div>
         <img class="land-nav-img" src="C-p.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="land-nav-fallback">♪</div>
-        <div class="land-nav-label"><span class="land-nav-dir">Siguiente</span><span class="land-nav-name">Crime & Punishment</span></div>
+        <div class="land-nav-label"><span class="land-nav-dir">Anterior</span><span class="land-nav-name">Crime & Punishment</span></div>
+      </a>
+      <a class="land-nav-btn land-nav-next" href="readysteady-letras.html">
+        <div class="land-nav-arrow">→</div>
+        <img class="land-nav-img" src="R-p.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="land-nav-fallback">♪</div>
+        <div class="land-nav-label"><span class="land-nav-dir">Siguiente</span><span class="land-nav-name">Ready Steady</span></div>
       </a>
     </div>
   </div>
