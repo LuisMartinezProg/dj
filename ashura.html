@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>阿修羅ちゃん · Ashura-chan — Música</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #100005;
+  --card: #1a0008;
+  --card2: #220010;
+  --accent: #cc1a14;
+  --accent2: #ff8070;
+  --text: #fff0ee;
+  --muted: #5a1010;
+  --border: rgba(204,26,20,0.18);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Serif JP', serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 15% 10%, rgba(160,10,10,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 70% at 85% 90%, rgba(130,10,10,0.10) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+.back-btn {
+  position: fixed; top: 1rem; left: 1rem; z-index: 100;
+  background: rgba(4,6,15,0.85);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  padding: 0.5rem 1rem; border-radius: 999px;
+  text-decoration: none; font-size: 0.78rem;
+  backdrop-filter: blur(10px); transition: all 0.2s; letter-spacing: 0.05em;
+}
+.back-btn:hover { background: rgba(79,142,247,0.12); }
+.title-banner {
+  position: relative; z-index: 1;
+  text-align: center; padding: 4.5rem 2rem 2.5rem;
+}
+.title-jp {
+  font-family: 'Noto Serif JP', serif;
+  font-size: clamp(2rem,7vw,4.5rem); font-weight: 700;
+  letter-spacing: 0.14em;
+  background: linear-gradient(135deg, #ffffff 0%, var(--accent2) 50%, var(--accent) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  line-height: 1.1; margin-bottom: 0.55rem;
+}
+.title-romaji {
+  font-family: 'Cormorant Garamond', serif; font-style: italic;
+  font-size: clamp(1rem,3vw,1.45rem); color: var(--accent2); opacity: 0.65;
+  letter-spacing: 0.35em; margin-bottom: 0.4rem;
+}
+.title-artist { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.45em; text-transform: uppercase; }
+.title-line { width: 50px; height: 1px; background: linear-gradient(90deg,transparent,var(--accent),transparent); margin: 1.3rem auto 0; }
+.main-wrap {
+  position: relative; z-index: 1;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 1.2rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.panel {
+  display: flex; flex-direction: column;
+  border-radius: 18px; overflow: hidden;
+  border: 1px solid var(--border); background: var(--card);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+}
+.panel:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(30,70,200,0.2);
+  border-color: rgba(79,142,247,0.4);
+}
+.panel-cover { text-decoration: none; color: inherit; }
+.panel-img-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: var(--card2); position: relative; }
+.panel-img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(0.85) saturate(0.85); transition: filter 0.35s, transform 0.35s; }
+.panel-cover:hover .panel-img { filter: brightness(1) saturate(1.1); transform: scale(1.04); }
+.panel-img-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(16,0,5,0.55) 0%, transparent 50%); pointer-events: none; }
+.panel-video-wrap { width: 100%; aspect-ratio: 1/1; background: var(--card2); position: relative; overflow: hidden; }
+.panel-video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
+.panel-label {
+  padding: 0.7rem 1rem; font-size: 0.68rem; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--muted); text-align: center; border-top: 1px solid var(--border); background: var(--card2);
+  display: flex; align-items: center; justify-content: center; gap: 0.45rem; transition: color 0.2s;
+}
+.panel:hover .panel-label { color: var(--accent2); }
+.panel-label-icon { font-size: 0.9rem; }
+.info-card {
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+  padding: 1.2rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+.info-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+}
+.info-label {
+  font-size: 0.58rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  min-width: 58px;
+  opacity: 0.7;
+}
+.info-value {
+  color: var(--accent2);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+}
+.info-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0.1rem 0;
+}
+.info-card-label {
+  font-size: 0.6rem; letter-spacing: 0.35em; text-transform: uppercase;
+  color: var(--muted); text-align: center;
+  border-top: 1px solid var(--border);
+  padding-top: 0.75rem;
+  margin-top: 0.3rem;
+  opacity: 0.55;
+}
+@media(min-width: 768px) {
+  .main-wrap {
+    max-width: 860px;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1.1rem;
+    padding: 0 2rem 4rem;
+  }
+  .panel-letras,
+  .panel-video {
+    flex: 1 1 0;
+  }
+  .info-card {
+    flex: 0 0 180px;
+    align-self: flex-start;
+    padding: 1.3rem 1.1rem;
+  }
+}
+</style>
+</head>
+<body>
+<a class="back-btn" href="index.html">← Menú</a>
+
+<div class="title-banner">
+  <div class="title-jp">阿修羅ちゃん</div>
+  <div class="title-romaji">Ashura-chan</div>
+  <div class="title-artist">Ado · 2021</div>
+  <div class="title-line"></div>
+</div>
+
+<div class="main-wrap">
+
+  <!-- Panel Letras -->
+  <a class="panel panel-cover panel-letras" href="ashura-letras.html">
+    <div class="panel-img-wrap">
+      <img class="panel-img" src="As-p.png" alt="Ashura-chan · Ado" onerror="this.parentElement.style.background='#220010'">
+      <div class="panel-img-overlay"></div>
+    </div>
+    <div class="panel-label"><span class="panel-label-icon">歌詞</span> Letras</div>
+  </a>
+
+  <!-- Info Card -->
+  <div class="info-card">
+    <div class="info-row">
+      <span class="info-label">Artista</span>
+      <span class="info-value">Ado</span>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-row">
+      <span class="info-label">Fecha</span>
+      <span class="info-value">2021 · Single</span>
+    </div>
+    <div class="info-divider"></div>
+    <div class="info-row">
+      <span class="info-label">Género</span>
+      <span class="info-value">J-Pop · Rock · Anime</span>
+    </div>
+    <div class="info-card-label">Info</div>
+  </div>
+
+  <!-- Panel Video -->
+  <div class="panel panel-video">
+    <div class="panel-video-wrap">
+      <iframe src="https://drive.google.com/file/d/1H0ynIsfLvZhyjvi-UOYy6_iQCS4MR1qU/preview?rm=minimal" allow="autoplay" allowfullscreen></iframe>
+    </div>
+    <div class="panel-label"><span class="panel-label-icon">🎬</span> Video</div>
+  </div>
+
+</div>
+</body>
+</html>
