@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>うっせぇわ · Usseewa — Letras</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#010110;--card:#05052a;--accent1:#4040ff;--accent2:#9999ff;--accent3:#1a1a8c;--text:#f0f0ff;--muted:#2a2a6a;--glow:rgba(64,64,255,0.4)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden;padding-bottom:40px}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 20%,rgba(40,40,180,0.14) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 80% 80%,rgba(20,20,100,0.10) 0%,transparent 60%);z-index:0;pointer-events:none}
+.back-btn{position:fixed;top:1rem;left:1rem;z-index:100;background:rgba(1,1,16,0.85);border:1px solid rgba(64,64,255,0.3);color:var(--accent1);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px);transition:all 0.2s}
+header{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 1rem;border-bottom:1px solid rgba(64,64,255,0.15)}
+.song-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.05em;margin-bottom:0.3rem}
+.artist-name{color:var(--muted);font-size:0.9rem;font-weight:300;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:1rem}
+.visualizer-wrap{display:flex;justify-content:center;align-items:flex-end;gap:3px;height:50px;padding:0 2rem;margin-top:0.5rem}
+.bar{width:4px;border-radius:2px 2px 0 0;background:linear-gradient(to top,var(--accent3),var(--accent1));opacity:0.4;height:4px}
+@keyframes wave{0%,100%{height:4px}50%{height:var(--max-h)}}
+.playing .bar{opacity:1;animation:wave var(--spd) ease-in-out infinite;animation-delay:var(--delay)}
+audio{display:none}
+.progress-section{position:relative;z-index:1;padding:1rem 2rem 0.5rem;max-width:780px;margin:0 auto}
+.progress-bar-wrap{width:100%;height:6px;background:var(--card);border-radius:3px;cursor:pointer;overflow:hidden;margin-bottom:0.5rem}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent1),var(--accent2));border-radius:3px;width:0%;box-shadow:0 0 10px var(--glow);pointer-events:none}
+.time-row{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--muted);font-family:'Cormorant Garamond',serif}
+.controls{position:relative;z-index:1;display:flex;justify-content:center;gap:1rem;padding:0.8rem 2rem 0.5rem;flex-wrap:wrap}
+.btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem}
+.btn-primary{background:linear-gradient(135deg,var(--accent3),var(--accent1));color:white;padding:0.75rem 2rem;font-size:1rem;font-weight:700;box-shadow:0 0 20px var(--glow);min-width:130px;justify-content:center}
+.btn-primary:hover{transform:scale(1.05)}
+.btn-secondary{background:var(--card);color:var(--accent1);border:1px solid rgba(64,64,255,0.3);padding:0.75rem 1.3rem;font-size:0.9rem}
+.volume-row{display:flex;align-items:center;gap:0.6rem;justify-content:center;padding-bottom:0.5rem;position:relative;z-index:1}
+.volume-row span{color:var(--muted);font-size:0.8rem}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100px;height:4px;border-radius:2px;background:var(--card);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent1);cursor:pointer}
+.view-toggles{position:relative;z-index:1;display:flex;justify-content:center;gap:0.5rem;padding:0 2rem 1.2rem;flex-wrap:wrap}
+.toggle-btn{border:1px solid rgba(64,64,255,0.25);background:transparent;color:var(--muted);padding:0.35rem 1rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.78rem;transition:all 0.2s}
+.toggle-btn.active{background:rgba(64,64,255,0.12);border-color:var(--accent1);color:var(--accent1)}
+.lyrics-container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:0 1.5rem 2rem}
+.section-label{text-align:center;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);padding:1.2rem 0 0.5rem;opacity:0.5;display:flex;align-items:center;gap:0.8rem}
+.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(64,64,255,0.15)}
+.lyric-block{padding:1.2rem 1.6rem;margin-bottom:0.5rem;border-radius:16px;border:1px solid transparent;transition:all 0.4s ease;cursor:pointer;opacity:0.3}
+.lyric-block.past{opacity:0.18}
+.lyric-block.active{opacity:1;background:linear-gradient(135deg,rgba(26,26,140,0.15),rgba(64,64,255,0.07));border-color:rgba(64,64,255,0.4);box-shadow:0 0 30px rgba(64,64,255,0.15);transform:translateX(6px)}
+.lyric-es{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:600;color:var(--text);line-height:1.3;margin-bottom:0.35rem}
+.lyric-block.active .lyric-es{background:linear-gradient(90deg,var(--text),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lyric-romaji{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,2.5vw,1.25rem);color:var(--accent2);margin-bottom:0.3rem}
+.lyric-kanji{font-family:'Noto Serif JP',serif;font-size:clamp(0.95rem,2vw,1.1rem);color:var(--accent2);opacity:0.75;font-weight:400;letter-spacing:0.08em}
+body.view-es .lyric-romaji,body.view-es .lyric-kanji{display:none}
+body.view-romaji .lyric-es,body.view-romaji .lyric-kanji{display:none}
+body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
+.scroll-btn{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--accent1));border:none;cursor:pointer;box-shadow:0 4px 20px var(--glow);display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:all 0.2s;opacity:0.5}
+.scroll-btn:hover{transform:scale(1.1);opacity:1}
+.scroll-btn.active{opacity:1}
+.landscape-layout{display:none}
+@media(orientation:landscape) and (max-height:600px){
+  .back-btn{display:none !important}.scroll-btn{display:none !important}
+  body{padding-bottom:0;overflow:hidden;height:100dvh}
+  header,.progress-section,.controls,.volume-row,.view-toggles,.lyrics-container{display:none !important}
+  .landscape-layout{display:flex;height:100dvh;overflow:hidden;position:relative;z-index:1}
+  .land-left{width:50%;flex-shrink:0;display:flex;flex-direction:column;padding:0.55rem 0.8rem;border-right:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.6);backdrop-filter:blur(12px);gap:0.3rem;overflow:hidden}
+  .land-back-btn{display:inline-flex;align-items:center;gap:0.3rem;text-decoration:none;color:var(--accent1);background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:999px;padding:0.2rem 0.65rem;font-size:0.62rem;font-family:'Cormorant Garamond',serif;letter-spacing:0.05em;transition:all 0.2s;align-self:flex-start;flex-shrink:0}
+  .land-title{font-family:'Cormorant Garamond',serif;font-size:0.9rem;font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .land-artist{font-size:0.54rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase}
+  .land-viz{display:flex;align-items:flex-end;gap:2px;height:22px}
+  .land-viz .bar{width:3px}
+  .land-progress-wrap{width:100%;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;cursor:pointer;overflow:hidden}
+  .land-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent1),var(--accent2));border-radius:2px;width:0%;pointer-events:none}
+  .land-time{display:flex;justify-content:space-between;font-size:0.58rem;color:var(--muted);font-family:'Cormorant Garamond',serif}
+  .land-btn-row{display:flex;gap:0.4rem}
+  .land-btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.7rem;padding:0.32rem 0.6rem;flex:1;text-align:center;transition:all 0.2s}
+  .land-btn-play{background:linear-gradient(135deg,var(--accent3),var(--accent1));color:white;font-weight:700}
+  .land-btn-reset{background:rgba(255,255,255,0.06);color:var(--accent1);border:1px solid rgba(255,255,255,0.15)}
+  .land-vol-row{display:flex;align-items:center;gap:0.3rem}
+  .land-vol-row span{color:var(--muted);font-size:0.62rem}
+  .land-vol{-webkit-appearance:none;appearance:none;flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,0.08);outline:none;cursor:pointer}
+  .land-vol::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--accent1);cursor:pointer}
+  .land-toggles{display:flex;flex-wrap:wrap;gap:0.22rem}
+  .land-toggle{border:1px solid rgba(255,255,255,0.12);background:transparent;color:var(--muted);padding:0.18rem 0.45rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.58rem;transition:all 0.2s}
+  .land-toggle.active{background:rgba(255,255,255,0.08);border-color:var(--accent1);color:var(--accent1)}
+  .land-nav-row{display:flex;gap:0.4rem;padding-top:0.3rem;border-top:1px solid rgba(255,255,255,0.08);flex-shrink:0;margin-top:auto}
+  .land-nav-btn{display:flex;align-items:center;gap:0;flex:1;text-decoration:none;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.10);border-radius:8px;overflow:hidden;transition:all 0.2s;min-width:0;height:38px}
+  .land-nav-btn:hover{border-color:var(--accent1)}
+  .land-nav-arrow{display:flex;align-items:center;justify-content:center;width:24px;flex-shrink:0;height:100%;background:rgba(255,255,255,0.07);color:var(--accent1);font-size:0.85rem;border-right:1px solid rgba(255,255,255,0.10);transition:all 0.2s}
+  .land-nav-next .land-nav-arrow{border-right:none;border-left:1px solid rgba(255,255,255,0.10)}
+  .land-nav-img{width:38px;height:38px;object-fit:cover;flex-shrink:0;display:block}
+  .land-nav-label{display:flex;flex-direction:column;min-width:0;overflow:hidden;padding:0 0.3rem;flex:1}
+  .land-nav-dir{font-size:0.44rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap}
+  .land-nav-name{font-size:0.58rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Cormorant Garamond',serif;font-weight:600}
+  .land-nav-next{flex-direction:row-reverse}
+  .land-nav-next .land-nav-label{align-items:flex-end;text-align:right}
+  .land-right{flex:1;overflow-y:auto;padding:0.5rem 0.8rem 0.5rem 0.7rem;scroll-behavior:smooth}
+  .land-right::-webkit-scrollbar{width:2px}
+  .land-right::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:2px}
+  .land-right .section-label{font-size:0.52rem;padding:0.5rem 0 0.25rem;opacity:0.38}
+  .land-right .lyric-block{padding:0.38rem 0.6rem;margin-bottom:0.18rem;border-radius:9px}
+  .land-right .lyric-es{font-size:0.88rem;margin-bottom:0.12rem;line-height:1.25}
+  .land-right .lyric-romaji{font-size:0.72rem;margin-bottom:0.08rem}
+  .land-right .lyric-kanji{font-size:0.66rem}
+  .land-right .lyric-block.active{transform:translateX(3px)}
+}
+</style>
+</head>
+<body>
+<a class="back-btn" href="usseewa.html">← Volver</a>
+<audio id="audio" src="U-m.mp3" preload="auto"></audio>
+<header>
+  <div class="song-title">うっせぇわ · Usseewa</div>
+  <div class="artist-name">Ado · 2020</div>
+  <div class="visualizer-wrap" id="visualizer"></div>
+</header>
+<div class="progress-section">
+  <div class="progress-bar-wrap" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="time-row"><span id="timeNow">0:00</span><span id="timeTotal">—</span></div>
+</div>
+<div class="controls">
+  <button class="btn btn-primary" id="playBtn">▶ Play</button>
+  <button class="btn btn-secondary" id="resetBtn">↩ Reinicio</button>
+</div>
+<div class="volume-row">
+  <span>🔈</span><input type="range" id="vol" min="0" max="1" step="0.05" value="0.8"><span>🔊</span>
+</div>
+<div class="view-toggles">
+  <button class="toggle-btn active" data-view="all">Todo</button>
+  <button class="toggle-btn" data-view="es">Español</button>
+  <button class="toggle-btn" data-view="romaji">Romaji</button>
+  <button class="toggle-btn" data-view="kanji">日本語</button>
+</div>
+<div class="lyrics-container" id="lyricsContainer"></div>
+<button class="scroll-btn" id="scrollBtn">♪</button>
+
+<div class="landscape-layout">
+  <div class="land-left">
+    <a class="land-back-btn" href="usseewa.html">← Volver</a>
+    <div class="land-title">うっせぇわ · Usseewa</div>
+    <div class="land-artist">Ado · 2020</div>
+    <div class="land-viz visualizer-wrap" id="vizL"></div>
+    <div class="land-progress-wrap" id="pbL"><div class="land-progress-fill" id="pfL"></div></div>
+    <div class="land-time"><span id="tnL">0:00</span><span id="ttL">—</span></div>
+    <div class="land-btn-row">
+      <button class="land-btn land-btn-play" id="playL">▶ Play</button>
+      <button class="land-btn land-btn-reset" id="resetL">↩</button>
+    </div>
+    <div class="land-vol-row">
+      <span>🔈</span><input class="land-vol" id="volL" type="range" min="0" max="1" step="0.05" value="0.8"><span>🔊</span>
+    </div>
+    <div class="land-toggles">
+      <button class="land-toggle active" data-view="all">Todo</button>
+      <button class="land-toggle" data-view="es">ES</button>
+      <button class="land-toggle" data-view="romaji">Romaji</button>
+      <button class="land-toggle" data-view="kanji">JP</button>
+    </div>
+    <div class="land-nav-row">
+      <a class="land-nav-btn" href="aishite.html">
+        <div class="land-nav-arrow">‹</div>
+        <img class="land-nav-img" src="Ai-p.png" alt="">
+        <div class="land-nav-label"><span class="land-nav-dir">Anterior</span><span class="land-nav-name">Aishite Aishite</span></div>
+      </a>
+      <a class="land-nav-btn land-nav-next" href="anoyume.html">
+        <div class="land-nav-label"><span class="land-nav-dir">Siguiente</span><span class="land-nav-name">Ano Yume wo Nazotte</span></div>
+        <img class="land-nav-img" src="A-p.png" alt="">
+        <div class="land-nav-arrow">›</div>
+      </a>
+    </div>
+  </div>
+  <div class="land-right" id="lyricsL"></div>
+</div>
+
+<script>
+const LYRICS=[
+  {t:1.37, kj:'正しさとは 愚かさとは', ro:'Tadashisa to wa oroka-sa to wa', es:'¿Qué es lo correcto? ¿Qué es la estupidez?'},
+  {t:2.66, kj:'それが何か見せつけてやる', ro:'Sore ga nani ka misetsukete yaru', es:'Te voy a demostrar qué es cada cosa'},
+  {t:16.87, kj:'ちっちゃな頃から優等生', ro:'Chiccana koro kara yuutousei', es:'Desde pequeña fui una alumna modelo'},
+  {t:19.47, kj:'気づいたら大人になっていた', ro:'Kidzuitara otona ni natte ita', es:'Antes de darme cuenta ya era adulta'},
+  {t:22.03, kj:'ナイフの様な思考回路', ro:'Naifu no you na shikou kairo', es:'Un circuito mental afilado como un cuchillo'},
+  {t:24.90, kj:'持ち合わせる訳もなく', ro:'Mochiawaseru wake mo naku', es:'No es algo que tenga'},
+  {t:27.33, kj:'でも遊び足りない 何か足りない', ro:'Demo asobi tarinai nanika tarinai', es:'Pero me falta diversión, me falta algo'},
+  {t:30.10, kj:'困っちまうこれは誰かのせい', ro:'Komaccchimau kore wa dare ka no sei', es:'Qué fastidio, esto es culpa de alguien'},
+  {t:33.13, kj:'あてもなくただ混乱するエイデイ', ro:'Ate mo naku tada konran suru eidei', es:'Sin rumbo, solo confundida cada día'},
+  {t:36.73, kj:'それもそっか', ro:'Sore mo sokka', es:'Supongo que eso también tiene sentido'},
+  {t:38.54, kj:'最新の流行は当然の把握', ro:'Saishin no hayari wa touzen no haaku', es:'Las últimas tendencias, por supuesto que las conozco'},
+  {t:41.14, kj:'経済の動向も通勤時チェック', ro:'Keizai no doukou mo tsuukin-ji chekku', es:'El movimiento económico, lo reviso en el camino al trabajo'},
+  {t:43.81, kj:'純情な精神で入社しワーク', ro:'Junjou na seishin de nyuusha shi waaku', es:'Entré a la empresa con un espíritu puro y trabajé'},
+  {t:46.36, kj:'社会人じゃ当然のルールです', ro:'Shakaijin ja touzen no ruuru desu', es:'Son las reglas obvias de un adulto en sociedad'},
+  {t:50.88, kj:'はぁ？うっせぇうっせぇうっせぇわ', ro:'Haa? Ussei ussei ussei wa', es:'¿Qué? Cállate, cállate, cállate ya'},
+  {t:54.46, kj:'あなたが思うより健康です', ro:'Anata ga omou yori kenkou desu', es:'Estoy más sana de lo que crees'},
+  {t:57.09, kj:'一切合切凡庸な', ro:'Issai gassai bon-you na', es:'Completamente mediocre'},
+  {t:59.77, kj:'あなたじゃ分からないかもね', ro:'Anata ja wakaranai kamo ne', es:'Quizás tú no puedas entenderlo'},
+  {t:62.75, kj:'嗚呼よく似合う', ro:'Aa yoku niau', es:'Ah, te queda muy bien'},
+  {t:64.58, kj:'その可もなく不可もないメロディー', ro:'Sono ka mo naku fuka mo nai merodii', es:'Esa melodía que no es ni buena ni mala'},
+  {t:68.24, kj:'うっせぇうっせぇうっせぇわ', ro:'Ussei ussei ussei wa', es:'Cállate, cállate, cállate ya'},
+  {t:70.62, kj:'頭の出来が違うので問題はナシ', ro:'Atama no deki ga chigau no de mondai wa nashi', es:'Mi cabeza funciona diferente así que no hay problema'},
+  {t:85.52, kj:'つっても私模範人間', ro:'Tsuttemo watashi mohan ningen', es:'Aunque dicho eso, soy un ser humano modelo'},
+  {t:88.38, kj:'殴ったりするのはノーセンキュー', ro:'Naguttari suru no wa noo senkuu', es:'Golpear a alguien, no gracias'},
+  {t:90.87, kj:'だったら言葉の銃口を', ro:'Dattara kotoba no juukou o', es:'Entonces apunto el cañón de mis palabras'},
+  {t:93.64, kj:'その頭に突きつけて撃てば', ro:'Sono atama ni tsukitsukete uteba', es:'A tu cabeza y disparo'},
+  {t:96.76, kj:'マジヤバない？止まれやしない', ro:'Maji yaba nai? Tomare ya shinai', es:'¿No es increíble? No puedo detenerme'},
+  {t:98.85, kj:'不平不満垂れて成れの果て', ro:'Fuhei fuman tarete nare no hate', es:'El resultado de quejarme sin parar'},
+  {t:102.04, kj:'サディスティックに変貌する精神', ro:'Sadisutikku ni henbou suru seishin', es:'Una mente que se transforma sádicamente'},
+  {t:105.40, kj:'クソだりぃな', ro:'Kuso dari i na', es:'Qué fastidio total'},
+  {t:107.36, kj:'酒が空いたグラスあれば直ぐに注ぎなさい', ro:'Sake ga aita gurasu areba sugu ni tsugi nasai', es:'Si hay un vaso vacío de sake, sírvelo de inmediato'},
+  {t:109.61, kj:'皆がつまみ易いように串外しなさい', ro:'Minna ga tsumami yasui you ni kushi hazushi nasai', es:'Quita las brochetas para que todos puedan agarrar la comida fácil'},
+  {t:112.47, kj:'会計や注文は先陣を切る', ro:'Kaikei ya chuumon wa senjin o kiru', es:'En la cuenta y los pedidos, tomar la iniciativa'},
+  {t:115.13, kj:'不文律最低限のマナーです', ro:'Fubunritsu saiteigen no manaa desu', es:'Son las normas mínimas no escritas de cortesía'},
+  {t:119.68, kj:'はぁ？うっせぇうっせぇうっせぇわ', ro:'Haa? Ussei ussei ussei wa', es:'¿Qué? Cállate, cállate, cállate ya'},
+  {t:123.11, kj:'くせぇ口塞げや限界です', ro:'Kusee kuchi fusage ya genkai desu', es:'Cierra esa bocaza asquerosa, llegué al límite'},
+  {t:125.94, kj:'絶対絶対現代の代弁者は私やろがい', ro:'Zettai zettai gendai no daibenshа wa watashi yaro gai', es:'Definitivamente, definitivamente, la voz de esta era soy yo'},
+  {t:131.32, kj:'もう見飽きたわ', ro:'Mou mi akita wa', es:'Ya estoy harta de ver esto'},
+  {t:133.31, kj:'二番煎じ言い換えのパロディ', ro:'Niban senji ii kae no parodi', es:'Una parodia de repeticiones y paráfrasis'},
+  {t:136.97, kj:'うっせぇうっせぇうっせぇわ', ro:'Ussei ussei ussei wa', es:'Cállate, cállate, cállate ya'},
+  {t:139.46, kj:'丸々と肉付いたその顔面にバツ', ro:'Marumaru to niku tsuita sono koumen ni batsu', es:'Una cruz en esa cara rolliza y regordeta'},
+  {t:154.15, kj:'うっせぇうっせぇうっせぇわ', ro:'Ussei ussei ussei wa', es:'Cállate, cállate, cállate ya'},
+  {t:159.61, kj:'うっせぇうっせぇうっせぇわ', ro:'Ussei ussei ussei wa', es:'Cállate, cállate, cállate ya'},
+  {t:162.47, kj:'私が俗に言う天才です', ro:'Watashi ga zoku ni iu tensai desu', es:'Soy lo que comúnmente se llama una genio'},
+  {t:165.22, kj:'うっせぇうっせぇうっせぇわ', ro:'Ussei ussei ussei wa', es:'Cállate, cállate, cállate ya'},
+  {t:167.69, kj:'あなたが思うより健康です', ro:'Anata ga omou yori kenkou desu', es:'Estoy más sana de lo que crees'},
+  {t:170.53, kj:'一切合切凡庸な', ro:'Issai gassai bon-you na', es:'Completamente mediocre'},
+  {t:173.12, kj:'あなたじゃ分からないかもね', ro:'Anata ja wakaranai kamo ne', es:'Quizás tú no puedas entenderlo'},
+  {t:176.07, kj:'嗚呼つまらねぇ', ro:'Aa tsumaranee', es:'Ah, qué aburrido'},
+  {t:178.59, kj:'何回聞かせるんだそのメモリー', ro:'Nankai kikaseru n da sono memorii', es:'¿Cuántas veces me vas a contar ese recuerdo?'},
+  {t:181.40, kj:'うっせぇうっせぇうっせぇわ', ro:'Ussei ussei ussei wa', es:'Cállate, cállate, cállate ya'},
+  {t:183.91, kj:'アタシも大概だけど', ro:'Atashi mo taigai da kedo', es:'Yo también soy bastante así, pero'},
+  {t:186.52, kj:'どうだっていいぜ問題はナシ', ro:'Dou datte ii ze mondai wa nashi', es:'Me da igual, no hay problema'},
+];
+</script>
+<script>
+(function(){
+  const audio=document.getElementById('audio');
+  if(!audio) return;
+  let activeIdx=-1;
+  const lyricsV=document.getElementById('lyricsContainer'),lyricsL=document.getElementById('lyricsL');
+  function buildLyrics(container){
+    if(!container) return;
+    LYRICS.forEach((line,i)=>{
+      const b=document.createElement('div');b.className='lyric-block';b.dataset.idx=i;
+      let h='';
+      if(line.es)h+=`<div class="lyric-es">${line.es}</div>`;
+      if(line.ro)h+=`<div class="lyric-romaji">${line.ro}</div>`;
+      if(line.kj)h+=`<div class="lyric-kanji">${line.kj}</div>`;
+      b.innerHTML=h;b.addEventListener('click',()=>{audio.currentTime=line.t;});container.appendChild(b);
+    });
+  }
+  buildLyrics(lyricsV);buildLyrics(lyricsL);
+  const fmt=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+  const pfV=document.getElementById('progressFill'),pfL=document.getElementById('pfL');
+  const tnV=document.getElementById('timeNow'),tnL=document.getElementById('tnL');
+  const ttV=document.getElementById('timeTotal'),ttL=document.getElementById('ttL');
+  const pbV=document.getElementById('progressBar'),pbL=document.getElementById('pbL');
+  const playV=document.getElementById('playBtn'),playL=document.getElementById('playL');
+  const resetV=document.getElementById('resetBtn'),resetL=document.getElementById('resetL');
+  const volV=document.getElementById('vol'),volL=document.getElementById('volL');
+  const vizV=document.getElementById('visualizer'),vizL=document.getElementById('vizL');
+  const scrollBtn=document.getElementById('scrollBtn');
+  [vizV,vizL].forEach(viz=>{if(!viz)return;const c=viz===vizV?28:18;for(let i=0;i<c;i++){const b=document.createElement('div');b.className='bar';const h=8+Math.random()*32;b.style.cssText=`--max-h:${h}px;--spd:${0.6+Math.random()*0.8}s;--delay:${(i/c*1.2).toFixed(2)}s`;viz.appendChild(b);}});
+  let autoScroll=true;
+  function updateActive(t){
+    const pct=(audio.duration?(t/audio.duration*100):0)+'%';
+    if(pfV)pfV.style.width=pct;if(pfL)pfL.style.width=pct;
+    if(tnV)tnV.textContent=fmt(t);if(tnL)tnL.textContent=fmt(t);
+    let n=-1;for(let i=0;i<LYRICS.length;i++){if(t>=LYRICS[i].t)n=i;}
+    if(n===activeIdx)return;activeIdx=n;
+    [lyricsV,lyricsL].forEach(c=>{if(!c)return;c.querySelectorAll('.lyric-block').forEach(b=>{const idx=parseInt(b.dataset.idx);b.classList.toggle('active',idx===activeIdx);b.classList.toggle('past',idx<activeIdx);});if(autoScroll){const a=c.querySelector('.lyric-block.active');if(a)a.scrollIntoView({behavior:'smooth',block:'center'});}});
+  }
+  audio.addEventListener('timeupdate',()=>updateActive(audio.currentTime));
+  audio.addEventListener('loadedmetadata',()=>{const d=audio.duration;if(ttV)ttV.textContent=fmt(d);if(ttL)ttL.textContent=fmt(d);});
+  function togglePlay(){if(audio.paused){audio.play();[vizV,vizL].forEach(v=>{if(v)v.classList.add('playing')});[playV,playL].forEach(b=>{if(b)b.textContent='⏸ Pausa'});}else{audio.pause();[vizV,vizL].forEach(v=>{if(v)v.classList.remove('playing')});[playV,playL].forEach(b=>{if(b)b.textContent='▶ Play';});}}
+  function resetAudio(){audio.pause();audio.currentTime=0;[vizV,vizL].forEach(v=>{if(v)v.classList.remove('playing')});[playV,playL].forEach(b=>{if(b)b.textContent='▶ Play';});}
+  [playV,playL].forEach(b=>{if(b)b.addEventListener('click',togglePlay)});
+  [resetV,resetL].forEach(b=>{if(b)b.addEventListener('click',resetAudio)});
+  if(pbV)pbV.addEventListener('click',e=>{const r=pbV.getBoundingClientRect();audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration;});
+  if(pbL)pbL.addEventListener('click',e=>{const r=pbL.getBoundingClientRect();audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration;});
+  function setVol(v){audio.volume=v;if(volV)volV.value=v;if(volL)volL.value=v;}
+  if(volV)volV.addEventListener('input',e=>setVol(e.target.value));
+  if(volL)volL.addEventListener('input',e=>setVol(e.target.value));
+  setVol(0.8);
+  if(scrollBtn){scrollBtn.classList.add('active');scrollBtn.addEventListener('click',()=>{autoScroll=!autoScroll;scrollBtn.classList.toggle('active',autoScroll);});}
+  function applyView(view){document.body.classList.remove('view-es','view-romaji','view-kanji');if(view!=='all')document.body.classList.add('view-'+view);document.querySelectorAll('.toggle-btn,.land-toggle').forEach(b=>b.classList.toggle('active',b.dataset.view===view));}
+  document.querySelectorAll('.toggle-btn,.land-toggle').forEach(b=>b.addEventListener('click',()=>applyView(b.dataset.view)));
+})();
+</script>
+</body>
+</html>
