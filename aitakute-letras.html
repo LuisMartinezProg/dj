@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JANE DOE — Música</title>
+<title>会いたくて · Aitakute — Música</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
 /* BOUQUET — paleta extraída de la portada:
@@ -15,10 +15,10 @@
    Marrón/piel (ropa, mano) → card/fondo oscuro
    Verde (hojas) → section-label line
    Blanco (pequeñas flores) → texto principal */
-:root{--bg:#080808;--card:#111111;--accent1:#c8c8c8;--accent2:#f0f0f0;--accent3:#2a2a2a;--text:#e0e0e0;--muted:#505050;--glow:rgba(200,200,200,0.15)}
+:root{--bg:#120a0c;--card:#1e1014;--accent1:#d08090;--accent2:#f0c0c8;--accent3:#602030;--text:#fff0f2;--muted:#604048;--glow:rgba(208,128,144,0.35)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden;padding-bottom:40px}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(255,255,255,0.03) 0%,transparent 60%);z-index:0;pointer-events:none}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 20%,rgba(160,80,90,0.10) 0%,transparent 60%);z-index:0;pointer-events:none}
 .back-btn{position:fixed;top:1rem;left:1rem;z-index:200;background:rgba(26,14,0,0.88);border:1px solid rgba(245,124,32,0.35);color:var(--accent1);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px)}
 .header-v{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 1rem;border-bottom:1px solid rgba(245,124,32,0.18)}
 .song-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.5rem,4vw,2.6rem);font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.05em;margin-bottom:0.3rem}
@@ -47,7 +47,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .toggle-btn.active{background:rgba(245,124,32,0.13);border-color:var(--accent1);color:var(--accent1)}
 .lyrics-container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:0 1.5rem 2rem}
 .section-label{text-align:center;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);padding:1.2rem 0 0.5rem;opacity:0.5;display:flex;align-items:center;gap:0.8rem}
-.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(200,200,200,0.08)}
+.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(208,128,144,0.15)}
 .lyric-block{padding:1.2rem 1.6rem;margin-bottom:0.5rem;border-radius:16px;border:1px solid transparent;transition:all 0.4s ease;cursor:pointer;opacity:0.3}
 .lyric-block.past{opacity:0.18}
 .lyric-block.active{opacity:1;background:linear-gradient(135deg,rgba(122,32,0,0.12),rgba(245,124,32,0.07));border-color:rgba(200,80,20,0.38);box-shadow:0 0 30px rgba(200,80,20,0.18);transform:translateX(6px)}
@@ -179,11 +179,11 @@ body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
 </style>
 </head>
 <body>
-<a class="back-btn" href="jane.html">← Volver</a>
-<audio id="audio" src="Jane Musica.mp3" preload="auto"></audio>
+<a class="back-btn" href="aitakute.html">← Volver</a>
+<audio id="audio" src="Ait-m.mp3" preload="auto"></audio>
 <div class="header-v">
-  <div class="song-title">JANE DOE</div>
-  <div class="artist-name">Kenshi Yonezu × Hikaru Utada · 2025</div>
+  <div class="song-title">会いたくて · Aitakute</div>
+  <div class="artist-name">Ado · 2021</div>
   <div class="visualizer-wrap" id="vizV"></div>
 </div>
 <div class="ctrl-v">
@@ -208,7 +208,7 @@ body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
 <div class="landscape-layout">
   <div class="land-left">
     <!-- 1. Botón volver -->
-    <a class="land-back-btn" href="jane.html">← Volver</a>
+    <a class="land-back-btn" href="aitakute.html">← Volver</a>
     <!-- Título y artista -->
     <div class="land-title" id="landTitle"></div>
     <div class="land-artist" id="landArtist"></div>
@@ -231,17 +231,17 @@ body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
     </div>
     <!-- 5. Navegación anterior / siguiente con imágenes -->
     <div class="land-nav-row">
-      <a class="land-nav-btn land-nav-prev" href="vivarium-letras.html">
+      <a class="land-nav-btn land-nav-prev" href="readysteady-letras.html">
         <div class="land-nav-arrow">←</div>
-        <img class="land-nav-img" src="Vi-p.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <img class="land-nav-img" src="R-p.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="land-nav-fallback">♪</div>
-        <div class="land-nav-label"><span class="land-nav-dir">Anterior</span><span class="land-nav-name">Vivarium</span></div>
+        <div class="land-nav-label"><span class="land-nav-dir">Anterior</span><span class="land-nav-name">Ready Steady</span></div>
       </a>
-      <a class="land-nav-btn land-nav-next" href="usseewa-letras.html">
+      <a class="land-nav-btn land-nav-next" href="bouquet-letras.html">
         <div class="land-nav-arrow">→</div>
-        <img class="land-nav-img" src="Us-p.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <img class="land-nav-img" src="Bo-p.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="land-nav-fallback">♪</div>
-        <div class="land-nav-label"><span class="land-nav-dir">Siguiente</span><span class="land-nav-name">Usseewa</span></div>
+        <div class="land-nav-label"><span class="land-nav-dir">Siguiente</span><span class="land-nav-name">Watashi ni Hanataba</span></div>
       </a>
     </div>
   </div>
@@ -250,26 +250,48 @@ body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
 </div>
 <script>
 const LYRICS=[
-  {t:14.45, section:"Verso 1",  es:"Como si en este mundo solo existiéramos nosotros dos", ro:"Marude kono sekai de futari dake mitai da ne", kj:"まるでこの世界で二人だけみたいだね"},
-  {t:25.16, section:"Verso 1",  es:"Solo fue un pequeño sueño que me permití soñar", ro:"Nante sukoshi dake yume wo mite shimatta dake", kj:"なんて少しだけ夢をみてしまっただけ"},
-  {t:35.80, section:"Verso 1",  es:"La luz de la luna en la punta de los pies, el aroma de un ramo, unos dedos que rozan otros", ro:"Tsumasaki ni tsukiakari, hanataba no kaori, yubi ni fureru yubi", kj:"つま先に月明かり 花束の香り 指に触れる指"},
-  {t:46.57, section:"Verso 1",  es:"Adiós, ya tengo que irme, olvidando todo", ro:"Sayonara, mou ikanakya, nani mo kamo wasurete", kj:"さよなら もう行かなきゃ 何もかも忘れて"},
-  {t:58.73, section:"Coro",     es:"Caminar descalza sobre el cristal", ro:"Garasu no ue wo hadashi no mama aruku", kj:"硝子の上を裸足のまま歩く"},
-  {t:64.30, section:"Coro",     es:"Con cada punzada de dolor, la sangre fluye y cae", ro:"Itamu goto ni chi ga nagarete ochite iku", kj:"痛むごとに血が流れて落ちていく"},
-  {t:71.07, section:"Coro",     es:"Por favor, sigue esas huellas rojas y ven a verme", ro:"Onegai, sono akai ashiato wo tadotte, ai ni kite", kj:"お願い その赤い足跡を辿って 会いにきて"},
-  {t:92.35, section:"Verso 2",  es:"Un pez dorado liberado en una piscina oxidada", ro:"Sabita puuru ni hanatarete iku kingyo", kj:"錆びたプールに放たれていく金魚"},
-  {t:97.72, section:"Verso 2",  es:"Una manzana escondida dentro de la caja de zapatos", ro:"Kutsubako no naka ni kakushita ringo", kj:"靴箱の中隠した林檎"},
-  {t:102.60, section:"Verso 2", es:"Las cicatrices que quedaron en tu piel marchita", ro:"Shinabita kimi no hada ni nokoru kizuato", kj:"萎びた君の肌に残る傷跡"},
-  {t:108.55, section:"Verso 2", es:"Un niño perdido que nadaba como un perro", ro:"Inu no you ni oyoida maigo", kj:"犬のように泳いだ迷子"},
-  {t:113.31, section:"Puente",  es:"¿Dónde estás? (Aquí estoy) ¿Qué estás haciendo? (Siempre te estoy mirando)", ro:"Doko ni iru no (koko ni iru yo) nani wo shite iru no (zutto miteru yo)", kj:"どこにいるの（ここにいるよ）何をしているの（ずっと見てるよ）"},
-  {t:118.81, section:"Puente",  es:"Llenemos este mundo de errores", ro:"Kono yo wo machigai de mitasou", kj:"この世を間違いで満たそう"},
-  {t:124.06, section:"Puente",  es:"Quédate a mi lado, vayamos a jugar", ro:"Soba ni ite yo, asobi ni ikou yo", kj:"側にいてよ 遊びに行こうよ"},
-  {t:129.99, section:"Puente",  es:"¿Dónde estás?", ro:"Doko ni iru no", kj:"どこにいるの"},
-  {t:136.70, section:"Coro",    es:"Caminar descalza sobre el cristal", ro:"Garasu no ue wo hadashi no mama aruku", kj:"硝子の上を裸足のまま歩く"},
-  {t:142.37, section:"Coro",    es:"Con cada punzada de dolor, la sangre fluye y cae", ro:"Itamu goto ni chi ga nagarete ochite iku", kj:"痛むごとに血が流れて落ちていく"},
-  {t:148.70, section:"Coro",    es:"Por favor, sigue esas huellas rojas y ven a verme", ro:"Onegai, sono akai ashiato wo tadotte, ai ni kite", kj:"お願い その赤い足跡を辿って 会いにきて"},
-  {t:170.13, section:"Outro",   es:"Como si en este mundo solo existiéramos nosotros dos", ro:"Marude kono sekai de futari dake mitai da ne", kj:"まるでこの世界で二人だけみたいだね"},
-  {t:180.91, section:"Outro",   es:"Solo fue un pequeño sueño que me permití soñar", ro:"Nante sukoshi dake yume wo mite shimatta dake", kj:"なんて少しだけ夢をみてしまっただけ"}
+  {t:0.68,  section:"Verso 1",    es:"Poco a poco empiezo a entenderte", ro:"Sukoshi zutsu wakari hajimeta", kj:"少しずつ分かり始めた"},
+  {t:6.47,  section:"Verso 1",    es:"Tus manías, lo que sueles pensar", ro:"Kimi no kuse kangaesou na koto", kj:"君の癖 考えそうなこと"},
+  {t:12.75, section:"Verso 1",    es:"Tengo cosas que quiero decirte", ro:"Tsutaetai koto ga aru no ni", kj:"伝えたいことがあるのに"},
+  {t:18.49, section:"Verso 1",    es:"Pero algo se me atasca en el fondo del pecho", ro:"Mune no oku tsukkaeru n da", kj:"胸の奥つっかえるんだ"},
+  {t:24.03, section:"Pre-coro",   es:"Tengo que moverme — a esta distancia", ro:"Ugoki dasanakya kono kyori no mama", kj:"動き出さなきゃ この距離のまま"},
+  {t:30.27, section:"Pre-coro",   es:"Sé que no podré acercarme, pero aun así", ro:"Chikadzukenai to wakatteru kedo", kj:"近づけないと分かってるけど"},
+  {t:36.46, section:"Pre-coro",   es:"Mi corazón débil y mi orgullo fuerte", ro:"Yowai kokoro to tsuyoi puraido ga", kj:"弱い心と強いプライドが"},
+  {t:42.55, section:"Pre-coro",   es:"Vuelven a interponerse — pero ahora", ro:"Mata jama wo suru demo ima wa", kj:"また邪魔をする でも今は"},
+  {t:51.23, section:"Coro 1",     es:"Quiero verte, quiero verte", ro:"Aitakute aitakute", kj:"会いたくて 会いたくて"},
+  {t:57.55, section:"Coro 1",     es:"Los sentimientos que desbordan superan su límite", ro:"Afuredasu omoi ga genkai wo koete", kj:"溢れ出す想いが限界を越えて"},
+  {t:63.34, section:"Coro 1",     es:"El mundo está envuelto en amor", ro:"Sekai wa ai ni tsutsumareta", kj:"世界は愛につつまれた"},
+  {t:69.60, section:"Coro 1",     es:"Subámonos juntos y digámoslo", ro:"Ainori shite tsutaeyou", kj:"相乗りして伝えよう"},
+  {t:75.56, section:"Coro 1",     es:"Quiero verte pero no puedo", ro:"Aitakute aenakute", kj:"会いたくて 会えなくて"},
+  {t:81.37, section:"Coro 1",     es:"Apilando sentimientos que se cruzan sin encontrarse", ro:"Surechigau omoi wo kasane atte", kj:"すれ違う想いを重ね合って"},
+  {t:87.61, section:"Coro 1",     es:"Siguiendo el rastro hacia ti", ro:"Kimi e no kiseki wo tadotte", kj:"君への軌跡を辿って"},
+  {t:94.28, section:"Coro 1",     es:"Tengo que echar a correr ahora", ro:"Ima hashiri dasanakucha", kj:"今走りださなくちゃ"},
+  {t:99.95, section:"Coro 1",     es:"Antes de pisar el freno", ro:"Bureeki kakeru mae ni", kj:"ブレーキかける前に"},
+  {t:114.81, section:"Verso 2",   es:"Muchas veces, decenas de veces", ro:"Nankai mo iya nanjuu kai mo", kj:"何回も いや何十回も"},
+  {t:121.13, section:"Verso 2",   es:"Me cruzo con tu mirada", ro:"Kimi to me wo awaseteru no ni", kj:"君と目を合わせてるのに"},
+  {t:127.01, section:"Verso 2",   es:"Cuanto más te miro, más", ro:"Mitsumereba mitsumeru hodo ni", kj:"見つめれば見つめるほどに"},
+  {t:132.97, section:"Verso 2",   es:"¿Por qué mi corazón acelera?", ro:"Naze kodou wa supiido wo masu no", kj:"なぜ鼓動はスピードを増すの"},
+  {t:138.59, section:"Verso 2",   es:"En los momentos felices, déjame llamarte", ro:"Ureshii toki wa yobasete kimi wo", kj:"嬉しい時は呼ばせて君を"},
+  {t:144.59, section:"Verso 2",   es:"En los momentos tristes, llámame a mí", ro:"Kanashii toki wa yonde watashi wo", kj:"悲しい時は呼んで私を"},
+  {t:150.69, section:"Verso 2",   es:"Mi corazón débil y mi orgullo fuerte también", ro:"Yowai kokoro mo tsuyoi puraido mo", kj:"弱い心も 強いプライドも"},
+  {t:156.42, section:"Verso 2",   es:"Quiero que conozcas todo de mí", ro:"Subete wo shitte hoshii kara", kj:"全てを知ってほしいから"},
+  {t:165.33, section:"Coro 2",    es:"Quiero verte, quiero verte", ro:"Aitakute aitakute", kj:"会いたくて 会いたくて"},
+  {t:171.78, section:"Coro 2",    es:"Los sentimientos que desbordan no tienen valor absoluto", ro:"Afuredasu omoi ni zettaichi wa nakute", kj:"溢れ出す想いに絶対値はなくて"},
+  {t:177.55, section:"Coro 2",    es:"El mundo está envuelto en amor", ro:"Sekai wa ai ni tsutsumareta", kj:"世界は愛につつまれた"},
+  {t:183.84, section:"Coro 2",    es:"Subámonos juntos y digámoslo", ro:"Ainori shite tsutaeyou", kj:"相乗りして伝えよう"},
+  {t:190.40, section:"Puente",    es:"Tu cara hecha un mar de risas", ro:"Kushakusha ni waratta kao mo", kj:"くしゃくしゃに笑った顔も"},
+  {t:193.39, section:"Puente",    es:"Tu cara de ligera tristeza", ro:"Sukoshi sabishisou na kao mo", kj:"少し寂しそうな顔も"},
+  {t:196.52, section:"Puente",    es:"Siempre quiero estar a tu lado, mirarte", ro:"Itsumo soba de kimi no yoko de mite itakute", kj:"いつもそばで 君の横で見ていたくて"},
+  {t:202.08, section:"Puente",    es:"Llevo este amor caprichoso en palabras torpes", ro:"Wagamama na ai wo heta kuso na kotoba ni nose hakobu yo", kj:"わがままな愛を 下手くそな言葉に乗せ運ぶよ"},
+  {t:216.55, section:"Coro Final", es:"Quiero verte, quiero verte", ro:"Aitakute aitakute", kj:"会いたくて 会いたくて"},
+  {t:222.62, section:"Coro Final", es:"Los sentimientos que desbordan superan su límite", ro:"Afuredasu omoi ga genkai wo koete", kj:"溢れ出す想いが限界を越えて"},
+  {t:228.71, section:"Coro Final", es:"El mundo está envuelto en amor", ro:"Sekai wa ai ni tsutsumareta", kj:"世界は愛につつまれた"},
+  {t:235.12, section:"Coro Final", es:"Subámonos juntos y digámoslo", ro:"Ainori shite tsutaeyou", kj:"相乗りして伝えよう"},
+  {t:240.59, section:"Coro Final", es:"Quiero verte pero no puedo", ro:"Aitakute aenakute", kj:"会いたくて 会えなくて"},
+  {t:246.77, section:"Coro Final", es:"Aunque los sentimientos que se cruzan se acumulen", ro:"Surechigau omoi ga kasabatte mo", kj:"すれ違う想いが嵩張っても"},
+  {t:252.65, section:"Coro Final", es:"Siguiendo el rastro hacia ti", ro:"Kimi e no kiseki wo tadotte", kj:"君への軌跡を辿って"},
+  {t:258.24, section:"Coro Final", es:"Voy a seguir corriendo ahora", ro:"Ima hashitte iku kara", kj:"今走っていくから"},
+  {t:264.42, section:"Coro Final", es:"Antes de pisar el freno", ro:"Bureeki kakeru mae ni", kj:"ブレーキかける前に"}
 ];
 </script>
 <script>

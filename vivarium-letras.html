@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JANE DOE — Música</title>
+<title>ビバリウム · Vivarium — Música</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
 /* BOUQUET — paleta extraída de la portada:
@@ -15,10 +15,10 @@
    Marrón/piel (ropa, mano) → card/fondo oscuro
    Verde (hojas) → section-label line
    Blanco (pequeñas flores) → texto principal */
-:root{--bg:#080808;--card:#111111;--accent1:#c8c8c8;--accent2:#f0f0f0;--accent3:#2a2a2a;--text:#e0e0e0;--muted:#505050;--glow:rgba(200,200,200,0.15)}
+:root{--bg:#04060f;--card:#0a0e1a;--accent1:#4f8ef7;--accent2:#a8c8ff;--accent3:#1a3a8f;--text:#f0f4ff;--muted:#4a5578;--glow:rgba(79,142,247,0.35)}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden;padding-bottom:40px}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(255,255,255,0.03) 0%,transparent 60%);z-index:0;pointer-events:none}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 20%,rgba(30,60,180,0.10) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 80% 80%,rgba(20,40,140,0.08) 0%,transparent 60%);z-index:0;pointer-events:none}
 .back-btn{position:fixed;top:1rem;left:1rem;z-index:200;background:rgba(26,14,0,0.88);border:1px solid rgba(245,124,32,0.35);color:var(--accent1);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px)}
 .header-v{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 1rem;border-bottom:1px solid rgba(245,124,32,0.18)}
 .song-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.5rem,4vw,2.6rem);font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.05em;margin-bottom:0.3rem}
@@ -47,7 +47,7 @@ input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;heigh
 .toggle-btn.active{background:rgba(245,124,32,0.13);border-color:var(--accent1);color:var(--accent1)}
 .lyrics-container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:0 1.5rem 2rem}
 .section-label{text-align:center;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);padding:1.2rem 0 0.5rem;opacity:0.5;display:flex;align-items:center;gap:0.8rem}
-.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(200,200,200,0.08)}
+.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(79,142,247,0.15)}
 .lyric-block{padding:1.2rem 1.6rem;margin-bottom:0.5rem;border-radius:16px;border:1px solid transparent;transition:all 0.4s ease;cursor:pointer;opacity:0.3}
 .lyric-block.past{opacity:0.18}
 .lyric-block.active{opacity:1;background:linear-gradient(135deg,rgba(122,32,0,0.12),rgba(245,124,32,0.07));border-color:rgba(200,80,20,0.38);box-shadow:0 0 30px rgba(200,80,20,0.18);transform:translateX(6px)}
@@ -179,11 +179,11 @@ body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
 </style>
 </head>
 <body>
-<a class="back-btn" href="jane.html">← Volver</a>
-<audio id="audio" src="Jane Musica.mp3" preload="auto"></audio>
+<a class="back-btn" href="vivarium.html">← Volver</a>
+<audio id="audio" src="vivarium.mp3" preload="auto"></audio>
 <div class="header-v">
-  <div class="song-title">JANE DOE</div>
-  <div class="artist-name">Kenshi Yonezu × Hikaru Utada · 2025</div>
+  <div class="song-title">ビバリウム · Vivarium</div>
+  <div class="artist-name">Ado · 2026</div>
   <div class="visualizer-wrap" id="vizV"></div>
 </div>
 <div class="ctrl-v">
@@ -208,7 +208,7 @@ body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
 <div class="landscape-layout">
   <div class="land-left">
     <!-- 1. Botón volver -->
-    <a class="land-back-btn" href="jane.html">← Volver</a>
+    <a class="land-back-btn" href="vivarium.html">← Volver</a>
     <!-- Título y artista -->
     <div class="land-title" id="landTitle"></div>
     <div class="land-artist" id="landArtist"></div>
@@ -231,17 +231,17 @@ body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
     </div>
     <!-- 5. Navegación anterior / siguiente con imágenes -->
     <div class="land-nav-row">
-      <a class="land-nav-btn land-nav-prev" href="vivarium-letras.html">
+      <a class="land-nav-btn land-nav-prev" href="ashura-letras.html">
         <div class="land-nav-arrow">←</div>
-        <img class="land-nav-img" src="Vi-p.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <img class="land-nav-img" src="As-p.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="land-nav-fallback">♪</div>
-        <div class="land-nav-label"><span class="land-nav-dir">Anterior</span><span class="land-nav-name">Vivarium</span></div>
+        <div class="land-nav-label"><span class="land-nav-dir">Anterior</span><span class="land-nav-name">Ashura-chan</span></div>
       </a>
-      <a class="land-nav-btn land-nav-next" href="usseewa-letras.html">
+      <a class="land-nav-btn land-nav-next" href="jane-letras.html">
         <div class="land-nav-arrow">→</div>
-        <img class="land-nav-img" src="Us-p.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <img class="land-nav-img" src="Ja-p.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="land-nav-fallback">♪</div>
-        <div class="land-nav-label"><span class="land-nav-dir">Siguiente</span><span class="land-nav-name">Usseewa</span></div>
+        <div class="land-nav-label"><span class="land-nav-dir">Siguiente</span><span class="land-nav-name">JANE DOE</span></div>
       </a>
     </div>
   </div>
@@ -250,26 +250,50 @@ body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
 </div>
 <script>
 const LYRICS=[
-  {t:14.45, section:"Verso 1",  es:"Como si en este mundo solo existiéramos nosotros dos", ro:"Marude kono sekai de futari dake mitai da ne", kj:"まるでこの世界で二人だけみたいだね"},
-  {t:25.16, section:"Verso 1",  es:"Solo fue un pequeño sueño que me permití soñar", ro:"Nante sukoshi dake yume wo mite shimatta dake", kj:"なんて少しだけ夢をみてしまっただけ"},
-  {t:35.80, section:"Verso 1",  es:"La luz de la luna en la punta de los pies, el aroma de un ramo, unos dedos que rozan otros", ro:"Tsumasaki ni tsukiakari, hanataba no kaori, yubi ni fureru yubi", kj:"つま先に月明かり 花束の香り 指に触れる指"},
-  {t:46.57, section:"Verso 1",  es:"Adiós, ya tengo que irme, olvidando todo", ro:"Sayonara, mou ikanakya, nani mo kamo wasurete", kj:"さよなら もう行かなきゃ 何もかも忘れて"},
-  {t:58.73, section:"Coro",     es:"Caminar descalza sobre el cristal", ro:"Garasu no ue wo hadashi no mama aruku", kj:"硝子の上を裸足のまま歩く"},
-  {t:64.30, section:"Coro",     es:"Con cada punzada de dolor, la sangre fluye y cae", ro:"Itamu goto ni chi ga nagarete ochite iku", kj:"痛むごとに血が流れて落ちていく"},
-  {t:71.07, section:"Coro",     es:"Por favor, sigue esas huellas rojas y ven a verme", ro:"Onegai, sono akai ashiato wo tadotte, ai ni kite", kj:"お願い その赤い足跡を辿って 会いにきて"},
-  {t:92.35, section:"Verso 2",  es:"Un pez dorado liberado en una piscina oxidada", ro:"Sabita puuru ni hanatarete iku kingyo", kj:"錆びたプールに放たれていく金魚"},
-  {t:97.72, section:"Verso 2",  es:"Una manzana escondida dentro de la caja de zapatos", ro:"Kutsubako no naka ni kakushita ringo", kj:"靴箱の中隠した林檎"},
-  {t:102.60, section:"Verso 2", es:"Las cicatrices que quedaron en tu piel marchita", ro:"Shinabita kimi no hada ni nokoru kizuato", kj:"萎びた君の肌に残る傷跡"},
-  {t:108.55, section:"Verso 2", es:"Un niño perdido que nadaba como un perro", ro:"Inu no you ni oyoida maigo", kj:"犬のように泳いだ迷子"},
-  {t:113.31, section:"Puente",  es:"¿Dónde estás? (Aquí estoy) ¿Qué estás haciendo? (Siempre te estoy mirando)", ro:"Doko ni iru no (koko ni iru yo) nani wo shite iru no (zutto miteru yo)", kj:"どこにいるの（ここにいるよ）何をしているの（ずっと見てるよ）"},
-  {t:118.81, section:"Puente",  es:"Llenemos este mundo de errores", ro:"Kono yo wo machigai de mitasou", kj:"この世を間違いで満たそう"},
-  {t:124.06, section:"Puente",  es:"Quédate a mi lado, vayamos a jugar", ro:"Soba ni ite yo, asobi ni ikou yo", kj:"側にいてよ 遊びに行こうよ"},
-  {t:129.99, section:"Puente",  es:"¿Dónde estás?", ro:"Doko ni iru no", kj:"どこにいるの"},
-  {t:136.70, section:"Coro",    es:"Caminar descalza sobre el cristal", ro:"Garasu no ue wo hadashi no mama aruku", kj:"硝子の上を裸足のまま歩く"},
-  {t:142.37, section:"Coro",    es:"Con cada punzada de dolor, la sangre fluye y cae", ro:"Itamu goto ni chi ga nagarete ochite iku", kj:"痛むごとに血が流れて落ちていく"},
-  {t:148.70, section:"Coro",    es:"Por favor, sigue esas huellas rojas y ven a verme", ro:"Onegai, sono akai ashiato wo tadotte, ai ni kite", kj:"お願い その赤い足跡を辿って 会いにきて"},
-  {t:170.13, section:"Outro",   es:"Como si en este mundo solo existiéramos nosotros dos", ro:"Marude kono sekai de futari dake mitai da ne", kj:"まるでこの世界で二人だけみたいだね"},
-  {t:180.91, section:"Outro",   es:"Solo fue un pequeño sueño que me permití soñar", ro:"Nante sukoshi dake yume wo mite shimatta dake", kj:"なんて少しだけ夢をみてしまっただけ"}
+  {t:15.72, section:"Verso 1",    es:"¿Cuánto tiempo ha pasado desde entonces?", ro:"Are kara dore kurai tatta koto darou", kj:"あれからどれくらい経ったことだろう"},
+  {t:20.64, section:"Verso 1",    es:"Mi forma de hablar ahogada no ha cambiado.", ro:"Kugumotta monoii wa ai mo kawarazu de", kj:"くぐもった物言いは相も変わらずで"},
+  {t:25.61, section:"Verso 1",    es:"El espejo refleja un ideal inalcanzable.", ro:"Kagami ga utsusu wa hedataru risouzou", kj:"鏡が写すは隔たる理想像"},
+  {t:30.49, section:"Verso 1",    es:"Hoy también forcé mis torpes dedos.", ro:"Bukiyou na yubisaki ni kyou mo te o kaketa", kj:"不器用な指先に今日も手をかけた"},
+  {t:44.17, section:"Verso 2",    es:"Sola y excluida por palabras ajenas.", ro:"Dareka no kotoba de hitori, tsumahajiki", kj:"誰かの言葉で 1人、爪弾き"},
+  {t:48.96, section:"Verso 2",    es:"Claro… nunca nadie esperó nada de mí.", ro:"Shouganai ne nozomareta koto nante nai shi", kj:"しょうがないね 望まれたことなんてないし"},
+  {t:53.93, section:"Verso 2",    es:"El rojo persistente, un interrogatorio tras los insultos.", ro:"Kobiritsuku akairo basei no ura de mondou", kj:"こびりつく赤色 罵声の裏で問答"},
+  {t:58.77, section:"Verso 2",    es:""¿Es especial tener defectos?" Entonces fui una impostora desde el principio.", ro:"Kekkan wa tokubetsu? Nara, hajime kara magaimono", kj:"「欠陥は特別？」なら、初めから紛いもの"},
+  {t:63.86, section:"Pre-coro",   es:"A cambio de aquello que quería alcanzar,", ro:"Kanaetai mono to wa hikikae ni", kj:"叶えたいものとは引き換えに"},
+  {t:66.36, section:"Pre-coro",   es:"rompí lo que era importante.", ro:"Taisetsu na mono o kowashite kite", kj:"大切なものを壊してきて"},
+  {t:68.82, section:"Pre-coro",   es:"Solo hay arrepentimiento y no puedo respirar.", ro:"Koukai bakari de iki ga dekinai kara", kj:"後悔ばかりで息ができないから"},
+  {t:71.32, section:"Pre-coro",   es:"Tiré mis emociones para sentir alivio.", ro:"Kanjou o sutete raku ni natte", kj:"感情を棄てて楽になって"},
+  {t:73.74, section:"Puente",     es:"Sin saber cómo curar las heridas tras la caída,", ro:"Koronda nochi no kizu no naoshikata mo", kj:"転んだ後の傷の治し方も"},
+  {t:76.24, section:"Puente",     es:"sin conocer el remordimiento por los errores cometidos…", ro:"Nokoshita ayamachi no kui mo shiranai mama", kj:"残した過ちの悔いも知らないまま"},
+  {t:79.37, section:"Puente",     es:"¿Es así como me convertiré en adulta?", ro:"Otona ni naru no?", kj:"大人になるの？"},
+  {t:84.63, section:"Coro 1",     es:"En el jardín encerrado, en penumbra,", ro:"Honogurai hakoniwa de", kj:"仄暗い 箱庭で"},
+  {t:89.55, section:"Coro 1",     es:"soñaba mis propios sueños sin descanso.", ro:"Tomedonaku watashi ga watashi no yume o mite ita", kj:"とめどなく私が私の夢を見ていた"},
+  {t:94.51, section:"Coro 1",     es:"La luz que oscilaba a lo lejos", ro:"Tooku de yureta hikari wa", kj:"遠くで揺れた光は"},
+  {t:99.43, section:"Coro 1",     es:"sentí que me llamaba.", ro:"Watashi o yobu ki ga shita", kj:"私を呼ぶ気がした"},
+  {t:107.98, section:"Verso 3",   es:"Cuando me di cuenta, al volverme, aquí estaba sola.", ro:"Kizukeba furimuku to koko ni, hitori", kj:"気付けば 振り向くと此処に、1人"},
+  {t:112.90, section:"Verso 3",   es:"Un espejismo vagando en esta habitación desordenada.", ro:"Chirakatta heya no naka mayoikomu shinkirou", kj:"散らかった部屋の中 迷い込む蜃気楼"},
+  {t:117.91, section:"Verso 3",   es:"¿Por qué se desbordan las lágrimas y la impaciencia?", ro:"Doushite afuredasu namida to shousou", kj:"どうして 溢れだす涙と焦燥"},
+  {t:122.75, section:"Verso 3",   es:"Las puntas mordidas de mis dedos volvieron a teñirse de rojo.", ro:"Fukazume no yubisaki mata akaku somatta", kj:"深爪の指先また赤く染まった"},
+  {t:128.34, section:"Monólogo",  es:""Escucho voces en mi cabeza, las mías y las que no lo son."", ro:"Atama no naka de kikoeru, watashi to watashi de nai koe ga", kj:"「頭の中で聞こえる」「私と私でない声が」"},
+  {t:130.84, section:"Monólogo",  es:""Repitiéndose una y otra vez, negando el hecho de haber nacido."", ro:"Kurikaeshi, umarete kita koto o hitei suru", kj:"「繰り返し 繰り返し生まれてきたことを否定する」"},
+  {t:133.92, section:"Monólogo",  es:""¿Por qué no puedo hacer nada? ¿Por qué no sé nada?"", ro:"Doushite nanimo dekinai no, doushite nanimo shiranai no", kj:"「どうして何もできないの」「どうして何も知らないの」"},
+  {t:136.34, section:"Monólogo",  es:""No lo sé. No lo sé. Yo no lo sé."", ro:"Wakaranai, wakaranai, watashi ni wa wakaranai", kj:"「わからない」「わからない」「私にはわからない」"},
+  {t:138.35, section:"Monólogo",  es:""Sin conocer ni una sola verdad, parece que ya soy adulta."", ro:"Tadashii koto hitotsu mo shiranai mama, otona ni natte shimatta mitai da", kj:"「正しいこと1つも知らないまま」「大人になってしまったみたいだ」"},
+  {t:143.98, section:"Monólogo",  es:""No creías en nada. No podías confiar en nadie."", ro:"Kimi wa nanimo shinjinakatta, dare mo shinjirarenakatta", kj:"「君は何も信じなかった」「誰も信じられなかった」"},
+  {t:146.98, section:"Monólogo",  es:""Lo que necesitabas, antes que la fama, era solo escuchar que estarías bien."", ro:"Kimi ni hitsuyou datta no wa meisei yori mo, daijoubu no hitokoto datta ne", kj:"「君に必要だったのは名声よりも先に」「大丈夫の一言だったね」"},
+  {t:152.10, section:"Monólogo",  es:""Lo siento, perdiste tu lugar donde pertenecer."", ro:"Ibasho o nakushichatte gomen ne", kj:"「居場所をなくしちゃってごめんね」"},
+  {t:155.20, section:"Monólogo",  es:""Así que está bien si ya no sales más."", ro:"Dakara mou dete konakutatte ii sa", kj:"「だから もう出てこなくたっていいさ」"},
+  {t:158.30, section:"Monólogo",  es:""En lo profundo de la ciudad oscilante, en esa luz,"", ro:"Yureru miyako no oku, sono hikari no naka de", kj:"「揺れる都の奥その光の中で 機械少女の歌が聴こえた」"},
+  {t:164.50, section:"Monólogo",  es:""Yo también quiero ir allá."", ro:"Watashi mo, soko ni ikitai", kj:"「私も、そこに行きたい」"},
+  {t:168.00, section:"Coro 2",    es:"En el jardín encerrado, en penumbra,", ro:"Honogurai hakoniwa de", kj:"仄暗い 箱庭で"},
+  {t:172.92, section:"Coro 2",    es:"sigo soñando mis propios sueños sin descanso.", ro:"Tomedonaku watashi ga watashi no yume o mite ite", kj:"とめどなく私が私の夢を見ていて"},
+  {t:177.88, section:"Coro 2",    es:"Tan cerca que puedo tocarlo,", ro:"Furerareru kyori no mama", kj:"触れられる距離のまま"},
+  {t:182.80, section:"Coro 2",    es:"no te vayas, no cambies.", ro:"Hanarenaide kawaranaide", kj:"離れないで 変わらないで"},
+  {t:187.72, section:"Coro Final", es:"Dentro de este jardín en miniatura,", ro:"Kono hakoniwa de", kj:"この箱庭で"},
+  {t:192.64, section:"Coro Final", es:"por mucho que me pierda, me aferre, o pierda todo,", ro:"Dore dake mayotte, sugatte, mienaku natte mo", kj:"どれだけ迷って、縋って、見えなくなっても"},
+  {t:197.56, section:"Coro Final", es:"la luz que titila en mis ojos es el futuro que pinté.", ro:"Kono me de yureta hikari wa ano hi egaku mirai da", kj:"この目で揺れた光は あの日描く未来だ"},
+  {t:207.00, section:"Outro",     es:"Adiós, aún tengo que seguir cantando,", ro:"Sayonara mada watashi wa utawanakucha", kj:"さよなら まだ 私は歌わなくちゃ"},
+  {t:216.00, section:"Outro",     es:"no estás sola hasta que amanezca.", ro:"Yoru ga akeru made hitori ja nai kara", kj:"夜が明けるまで 1人じゃないから"},
+  {t:221.00, section:"Outro",     es:"Porque tú, escondida en el clóset, aún sigues llorando.", ro:"Kuroozetto no kimi wa mada naite iru", kj:"クローゼットの君はまだ泣いてる"}
 ];
 </script>
 <script>
