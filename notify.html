@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enviar Notificación - Musica</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: #04081c;
+    color: #e0e8ff;
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  .card {
+    background: #0a1230;
+    border: 1px solid rgba(80,140,255,0.2);
+    border-radius: 20px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 420px;
+  }
+  h1 { font-size: 1.4rem; margin-bottom: 1.5rem; color: #80c0ff; text-align: center; }
+  label { font-size: 0.85rem; color: #8090b0; display: block; margin-bottom: 0.3rem; }
+  input, textarea {
+    width: 100%;
+    background: #0d1a35;
+    border: 1px solid rgba(80,140,255,0.25);
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    color: #e0e8ff;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    outline: none;
+  }
+  textarea { height: 80px; resize: none; }
+  button {
+    width: 100%;
+    background: linear-gradient(135deg, #3060c0, #5090e0);
+    border: none;
+    border-radius: 12px;
+    padding: 0.85rem;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 0.5rem;
+  }
+  button:active { opacity: 0.8; }
+  #status {
+    margin-top: 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    min-height: 1.5rem;
+    color: #60d080;
+  }
+  .error { color: #f06060 !important; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>🎵 Enviar Notificación</h1>
+
+  <label>Título</label>
+  <input type="text" id="title" placeholder="Nueva canción disponible 🎵" value="Nueva canción disponible 🎵">
+
+  <label>Mensaje</label>
+  <textarea id="body" placeholder="¡Ya puedes escucharla en Musica!">¡Ya puedes escucharla en Musica!</textarea>
+
+  <button onclick="enviar()">Enviar a todos</button>
+  <div id="status"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB8hX9NvKCP3iQWUAFPWFUflHMAW5bnRww",
+  authDomain: "musica-7e89d.firebaseapp.com",
+  projectId: "musica-7e89d",
+  storageBucket: "musica-7e89d.firebasestorage.app",
+  messagingSenderId: "165429222650",
+  appId: "1:165429222650:web:0bff17cd1c8e26f655fd43"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.enviar = async function() {
+  const title = document.getElementById('title').value;
+  const body = document.getElementById('body').value;
+  const status = document.getElementById('status');
+
+  if (!title || !body) {
+    status.textContent = 'Completa todos los campos';
+    status.className = 'error';
+    return;
+  }
+
+  status.textContent = 'Enviando...';
+  status.className = '';
+
+  try {
+    const snapshot = await getDocs(collection(db, 'subscriptions'));
+    let count = 0;
+
+    for (const docSnap of snapshot.docs) {
+      const { subscription } = docSnap.data();
+      // Aquí se enviaría via tu backend/Cloud Function
+      // Por ahora muestra cuántos suscriptores hay
+      count++;
+    }
+
+    status.textContent = `✅ ${count} suscriptor(es) encontrados`;
+  } catch (err) {
+    status.textContent = 'Error: ' + err.message;
+    status.className = 'error';
+  }
+};
+</script>
+</body>
+</html>
