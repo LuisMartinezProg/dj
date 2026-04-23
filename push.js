@@ -10,7 +10,6 @@ const firebaseConfig = {
 
 const VAPID_KEY = "BLHW1YV-s7u3NlaBlh0bAwiyBd1Jos5vzZ3coYGMH3C0Mb1QHVZZyFhqP-XSesmHHWCU4yo7bc4XVUJuK8-6o1U";
 
-// Convertir clave VAPID
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
   const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -18,7 +17,6 @@ function urlBase64ToUint8Array(base64String) {
   return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
 }
 
-// Registrar Service Worker y suscribirse
 async function initPush() {
   if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
     console.log('Push no soportado');
@@ -40,11 +38,10 @@ async function initPush() {
       applicationServerKey: urlBase64ToUint8Array(VAPID_KEY)
     });
 
-    // Guardar suscripción en Firebase Firestore
-    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+    const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
     const { getFirestore, doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
 
-    const app = initializeApp(firebaseConfig);
+    const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
     const db = getFirestore(app);
 
     const subJson = JSON.parse(JSON.stringify(subscription));
