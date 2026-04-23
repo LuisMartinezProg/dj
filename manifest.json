@@ -1,0 +1,25 @@
+{
+  "name": "Musica",
+  "short_name": "Ongaku",
+  "description": "Karaoke japonés con letras en español, romaji y kanji",
+  "start_url": "/dj/",
+  "display": "standalone",
+  "background_color": "#3c2387",
+  "theme_color": "#110438",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f3b5.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    }
+  ],
+  "id": "/dj/",
+  "dir": "rtl",
+  "scope": "/dj/",
+  "lang": "es",
+  "categories": [
+    "entertainment",
+    "music"
+  ]
+}
