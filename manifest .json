@@ -7,10 +7,16 @@
   "background_color": "#09070f",
   "theme_color": "#09070f",
   "orientation": "portrait",
+  "id": "/dj/",
   "icons": [
     {
-      "src": "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f3b5.png",
-      "sizes": "72x72",
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
       "type": "image/png"
     }
   ]
