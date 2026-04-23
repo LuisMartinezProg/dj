@@ -232,4 +232,9 @@ searchInput.addEventListener('input',()=>{
 for(let i=0;i<12;i++){const p=document.createElement('div');p.className='petal';p.style.cssText=`left:${Math.random()*100}%;animation-duration:${6+Math.random()*10}s;animation-delay:${Math.random()*8}s;width:${5+Math.random()*6}px;height:${5+Math.random()*6}px;opacity:${0.2+Math.random()*0.4}`;document.body.appendChild(p);}
 </script>
 </body>
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/dj/sw.js');
+  }
+  </script>
 </html>
