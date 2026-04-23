@@ -1,6 +1,6 @@
 {
-  "name": "Musci",
-  "short_name": "Musci",
+  "name": "Musica",
+  "short_name": "Musica",
   "description": "Karaoke japonés con letras en español, romaji y kanji",
   "start_url": "/dj/",
   "display": "standalone",
