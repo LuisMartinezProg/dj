@@ -1,0 +1,25 @@
+{
+  "name": "Musica",
+  "short_name": "Musica",
+  "description": "Karaoke japonés con letras en español, romaji y kanji",
+  "start_url": "/dj/",
+  "id": "/dj/",
+  "display": "standalone",
+  "background_color": "#09070f",
+  "theme_color": "#09070f",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "https://luismartinezprog.github.io/dj/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://luismartinezprog.github.io/dj/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
