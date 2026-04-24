@@ -1,4 +1,3 @@
-// Configuración Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyB8hX9NvKCP3iQWUAFPWFUflHMAW5bnRww",
   authDomain: "musica-7e89d.firebaseapp.com",
@@ -18,25 +17,26 @@ function urlBase64ToUint8Array(base64String) {
 }
 
 async function initPush() {
-  if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-    console.log('Push no soportado');
-    return;
-  }
+  if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
 
   try {
     const registration = await navigator.serviceWorker.register('/dj/sw.js');
-    console.log('SW registrado');
+    
+    // Esperar a que el SW esté activo
+    await navigator.serviceWorker.ready;
 
     const permission = await Notification.requestPermission();
-    if (permission !== 'granted') {
-      console.log('Permiso denegado');
-      return;
-    }
+    if (permission !== 'granted') return;
 
-    const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(VAPID_KEY)
-    });
+    // Verificar si ya hay suscripción existente
+    let subscription = await registration.pushManager.getSubscription();
+    
+    if (!subscription) {
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_KEY)
+      });
+    }
 
     const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
     const { getFirestore, doc, setDoc } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
