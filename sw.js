@@ -33,4 +33,16 @@ self.addEventListener('notificationclick', event => {
   event.waitUntil(
     clients.openWindow(event.notification.data.url)
   );
+  
+});
+// ntfy.sh - escuchar notificaciones
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'NTFY_NOTIFY') {
+    self.registration.showNotification(event.data.title, {
+      body: event.data.body,
+      icon: '/dj/icon-192x192.png',
+      vibrate: [200, 100, 200],
+      data: { url: '/dj/' }
+    });
+  }
 });
