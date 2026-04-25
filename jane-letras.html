@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JANE DOE — Música</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+/* VIDRIO ROTO — paleta extraída de la imagen:
+   Negro profundo (fondo) → bg
+   Negro ligeramente levantado → card
+   Blanco hueso (pies, tobillos) → accent1 / texto principal
+   Blanco especular (destellos en vidrios) → accent2
+   Gris carbón (piernas, penumbra) → accent3
+   Gris medio (zonas intermedias) → text / muted
+   Glow: fulgor blanco-grisáceo muy sutil */
+:root{--bg:#080808;--card:#101010;--accent1:#c8a84b;--accent2:#e8cc80;--accent3:#3A3733;--text:#C8C4BE;--muted:#7a6840;--glow:rgba(200,168,75,0.18)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden;padding-bottom:40px}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(255,255,255,0.03) 0%,transparent 60%);z-index:0;pointer-events:none}
+.back-btn{position:fixed;top:1rem;left:1rem;z-index:200;background:rgba(8,8,8,0.88);border:1px solid rgba(200,168,75,0.25);color:var(--accent1);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px)}
+.header-v{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 1rem;border-bottom:1px solid rgba(200,168,75,0.10)}
+.song-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.5rem,4vw,2.6rem);font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.05em;margin-bottom:0.3rem}
+.artist-name{color:var(--muted);font-size:0.9rem;font-weight:300;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:1rem}
+.visualizer-wrap{display:flex;justify-content:center;align-items:flex-end;gap:3px;height:50px;padding:0 2rem;margin-top:0.5rem}
+.bar{width:4px;border-radius:2px 2px 0 0;background:linear-gradient(to top,var(--accent3),var(--accent1));opacity:0.4;height:4px}
+@keyframes wave{0%,100%{height:4px}50%{height:var(--max-h)}}
+.playing .bar{opacity:1;animation:wave var(--spd) ease-in-out infinite;animation-delay:var(--delay)}
+audio{display:none}
+.ctrl-v{position:relative;z-index:1}
+.progress-section{padding:1rem 2rem 0.5rem;max-width:780px;margin:0 auto}
+.progress-bar-wrap{width:100%;height:6px;background:var(--card);border-radius:3px;cursor:pointer;overflow:hidden;margin-bottom:0.5rem}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent1),var(--accent2));border-radius:3px;width:0%;box-shadow:0 0 10px var(--glow);pointer-events:none}
+.time-row{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--muted);font-family:'Cormorant Garamond',serif}
+.controls{display:flex;justify-content:center;gap:1rem;padding:0.8rem 2rem 0.5rem;flex-wrap:wrap}
+.btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem}
+.btn-primary{background:linear-gradient(135deg,var(--accent3),var(--accent1));color:white;padding:0.75rem 2rem;font-size:1rem;font-weight:700;box-shadow:0 0 20px var(--glow);min-width:130px;justify-content:center}
+.btn-primary:hover{transform:scale(1.05)}
+.btn-secondary{background:var(--card);color:var(--accent1);border:1px solid rgba(200,168,75,0.20);padding:0.75rem 1.3rem;font-size:0.9rem}
+.volume-row{display:flex;align-items:center;gap:0.6rem;justify-content:center;padding-bottom:0.5rem}
+.volume-row span{color:var(--muted);font-size:0.8rem}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100px;height:4px;border-radius:2px;background:var(--card);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent1);cursor:pointer}
+.view-toggles{display:flex;justify-content:center;gap:0.5rem;padding:0 2rem 1.2rem;flex-wrap:wrap}
+.toggle-btn{border:1px solid rgba(200,168,75,0.18);background:transparent;color:var(--muted);padding:0.35rem 1rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.78rem;transition:all 0.2s}
+.toggle-btn.active{background:rgba(200,168,75,0.08);border-color:var(--accent1);color:var(--accent1)}
+.lyrics-container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:0 1.5rem 2rem}
+.section-label{text-align:center;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);padding:1.2rem 0 0.5rem;opacity:0.5;display:flex;align-items:center;gap:0.8rem}
+.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(200,200,200,0.08)}
+.lyric-block{padding:1.2rem 1.6rem;margin-bottom:0.5rem;border-radius:16px;border:1px solid transparent;transition:all 0.4s ease;cursor:pointer;opacity:0.3}
+.lyric-block.past{opacity:0.18}
+.lyric-block.active{opacity:1;background:linear-gradient(135deg,rgba(58,55,51,0.25),rgba(200,168,75,0.05));border-color:rgba(200,168,75,0.30);box-shadow:0 0 30px rgba(200,168,75,0.08);transform:translateX(6px)}
+.lyric-es{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:600;color:var(--text);line-height:1.3;margin-bottom:0.35rem}
+.lyric-block.active .lyric-es{background:linear-gradient(90deg,var(--text),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lyric-romaji{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,2.5vw,1.25rem);color:var(--accent2);margin-bottom:0.3rem}
+.lyric-kanji{font-family:'Noto Serif JP',serif;font-size:clamp(0.95rem,2vw,1.1rem);color:var(--accent2);opacity:0.75;font-weight:400;letter-spacing:0.08em}
+body.view-es .lyric-romaji,body.view-es .lyric-kanji{display:none}
+body.view-romaji .lyric-es,body.view-romaji .lyric-kanji{display:none}
+body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
+.scroll-btn{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--accent1));border:none;cursor:pointer;box-shadow:0 4px 20px var(--glow);display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:all 0.2s;opacity:0.5}
+.scroll-btn:hover{transform:scale(1.1);opacity:1}.scroll-btn.active{opacity:1}
+.landscape-layout{display:none}
+/* ═══ LANDSCAPE ═══ */
+.landscape-layout{display:none}
+@media(orientation:landscape) and (max-height:600px){
+  .back-btn{display:none !important}
+  .scroll-btn{display:none !important}
+  body{padding-bottom:0;overflow:hidden;height:100dvh}
+  header,.header-v,.ctrl-v,.progress-section,.controls,.volume-row,
+  .view-toggles,#lyricsContainer,.lyrics-container{display:none !important}
+  .landscape-layout{display:flex;height:100dvh;overflow:hidden;position:relative;z-index:1}
+
+  /* ── COLUMNA IZQUIERDA: 50% ── */
+  .land-left{
+    width:50%;flex-shrink:0;
+    display:flex;flex-direction:column;
+    padding:0.55rem 0.8rem;
+    border-right:1px solid rgba(200,168,75,0.10);
+    background:rgba(8,8,8,0.80);backdrop-filter:blur(12px);
+    gap:0.3rem;overflow:hidden
+  }
+
+  /* Botón volver */
+  .land-back-btn{
+    display:inline-flex;align-items:center;gap:0.3rem;
+    text-decoration:none;color:var(--accent1);
+    background:rgba(200,168,75,0.05);border:1px solid rgba(200,168,75,0.18);
+    border-radius:999px;padding:0.2rem 0.65rem;
+    font-size:0.62rem;font-family:'Cormorant Garamond',serif;
+    letter-spacing:0.05em;transition:all 0.2s;align-self:flex-start;flex-shrink:0
+  }
+  .land-back-btn:hover{background:rgba(200,168,75,0.10);border-color:var(--accent2)}
+
+  /* Título y artista */
+  .land-title{font-family:'Cormorant Garamond',serif;font-size:0.9rem;font-weight:600;
+    background:linear-gradient(135deg,var(--accent1),var(--accent2));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .land-artist{font-size:0.54rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:0.05rem}
+
+  /* Visualizer — barras multicolor como el ramo */
+  .land-viz{display:flex;align-items:flex-end;gap:2px;height:22px}
+  .land-viz .bar{width:3px}
+
+  /* Barra de progreso */
+  .land-progress-wrap{width:100%;height:4px;background:var(--card);border-radius:2px;cursor:pointer;overflow:hidden}
+  .land-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent1),var(--accent2));border-radius:2px;width:0%;pointer-events:none}
+  .land-time{display:flex;justify-content:space-between;font-size:0.58rem;color:var(--muted);font-family:'Cormorant Garamond',serif}
+
+  /* Botones play/reset */
+  .land-btn-row{display:flex;gap:0.4rem}
+  .land-btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.7rem;padding:0.32rem 0.6rem;flex:1;text-align:center;transition:all 0.2s}
+  .land-btn-play{background:linear-gradient(135deg,var(--accent3),var(--accent1));color:white;font-weight:700;box-shadow:0 0 10px var(--glow)}
+  .land-btn-reset{background:var(--card);color:var(--accent1);border:1px solid rgba(200,168,75,0.18)}
+
+  /* Volumen */
+  .land-vol-row{display:flex;align-items:center;gap:0.3rem}
+  .land-vol-row span{color:var(--muted);font-size:0.62rem}
+  .land-vol{-webkit-appearance:none;appearance:none;flex:1;height:3px;border-radius:2px;background:var(--card);outline:none;cursor:pointer}
+  .land-vol::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--accent1);cursor:pointer}
+
+  /* Toggles de vista — azul del cabello al hover */
+  .land-toggles{display:flex;flex-wrap:wrap;gap:0.22rem}
+  .land-toggle{border:1px solid rgba(200,168,75,0.15);background:transparent;color:var(--muted);padding:0.18rem 0.45rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.58rem;transition:all 0.2s}
+  .land-toggle.active{background:rgba(200,168,75,0.08);border-color:var(--accent1);color:var(--accent1)}
+
+  /* ── NAVEGACIÓN ── */
+  .land-nav-row{
+    display:flex;gap:0.4rem;
+    padding-top:0.3rem;border-top:1px solid rgba(200,168,75,0.10);
+    flex-shrink:0;margin-top:auto
+  }
+  .land-nav-btn{
+    display:flex;align-items:center;gap:0;flex:1;
+    text-decoration:none;
+    background:rgba(200,168,75,0.03);border:1px solid rgba(200,168,75,0.10);
+    border-radius:8px;overflow:hidden;
+    transition:all 0.2s;min-width:0;height:38px
+  }
+  .land-nav-btn:hover{border-color:var(--accent2);box-shadow:0 0 14px rgba(200,168,75,0.10)}
+  .land-nav-btn:hover .land-nav-arrow{background:rgba(200,168,75,0.12);color:var(--accent2)}
+  .land-nav-arrow{
+    display:flex;align-items:center;justify-content:center;
+    width:24px;flex-shrink:0;height:100%;
+    background:rgba(200,168,75,0.06);
+    color:var(--accent1);font-size:0.85rem;
+    border-right:1px solid rgba(200,168,75,0.10);
+    transition:all 0.2s
+  }
+  .land-nav-next .land-nav-arrow{border-right:none;border-left:1px solid rgba(200,168,75,0.10)}
+  .land-nav-img{width:38px;height:38px;object-fit:cover;flex-shrink:0;display:block}
+  .land-nav-fallback{
+    width:38px;height:38px;flex-shrink:0;
+    background:rgba(200,168,75,0.05);
+    display:none;align-items:center;justify-content:center;
+    font-size:1rem;color:var(--muted)
+  }
+  .land-nav-label{
+    display:flex;flex-direction:column;min-width:0;overflow:hidden;
+    padding:0 0.3rem;flex:1
+  }
+  .land-nav-dir{font-size:0.44rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap}
+  .land-nav-name{font-size:0.58rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Cormorant Garamond',serif;font-weight:600}
+  .land-nav-next{flex-direction:row-reverse}
+  .land-nav-next .land-nav-label{align-items:flex-end;text-align:right}
+
+  /* ── COLUMNA DERECHA: letras ── */
+  .land-right{flex:1;overflow-y:auto;padding:0.5rem 0.8rem 0.5rem 0.7rem;scroll-behavior:smooth}
+  .land-right::-webkit-scrollbar{width:2px}
+  .land-right::-webkit-scrollbar-thumb{background:rgba(200,168,75,0.18);border-radius:2px}
+  .land-right .section-label{font-size:0.52rem;padding:0.5rem 0 0.25rem;opacity:0.38}
+  .land-right .lyric-block{padding:0.38rem 0.6rem;margin-bottom:0.18rem;border-radius:9px}
+  .land-right .lyric-es{font-size:0.88rem;margin-bottom:0.12rem;line-height:1.25}
+  .land-right .lyric-romaji{font-size:0.72rem;margin-bottom:0.08rem}
+  .land-right .lyric-kanji{font-size:0.66rem}
+  .land-right .lyric-block.active{transform:translateX(3px)}
+}
+</style>
+</head>
+<body>
+<a class="back-btn" href="jane.html">← Volver</a>
+<audio id="audio" src="Jane Musica.mp3" preload="auto"></audio>
+<div class="header-v">
+  <div class="song-title">JANE DOE</div>
+  <div class="artist-name">Kenshi Yonezu × Hikaru Utada · 2025</div>
+  <div class="visualizer-wrap" id="vizV"></div>
+</div>
+<div class="ctrl-v">
+  <div class="progress-section">
+    <div class="progress-bar-wrap" id="pbV"><div class="progress-fill" id="pfV"></div></div>
+    <div class="time-row"><span id="tnV">0:00</span><span id="ttV">—</span></div>
+  </div>
+  <div class="controls">
+    <button class="btn btn-primary" id="playV">▶ Play</button>
+    <button class="btn btn-secondary" id="resetV">↩ Reinicio</button>
+  </div>
+  <div class="volume-row"><span>🔈</span><input type="range" id="volV" min="0" max="1" step="0.05" value="0.8"><span>🔊</span></div>
+  <div class="view-toggles">
+    <button class="toggle-btn active" data-view="all">Todo</button>
+    <button class="toggle-btn" data-view="es">Español</button>
+    <button class="toggle-btn" data-view="romaji">Romaji</button>
+    <button class="toggle-btn" data-view="kanji">日本語</button>
+  </div>
+</div>
+<div class="lyrics-container" id="lyricsV"></div>
+<button class="scroll-btn" id="scrollBtn">♪</button>
+<div class="landscape-layout">
+  <div class="land-left">
+    <!-- 1. Botón volver -->
+    <a class="land-back-btn" href="jane.html">← Volver</a>
+    <!-- Título y artista -->
+    <div class="land-title" id="landTitle"></div>
+    <div class="land-artist" id="landArtist"></div>
+    <!-- 2. Visualizer -->
+    <div class="land-viz" id="vizL"></div>
+    <!-- 3. Barra de progreso + tiempo -->
+    <div class="land-progress-wrap" id="pbL"><div class="land-progress-fill" id="pfL"></div></div>
+    <div class="land-time"><span id="tnL">0:00</span><span id="ttL">—</span></div>
+    <!-- 4. Controles -->
+    <div class="land-btn-row">
+      <button class="land-btn land-btn-play" id="playL">▶</button>
+      <button class="land-btn land-btn-reset" id="resetL">↩</button>
+    </div>
+    <div class="land-vol-row"><span>🔈</span><input type="range" class="land-vol" id="volL" min="0" max="1" step="0.05" value="0.8"><span>🔊</span></div>
+    <div class="land-toggles">
+      <button class="land-toggle active" data-view="all">Todo</button>
+      <button class="land-toggle" data-view="es">ES</button>
+      <button class="land-toggle" data-view="romaji">Roma</button>
+      <button class="land-toggle" data-view="kanji">JP</button>
+    </div>
+    <!-- 5. Navegación anterior / siguiente con imágenes -->
+    <div class="land-nav-row">
+      <a class="land-nav-btn land-nav-prev" href="eien.html">
+        <div class="land-nav-arrow">←</div>
+        <img class="land-nav-img" src="E-p.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="land-nav-fallback">♪</div>
+        <div class="land-nav-label"><span class="land-nav-dir">Anterior</span><span class="land-nav-name">Eien</span></div>
+      </a>
+      <a class="land-nav-btn land-nav-next" href="hikaru.html">
+        <div class="land-nav-arrow">→</div>
+        <img class="land-nav-img" src="Hi-p.png" alt="" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="land-nav-fallback">♪</div>
+        <div class="land-nav-label"><span class="land-nav-dir">Siguiente</span><span class="land-nav-name">Hikaru Nara</span></div>
+      </a>
+    </div>
+  </div>
+  <!-- Columna derecha: letras -->
+  <div class="land-right" id="lyricsL"></div>
+</div>
+<script>
+const LYRICS=[
+  {t:14.45, section:"Verso 1",  es:"Como si en este mundo solo existiéramos nosotros dos", ro:"Marude kono sekai de futari dake mitai da ne", kj:"まるでこの世界で二人だけみたいだね"},
+  {t:25.16, section:"Verso 1",  es:"Solo fue un pequeño sueño que me permití soñar", ro:"Nante sukoshi dake yume wo mite shimatta dake", kj:"なんて少しだけ夢をみてしまっただけ"},
+  {t:35.80, section:"Verso 1",  es:"La luz de la luna en la punta de los pies, el aroma de un ramo, unos dedos que rozan otros", ro:"Tsumasaki ni tsukiakari, hanataba no kaori, yubi ni fureru yubi", kj:"つま先に月明かり 花束の香り 指に触れる指"},
+  {t:46.57, section:"Verso 1",  es:"Adiós, ya tengo que irme, olvidando todo", ro:"Sayonara, mou ikanakya, nani mo kamo wasurete", kj:"さよなら もう行かなきゃ 何もかも忘れて"},
+  {t:58.73, section:"Coro",     es:"Caminar descalza sobre el cristal", ro:"Garasu no ue wo hadashi no mama aruku", kj:"硝子の上を裸足のまま歩く"},
+  {t:64.30, section:"Coro",     es:"Con cada punzada de dolor, la sangre fluye y cae", ro:"Itamu goto ni chi ga nagarete ochite iku", kj:"痛むごとに血が流れて落ちていく"},
+  {t:71.07, section:"Coro",     es:"Por favor, sigue esas huellas rojas y ven a verme", ro:"Onegai, sono akai ashiato wo tadotte, ai ni kite", kj:"お願い その赤い足跡を辿って 会いにきて"},
+  {t:92.35, section:"Verso 2",  es:"Un pez dorado liberado en una piscina oxidada", ro:"Sabita puuru ni hanatarete iku kingyo", kj:"錆びたプールに放たれていく金魚"},
+  {t:97.72, section:"Verso 2",  es:"Una manzana escondida dentro de la caja de zapatos", ro:"Kutsubako no naka ni kakushita ringo", kj:"靴箱の中隠した林檎"},
+  {t:102.60, section:"Verso 2", es:"Las cicatrices que quedaron en tu piel marchita", ro:"Shinabita kimi no hada ni nokoru kizuato", kj:"萎びた君の肌に残る傷跡"},
+  {t:108.55, section:"Verso 2", es:"Un niño perdido que nadaba como un perro", ro:"Inu no you ni oyoida maigo", kj:"犬のように泳いだ迷子"},
+  {t:113.31, section:"Puente",  es:"¿Dónde estás? (Aquí estoy) ¿Qué estás haciendo? (Siempre te estoy mirando)", ro:"Doko ni iru no (koko ni iru yo) nani wo shite iru no (zutto miteru yo)", kj:"どこにいるの（ここにいるよ）何をしているの（ずっと見てるよ）"},
+  {t:118.81, section:"Puente",  es:"Llenemos este mundo de errores", ro:"Kono yo wo machigai de mitasou", kj:"この世を間違いで満たそう"},
+  {t:124.06, section:"Puente",  es:"Quédate a mi lado, vayamos a jugar", ro:"Soba ni ite yo, asobi ni ikou yo", kj:"側にいてよ 遊びに行こうよ"},
+  {t:129.99, section:"Puente",  es:"¿Dónde estás?", ro:"Doko ni iru no", kj:"どこにいるの"},
+  {t:136.70, section:"Coro",    es:"Caminar descalza sobre el cristal", ro:"Garasu no ue wo hadashi no mama aruku", kj:"硝子の上を裸足のまま歩く"},
+  {t:142.37, section:"Coro",    es:"Con cada punzada de dolor, la sangre fluye y cae", ro:"Itamu goto ni chi ga nagarete ochite iku", kj:"痛むごとに血が流れて落ちていく"},
+  {t:148.70, section:"Coro",    es:"Por favor, sigue esas huellas rojas y ven a verme", ro:"Onegai, sono akai ashiato wo tadotte, ai ni kite", kj:"お願い その赤い足跡を辿って 会いにきて"},
+  {t:170.13, section:"Outro",   es:"Como si en este mundo solo existiéramos nosotros dos", ro:"Marude kono sekai de futari dake mitai da ne", kj:"まるでこの世界で二人だけみたいだね"},
+  {t:180.91, section:"Outro",   es:"Solo fue un pequeño sueño que me permití soñar", ro:"Nante sukoshi dake yume wo mite shimatta dake", kj:"なんて少しだけ夢をみてしまっただけ"}
+];
+</script>
+<script>
+(function(){
+  const audio=document.getElementById('audio');let activeIdx=-1;
+  function buildLyrics(container){let curSec=null;LYRICS.forEach((line,i)=>{if(line.section!==curSec){curSec=line.section;const sl=document.createElement('div');sl.className='section-label';sl.innerHTML=`<span>${line.section}</span>`;container.appendChild(sl);}const b=document.createElement('div');b.className='lyric-block';b.dataset.idx=i;let h='';if(line.es)h+=`<div class="lyric-es">${line.es}</div>`;if(line.ro)h+=`<div class="lyric-romaji">${line.ro}</div>`;if(line.kj)h+=`<div class="lyric-kanji">${line.kj}</div>`;b.innerHTML=h;b.addEventListener('click',()=>{audio.currentTime=line.t;});container.appendChild(b);});}
+  buildLyrics(document.getElementById('lyricsV'));buildLyrics(document.getElementById('lyricsL'));
+  const fmt=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+  const scrollBtn=document.getElementById('scrollBtn');
+  function setProgress(t){const pct=(audio.duration?(t/audio.duration*100):0)+'%';document.getElementById('pfV').style.width=pct;document.getElementById('pfL').style.width=pct;document.getElementById('tnV').textContent=fmt(t);document.getElementById('tnL').textContent=fmt(t);}
+  function updateActive(t){setProgress(t);let newActive=-1;for(let i=0;i<LYRICS.length;i++){if(t>=LYRICS[i].t)newActive=i;}if(newActive===activeIdx)return;activeIdx=newActive;['lyricsV','lyricsL'].forEach(id=>{const blocks=document.getElementById(id).querySelectorAll('.lyric-block');blocks.forEach((b,i)=>{b.classList.toggle('active',i===activeIdx);b.classList.toggle('past',i<activeIdx);});if(activeIdx>=0&&blocks[activeIdx]){if(id==='lyricsL'){const lr=document.getElementById('lyricsL');lr.scrollTo({top:blocks[activeIdx].offsetTop-lr.clientHeight/2,behavior:'smooth'});}else{blocks[activeIdx].scrollIntoView({behavior:'smooth',block:'center'});}}});scrollBtn.classList.toggle('active',activeIdx>=0);}
+  audio.addEventListener('loadedmetadata',()=>{const d=fmt(audio.duration);document.getElementById('ttV').textContent=d;document.getElementById('ttL').textContent=d;});
+  audio.addEventListener('timeupdate',()=>updateActive(audio.currentTime));
+  audio.addEventListener('ended',()=>{document.body.classList.remove('is-playing');['vizV','vizL'].forEach(id=>document.getElementById(id).classList.remove('playing'));document.getElementById('playV').textContent='▶ Play';document.getElementById('playL').textContent='▶';scrollBtn.classList.remove('active');});
+  ['pbV','pbL'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{const r=e.currentTarget.getBoundingClientRect();audio.currentTime=((e.clientX-r.left)/r.width)*(audio.duration||0);});});
+  function togglePlay(){if(audio.paused){audio.play();document.getElementById('playV').textContent='⏸ Pausa';document.getElementById('playL').textContent='⏸';document.body.classList.add('is-playing');['vizV','vizL'].forEach(id=>document.getElementById(id).classList.add('playing'));}else{audio.pause();document.getElementById('playV').textContent='▶ Play';document.getElementById('playL').textContent='▶';document.body.classList.remove('is-playing');['vizV','vizL'].forEach(id=>document.getElementById(id).classList.remove('playing'));}}
+  function doReset(){audio.pause();audio.currentTime=0;activeIdx=-1;document.getElementById('playV').textContent='▶ Play';document.getElementById('playL').textContent='▶';document.body.classList.remove('is-playing');['vizV','vizL'].forEach(id=>document.getElementById(id).classList.remove('playing'));['lyricsV','lyricsL'].forEach(id=>{document.getElementById(id).querySelectorAll('.lyric-block').forEach(b=>b.classList.remove('active','past'));});scrollBtn.classList.remove('active');window.scrollTo({top:0,behavior:'smooth'});}
+  document.getElementById('playV').addEventListener('click',togglePlay);document.getElementById('playL').addEventListener('click',togglePlay);
+  document.getElementById('resetV').addEventListener('click',doReset);document.getElementById('resetL').addEventListener('click',doReset);
+  document.getElementById('volV').addEventListener('input',e=>{audio.volume=parseFloat(e.target.value);document.getElementById('volL').value=e.target.value;});
+  document.getElementById('volL').addEventListener('input',e=>{audio.volume=parseFloat(e.target.value);document.getElementById('volV').value=e.target.value;});
+  audio.volume=0.8;
+  scrollBtn.addEventListener('click',()=>{const blocks=document.getElementById('lyricsV').querySelectorAll('.lyric-block');if(activeIdx>=0&&blocks[activeIdx])blocks[activeIdx].scrollIntoView({behavior:'smooth',block:'center'});});
+  function setView(v){document.body.className=document.body.className.replace(/\bview-\S+/g,'').trim();if(v!=='all')document.body.classList.add('view-'+v);if(!audio.paused)document.body.classList.add('is-playing');}
+  document.querySelectorAll('.toggle-btn').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.land-toggle').forEach(b=>{b.classList.toggle('active',b.dataset.view===btn.dataset.view);});setView(btn.dataset.view);});});
+  document.querySelectorAll('.land-toggle').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.land-toggle').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.toggle-btn').forEach(b=>{b.classList.toggle('active',b.dataset.view===btn.dataset.view);});setView(btn.dataset.view);});});
+  ['vizV','vizL'].forEach(id=>{const vizEl=document.getElementById(id);const count=id==='vizL'?24:48;for(let i=0;i<count;i++){const bar=document.createElement('div');bar.className='bar';const mh=8+Math.sin(i*0.4)*22+Math.random()*16;bar.style.cssText=`--max-h:${mh}px;--spd:${0.4+Math.random()*0.8}s;--delay:${(i/count)*-1.2}s;`;vizEl.appendChild(bar);}});
+
+  // Copiar título y artista al landscape
+  const st=document.querySelector('.song-title'),an=document.querySelector('.artist-name');
+  const lt=document.getElementById('landTitle'),la=document.getElementById('landArtist');
+  if(st&&lt) lt.textContent=st.textContent;
+  if(an&&la) la.textContent=an.textContent;
+})();
+</script>
+</body>
+</html>
