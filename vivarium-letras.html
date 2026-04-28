@@ -297,35 +297,9 @@ const LYRICS=[
   {t:242.86, section:"Outro",     es:"llorando.", ro:"naite iru", kj:"泣いてる"}
 ];
 </script>
+<script src="utils.js"></script>
 <script>
-(function(){
-  const audio=document.getElementById('audio');let activeIdx=-1;
-  function buildLyrics(container){let curSec=null;LYRICS.forEach((line,i)=>{if(line.section!==curSec){curSec=line.section;const sl=document.createElement('div');sl.className='section-label';sl.innerHTML=`<span>${line.section}</span>`;container.appendChild(sl);}const b=document.createElement('div');b.className='lyric-block';b.dataset.idx=i;let h='';if(line.es)h+=`<div class="lyric-es">${line.es}</div>`;if(line.ro)h+=`<div class="lyric-romaji">${line.ro}</div>`;if(line.kj)h+=`<div class="lyric-kanji">${line.kj}</div>`;b.innerHTML=h;b.addEventListener('click',()=>{audio.currentTime=line.t;});container.appendChild(b);});}
-  buildLyrics(document.getElementById('lyricsV'));buildLyrics(document.getElementById('lyricsL'));
-  const lt=document.getElementById('landTitle');const la=document.getElementById('landArtist');
-  if(lt)lt.textContent=document.querySelector('.song-title')?.textContent||'';
-  if(la)la.textContent=document.querySelector('.artist-name')?.textContent||'';
-  const fmt=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
-  const scrollBtn=document.getElementById('scrollBtn');
-  function setProgress(t){const pct=(audio.duration?(t/audio.duration*100):0)+'%';document.getElementById('pfV').style.width=pct;document.getElementById('pfL').style.width=pct;document.getElementById('tnV').textContent=fmt(t);document.getElementById('tnL').textContent=fmt(t);}
-  function updateActive(t){setProgress(t);let newActive=-1;for(let i=0;i<LYRICS.length;i++){if(t>=LYRICS[i].t)newActive=i;}if(newActive===activeIdx)return;activeIdx=newActive;['lyricsV','lyricsL'].forEach(id=>{const blocks=document.getElementById(id).querySelectorAll('.lyric-block');blocks.forEach((b,i)=>{b.classList.toggle('active',i===activeIdx);b.classList.toggle('past',i<activeIdx);});if(activeIdx>=0&&blocks[activeIdx]){if(id==='lyricsL'){const lr=document.getElementById('lyricsL');lr.scrollTo({top:blocks[activeIdx].offsetTop-lr.clientHeight/2,behavior:'smooth'});}else{blocks[activeIdx].scrollIntoView({behavior:'smooth',block:'center'});}}});scrollBtn.classList.toggle('active',activeIdx>=0);}
-  audio.addEventListener('loadedmetadata',()=>{const d=fmt(audio.duration);document.getElementById('ttV').textContent=d;document.getElementById('ttL').textContent=d;});
-  audio.addEventListener('timeupdate',()=>updateActive(audio.currentTime));
-  audio.addEventListener('ended',()=>{document.body.classList.remove('is-playing');['vizV','vizL'].forEach(id=>document.getElementById(id).classList.remove('playing'));document.getElementById('playV').textContent='▶ Play';document.getElementById('playL').textContent='▶';scrollBtn.classList.remove('active');});
-  ['pbV','pbL'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{const r=e.currentTarget.getBoundingClientRect();audio.currentTime=((e.clientX-r.left)/r.width)*(audio.duration||0);});});
-  function togglePlay(){if(audio.paused){audio.play();document.getElementById('playV').textContent='⏸ Pausa';document.getElementById('playL').textContent='⏸';document.body.classList.add('is-playing');['vizV','vizL'].forEach(id=>document.getElementById(id).classList.add('playing'));}else{audio.pause();document.getElementById('playV').textContent='▶ Play';document.getElementById('playL').textContent='▶';document.body.classList.remove('is-playing');['vizV','vizL'].forEach(id=>document.getElementById(id).classList.remove('playing'));}}
-  function doReset(){audio.pause();audio.currentTime=0;activeIdx=-1;document.getElementById('playV').textContent='▶ Play';document.getElementById('playL').textContent='▶';document.body.classList.remove('is-playing');['vizV','vizL'].forEach(id=>document.getElementById(id).classList.remove('playing'));['lyricsV','lyricsL'].forEach(id=>{document.getElementById(id).querySelectorAll('.lyric-block').forEach(b=>b.classList.remove('active','past'));});scrollBtn.classList.remove('active');window.scrollTo({top:0,behavior:'smooth'});}
-  document.getElementById('playV').addEventListener('click',togglePlay);document.getElementById('playL').addEventListener('click',togglePlay);
-  document.getElementById('resetV').addEventListener('click',doReset);document.getElementById('resetL').addEventListener('click',doReset);
-  document.getElementById('volV').addEventListener('input',e=>{audio.volume=parseFloat(e.target.value);document.getElementById('volL').value=e.target.value;});
-  document.getElementById('volL').addEventListener('input',e=>{audio.volume=parseFloat(e.target.value);document.getElementById('volV').value=e.target.value;});
-  audio.volume=0.8;
-  scrollBtn.addEventListener('click',()=>{const blocks=document.getElementById('lyricsV').querySelectorAll('.lyric-block');if(activeIdx>=0&&blocks[activeIdx])blocks[activeIdx].scrollIntoView({behavior:'smooth',block:'center'});});
-  function setView(v){document.body.className=document.body.className.replace(/\bview-\S+/g,'').trim();if(v!=='all')document.body.classList.add('view-'+v);if(!audio.paused)document.body.classList.add('is-playing');}
-  document.querySelectorAll('.toggle-btn').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.land-toggle').forEach(b=>{b.classList.toggle('active',b.dataset.view===btn.dataset.view);});setView(btn.dataset.view);});});
-  document.querySelectorAll('.land-toggle').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.land-toggle').forEach(b=>b.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('.toggle-btn').forEach(b=>{b.classList.toggle('active',b.dataset.view===btn.dataset.view);});setView(btn.dataset.view);});});
-  ['vizV','vizL'].forEach(id=>{const vizEl=document.getElementById(id);const count=id==='vizL'?24:48;for(let i=0;i<count;i++){const bar=document.createElement('div');bar.className='bar';const mh=8+Math.sin(i*0.4)*22+Math.random()*16;bar.style.cssText=`--max-h:${mh}px;--spd:${0.4+Math.random()*0.8}s;--delay:${(i/count)*-1.2}s;`;vizEl.appendChild(bar);}});
-})();
+  MusicUtils.initKaraoke({ lyrics: LYRICS });
 </script>
 </body>
 </html>
