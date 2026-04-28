@@ -183,62 +183,14 @@ const LYRICS=[
   {t:243.60,es:'Love you, and you?', ro:'Love you, and you?', kj:'Love you, and you?'},
   {t:246.63,es:'Adieu, adieu.', ro:'Adieu, adieu.', kj:'Adieu, adieu'},
 ];
-const audio=document.getElementById('audio');
-const lyricsV=document.getElementById('lyricsV');
-const lyricsL=document.getElementById('lyricsL');
-const vizV=document.getElementById('visualizer');
-const vizLEl=document.getElementById('vizL');
-let activeIdx=-1,autoScroll=true;
-function buildBars(wrap,n){for(let i=0;i<n;i++){const b=document.createElement('div');b.className='bar';const h=8+Math.random()*28;b.style.cssText=`--max-h:${h}px;--spd:${0.6+Math.random()*0.8}s;--delay:${Math.random()*0.5}s`;wrap.appendChild(b);}}
-buildBars(vizV,28);buildBars(vizLEl,18);
-function buildLyrics(container){
-  LYRICS.forEach((line,i)=>{
-    const b=document.createElement('div');b.className='lyric-block';b.dataset.idx=i;
-    let h='';
-    if(line.es)h+=`<div class="lyric-es">${line.es}</div>`;
-    if(line.ro)h+=`<div class="lyric-romaji">${line.ro}</div>`;
-    if(line.kj)h+=`<div class="lyric-kanji">${line.kj}</div>`;
-    b.innerHTML=h;b.addEventListener('click',()=>{audio.currentTime=line.t;});container.appendChild(b);
-  });
-}
-buildLyrics(lyricsV);buildLyrics(lyricsL);
-const fmt=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
-const pfV=document.getElementById('progressFill'),pfL=document.getElementById('pfL');
-const tnV=document.getElementById('timeNow'),tnL=document.getElementById('tnL');
-const ttV=document.getElementById('timeTotal'),ttL=document.getElementById('ttL');
-audio.addEventListener('loadedmetadata',()=>{const d=fmt(audio.duration);ttV.textContent=d;ttL.textContent=d;});
-audio.addEventListener('timeupdate',()=>{
-  const p=(audio.currentTime/audio.duration)*100||0;
-  pfV.style.width=pfL.style.width=p+'%';
-  tnV.textContent=tnL.textContent=fmt(audio.currentTime);
-  let ni=-1;
-  for(let i=LYRICS.length-1;i>=0;i--){if(audio.currentTime>=LYRICS[i].t){ni=i;break;}}
-  if(ni!==activeIdx){
-    activeIdx=ni;
-    [lyricsV,lyricsL].forEach(c=>{
-      c.querySelectorAll('.lyric-block').forEach((b,i)=>{
-        b.classList.toggle('active',i===ni);
-        b.classList.toggle('past',i<ni);
-      });
-    });
-    if(autoScroll){[lyricsV,lyricsL].forEach(c=>{const a=c.querySelector('.lyric-block.active');if(a)a.scrollIntoView({behavior:'smooth',block:'center'});});}
-  }
-});
-audio.addEventListener('play',()=>{vizV?.classList.add('playing');vizLEl?.classList.add('playing');document.getElementById('playBtn').textContent='⏸ Pausa';document.getElementById('playL').textContent='⏸';});
-audio.addEventListener('pause',()=>{vizV?.classList.remove('playing');vizLEl?.classList.remove('playing');document.getElementById('playBtn').textContent='▶ Play';document.getElementById('playL').textContent='▶';});
-document.getElementById('playBtn').addEventListener('click',()=>audio.paused?audio.play():audio.pause());
-document.getElementById('resetBtn').addEventListener('click',()=>{audio.currentTime=0;audio.pause();});
-document.getElementById('playL').addEventListener('click',()=>audio.paused?audio.play():audio.pause());
-document.getElementById('resetL').addEventListener('click',()=>{audio.currentTime=0;audio.pause();});
-document.getElementById('progressBar').addEventListener('click',e=>{const r=e.currentTarget.getBoundingClientRect();audio.currentTime=(e.clientX-r.left)/r.width*audio.duration;});
-document.getElementById('pbL').addEventListener('click',e=>{const r=e.currentTarget.getBoundingClientRect();audio.currentTime=(e.clientX-r.left)/r.width*audio.duration;});
-document.getElementById('volRange').addEventListener('input',e=>{audio.volume=e.target.value;document.getElementById('volL').value=e.target.value;});
-document.getElementById('volL').addEventListener('input',e=>{audio.volume=e.target.value;document.getElementById('volRange').value=e.target.value;});
-document.querySelectorAll('.toggle-btn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.toggle-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.body.className=b.dataset.view==='all'?'':'view-'+b.dataset.view;}));
-document.querySelectorAll('.land-toggle').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.land-toggle').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.body.className=b.dataset.view==='all'?'':'view-'+b.dataset.view;}));
-const scrollBtn=document.getElementById('scrollBtn');
-function scrollToActive(){[lyricsV,lyricsL].forEach(c=>{if(!c)return;const a=c.querySelector('.lyric-block.active');if(a)a.scrollIntoView({behavior:'smooth',block:'center'});});}
-if(scrollBtn){scrollBtn.classList.add('active');scrollBtn.addEventListener('click',()=>{autoScroll=!autoScroll;scrollBtn.classList.toggle('active',autoScroll);if(autoScroll)scrollToActive();});}
+
+  </script>
+<script src="utils.js"></script>
+<script>
+  MusicUtils.initKaraoke({ lyrics: LYRICS });
+</script>
+</body>
+</html>
 </script>
 </body>
 </html>
