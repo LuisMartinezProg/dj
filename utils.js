@@ -322,3 +322,47 @@ document.addEventListener('DOMContentLoaded', () => {
     MusicUtils.initPetals();
   }
 });
+
+/* ═══════════════════════════════════════════════════════════════
+   AUTO-NAVEGACIÓN — requiere canciones.js cargado antes
+   Detecta la canción actual por la URL y genera los botones
+   anterior/siguiente automáticamente en .land-nav-row
+   ═══════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof CANCIONES === 'undefined') return;
+
+  // Detectar id de canción actual desde la URL (ej: jane-letras.html → "jane")
+  const match = location.pathname.match(/\/([^/]+)-letras\.html/);
+  if (!match) return;
+  const currentId = match[1];
+
+  const idx = CANCIONES.findIndex(c => c.id === currentId);
+  if (idx === -1) return;
+
+  const prev = idx > 0 ? CANCIONES[idx - 1] : null;
+  const next = idx < CANCIONES.length - 1 ? CANCIONES[idx + 1] : null;
+
+  // Generar HTML de un botón de navegación
+  function navBtn(cancion, direccion) {
+    const isPrev = direccion === 'prev';
+    return `
+      <a class="land-nav-btn land-nav-${direccion}" href="${cancion.id}-letras.html">
+        <div class="land-nav-arrow">${isPrev ? '←' : '→'}</div>
+        <img class="land-nav-img" src="${cancion.img}" alt=""
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="land-nav-fallback">♪</div>
+        <div class="land-nav-label">
+          <span class="land-nav-dir">${isPrev ? 'Anterior' : 'Siguiente'}</span>
+          <span class="land-nav-name">${cancion.titulo}</span>
+        </div>
+      </a>`;
+  }
+
+  // Inyectar en .land-nav-row (landscape)
+  const navRow = document.querySelector('.land-nav-row');
+  if (navRow) {
+    navRow.innerHTML = '';
+    if (prev) navRow.insertAdjacentHTML('beforeend', navBtn(prev, 'prev'));
+    if (next) navRow.insertAdjacentHTML('beforeend', navBtn(next, 'next'));
+  }
+});
