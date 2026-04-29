@@ -322,47 +322,275 @@ document.addEventListener('DOMContentLoaded', () => {
     MusicUtils.initPetals();
   }
 });
-
 /* ═══════════════════════════════════════════════════════════════
    AUTO-NAVEGACIÓN — requiere canciones.js cargado antes
-   Detecta la canción actual por la URL y genera los botones
-   anterior/siguiente automáticamente en .land-nav-row
+   Detecta la canción actual por la URL y genera botones
+   anterior/siguiente en:
+     · [id].html        → al final de .main-wrap
+     · [id]-letras.html → portrait (tras #scrollBtn) + landscape (.land-nav-row)
    ═══════════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof CANCIONES === 'undefined') return;
 
-  // Detectar id de canción actual desde la URL (ej: jane-letras.html → "jane")
-  const match = location.pathname.match(/\/([^/]+)-letras\.html/);
-  if (!match) return;
-  const currentId = match[1];
+  const path = location.pathname;
+
+  // ── Detectar modo y canción actual ──────────────────────────
+  const letrasMatch = path.match(/\/([^/]+)-letras\.html/);
+  const coverMatch  = path.match(/\/([^/]+)\.html/);
+
+  const isLetras = !!letrasMatch;
+  const currentId = isLetras
+    ? letrasMatch[1]
+    : (coverMatch ? coverMatch[1] : null);
+
+  if (!currentId) return;
 
   const idx = CANCIONES.findIndex(c => c.id === currentId);
   if (idx === -1) return;
 
-  const prev = idx > 0 ? CANCIONES[idx - 1] : null;
+  const prev = idx > 0                    ? CANCIONES[idx - 1] : null;
   const next = idx < CANCIONES.length - 1 ? CANCIONES[idx + 1] : null;
 
-  // Generar HTML de un botón de navegación
-  function navBtn(cancion, direccion) {
-    const isPrev = direccion === 'prev';
-    return `
-      <a class="land-nav-btn land-nav-${direccion}" href="${cancion.id}-letras.html">
-        <div class="land-nav-arrow">${isPrev ? '←' : '→'}</div>
-        <img class="land-nav-img" src="${cancion.img}" alt=""
-             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-        <div class="land-nav-fallback">♪</div>
-        <div class="land-nav-label">
-          <span class="land-nav-dir">${isPrev ? 'Anterior' : 'Siguiente'}</span>
-          <span class="land-nav-name">${cancion.titulo}</span>
-        </div>
-      </a>`;
+  // ── Inyectar estilos de navegación (una sola vez) ──────────
+  if (!document.getElementById('nav-styles')) {
+    const style = document.createElement('style');
+    style.id = 'nav-styles';
+    style.textContent = `
+      /* ── Navegación portrait (portrait-nav-row) ── */
+      .portrait-nav-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.6rem;
+        padding: 1rem 1.5rem 2rem;
+        position: relative;
+        z-index: 1;
+        max-width: 780px;
+        margin: 0 auto;
+      }
+      .portrait-nav-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        text-decoration: none;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 14px;
+        padding: 0.55rem 0.85rem;
+        flex: 1;
+        min-width: 0;
+        transition: background 0.2s, border-color 0.2s;
+        max-width: 48%;
+      }
+      .portrait-nav-btn:hover {
+        background: rgba(255,255,255,0.07);
+        border-color: rgba(255,255,255,0.18);
+      }
+      .portrait-nav-next { justify-content: flex-end; text-align: right; }
+      .portrait-nav-img {
+        width: 38px; height: 38px;
+        border-radius: 8px;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+      .portrait-nav-fallback {
+        width: 38px; height: 38px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.06);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+      }
+      .portrait-nav-text { display: flex; flex-direction: column; min-width: 0; }
+      .portrait-nav-dir  { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.45; color: inherit; }
+      .portrait-nav-name { font-size: 0.78rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: inherit; }
+      .portrait-nav-arrow { font-size: 1rem; opacity: 0.5; flex-shrink: 0; }
+
+      /* ── Navegación cover ([id].html) ── */
+      .cover-nav-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.6rem;
+        padding: 0.5rem 0 1.5rem;
+      }
+      .cover-nav-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        text-decoration: none;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 14px;
+        padding: 0.6rem 0.9rem;
+        flex: 1;
+        min-width: 0;
+        transition: background 0.2s, border-color 0.2s, transform 0.2s;
+      }
+      .cover-nav-btn:hover {
+        background: rgba(255,255,255,0.07);
+        border-color: rgba(255,255,255,0.2);
+        transform: translateY(-2px);
+      }
+      .cover-nav-next { justify-content: flex-end; text-align: right; }
+      .cover-nav-img {
+        width: 42px; height: 42px;
+        border-radius: 9px;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+      .cover-nav-fallback {
+        width: 42px; height: 42px;
+        border-radius: 9px;
+        background: rgba(255,255,255,0.06);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+      }
+      .cover-nav-text  { display: flex; flex-direction: column; min-width: 0; }
+      .cover-nav-dir   { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.45; color: inherit; }
+      .cover-nav-name  { font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: inherit; }
+      .cover-nav-arrow { font-size: 1.1rem; opacity: 0.5; flex-shrink: 0; }
+
+      /* ── Navegación landscape (land-nav-row) ── */
+      .land-nav-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        margin-top: auto;
+        padding-top: 0.3rem;
+        border-top: 1px solid rgba(255,255,255,0.06);
+      }
+      .land-nav-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        text-decoration: none;
+        color: inherit;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 8px;
+        padding: 0.25rem 0.45rem;
+        transition: background 0.2s;
+        min-width: 0;
+        overflow: hidden;
+      }
+      .land-nav-btn:hover { background: rgba(255,255,255,0.08); }
+      .land-nav-arrow { font-size: 0.65rem; opacity: 0.5; flex-shrink: 0; }
+      .land-nav-img {
+        width: 22px; height: 22px;
+        border-radius: 4px;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+      .land-nav-fallback {
+        width: 22px; height: 22px;
+        border-radius: 4px;
+        background: rgba(255,255,255,0.06);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.65rem;
+        flex-shrink: 0;
+      }
+      .land-nav-label { display: flex; flex-direction: column; min-width: 0; }
+      .land-nav-dir   { font-size: 0.48rem; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.4; }
+      .land-nav-name  { font-size: 0.58rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    `;
+    document.head.appendChild(style);
   }
 
-  // Inyectar en .land-nav-row (landscape)
+  // ── Generadores de botón ────────────────────────────────────
+  function makeBtn(cancion, dir, variant) {
+    // variant: 'portrait' | 'cover' | 'land'
+    const isPrev = dir === 'prev';
+    const prefix = variant === 'land' ? 'land-nav' : `${variant}-nav`;
+    const href   = isLetras
+      ? `${cancion.id}-letras.html`
+      : `${cancion.id}.html`;
+
+    const a = document.createElement('a');
+    a.className = `${prefix}-btn ${prefix}-${dir}`;
+    a.href = href;
+
+    const arrow = document.createElement('div');
+    arrow.className = `${prefix}-arrow`;
+    arrow.textContent = isPrev ? '←' : '→';
+
+    const img = document.createElement('img');
+    img.className = `${prefix}-img`;
+    img.src = cancion.img;
+    img.alt = '';
+
+    const fallback = document.createElement('div');
+    fallback.className = `${prefix}-fallback`;
+    fallback.textContent = '♪';
+    img.onerror = () => {
+      img.style.display = 'none';
+      fallback.style.display = 'flex';
+    };
+
+    const label = document.createElement('div');
+    label.className = `${prefix}-label`;
+
+    const dirSpan = document.createElement('span');
+    dirSpan.className = `${prefix}-dir`;
+    dirSpan.textContent = isPrev ? 'Anterior' : 'Siguiente';
+
+    const nameSpan = document.createElement('span');
+    nameSpan.className = `${prefix}-name`;
+    nameSpan.textContent = cancion.titulo;
+
+    label.appendChild(dirSpan);
+    label.appendChild(nameSpan);
+
+    if (isPrev) {
+      a.appendChild(arrow);
+      a.appendChild(img);
+      a.appendChild(fallback);
+      a.appendChild(label);
+    } else {
+      a.appendChild(label);
+      a.appendChild(img);
+      a.appendChild(fallback);
+      a.appendChild(arrow);
+    }
+
+    return a;
+  }
+
+  // ── 1. Landscape: inyectar en .land-nav-row ─────────────────
   const navRow = document.querySelector('.land-nav-row');
   if (navRow) {
     navRow.innerHTML = '';
-    if (prev) navRow.insertAdjacentHTML('beforeend', navBtn(prev, 'prev'));
-    if (next) navRow.insertAdjacentHTML('beforeend', navBtn(next, 'next'));
+    if (prev) navRow.appendChild(makeBtn(prev, 'prev', 'land'));
+    if (next) navRow.appendChild(makeBtn(next, 'next', 'land'));
+  }
+
+  // ── 2. Portrait (letras): inyectar tras #scrollBtn ──────────
+  if (isLetras) {
+    const scrollBtn = document.getElementById('scrollBtn');
+    if (scrollBtn) {
+      const row = document.createElement('div');
+      row.className = 'portrait-nav-row';
+      if (prev) row.appendChild(makeBtn(prev, 'prev', 'portrait'));
+      if (next) row.appendChild(makeBtn(next, 'next', 'portrait'));
+      scrollBtn.insertAdjacentElement('afterend', row);
+    }
+  }
+
+  // ── 3. Cover ([id].html): inyectar al final de .main-wrap ───
+  if (!isLetras) {
+    const mainWrap = document.querySelector('.main-wrap');
+    if (mainWrap) {
+      const row = document.createElement('div');
+      row.className = 'cover-nav-row';
+      if (prev) row.appendChild(makeBtn(prev, 'prev, 'cover'));
+      if (next) row.appendChild(makeBtn(next, 'next', 'cover'));
+      mainWrap.appendChild(row);
+    }
   }
 });
+
