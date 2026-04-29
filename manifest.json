@@ -7,7 +7,7 @@
   "display": "standalone",
   "background_color": "#09070f",
   "theme_color": "#09070f",
-  "orientation": "portrait",
+  "orientation": "any",
   "icons": [
     {
       "src": "https://luismartinezprog.github.io/dj/icon-192x192.png",
