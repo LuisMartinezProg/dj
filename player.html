@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>▶ Reproducir — Música</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#09070f;--card:#1a1230;--card2:#120d22;
+  --accent1:#c084fc;--accent2:#f472b6;--accent3:#818cf8;
+  --text:#f1e9ff;--muted:#6b5e8c;--dim:#3a2f5a;
+  --glow:rgba(192,132,252,0.3)
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden;display:flex;flex-direction:column;align-items:center}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 10% 10%,rgba(192,132,252,0.1) 0%,transparent 60%),radial-gradient(ellipse 60% 70% at 90% 90%,rgba(244,114,182,0.08) 0%,transparent 60%);z-index:0;pointer-events:none}
+
+/* NAV */
+.top-nav{position:relative;z-index:10;width:100%;max-width:500px;display:flex;justify-content:space-between;align-items:center;padding:1rem 1.2rem 0}
+.nav-btn{text-decoration:none;background:rgba(26,18,48,0.8);border:1px solid rgba(192,132,252,0.25);color:var(--accent1);padding:0.45rem 1rem;border-radius:999px;font-size:0.75rem;letter-spacing:0.08em;backdrop-filter:blur(10px);transition:all 0.2s}
+.nav-btn:hover{border-color:rgba(192,132,252,0.6);box-shadow:0 0 16px var(--glow)}
+.nav-title{font-family:'Cormorant Garamond',serif;font-size:0.85rem;color:var(--muted);letter-spacing:0.2em}
+
+/* PLAYER PRINCIPAL */
+.player-wrap{position:relative;z-index:1;width:100%;max-width:500px;padding:1.2rem 1.2rem 0}
+.player-card{background:linear-gradient(160deg,var(--card) 0%,var(--card2) 100%);border:1px solid rgba(192,132,252,0.2);border-radius:24px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,0.5)}
+
+/* COVER ~60% */
+.cover-wrap{position:relative;width:100%;padding-top:60%;overflow:hidden}
+.cover-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity 0.5s,transform 0.5s}
+.cover-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,rgba(9,7,15,0.85) 100%)}
+.cover-info{position:absolute;bottom:0;left:0;right:0;padding:1rem 1.2rem 0.8rem}
+.cover-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.3rem,4vw,2rem);font-weight:600;background:linear-gradient(135deg,#fff,var(--accent1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;margin-bottom:0.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cover-title-jp{font-size:0.75rem;color:var(--accent1);opacity:0.7;letter-spacing:0.12em;margin-bottom:0.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cover-artist{font-size:0.72rem;color:var(--muted);letter-spacing:0.2em;text-transform:uppercase}
+
+/* CONTROLES */
+.controls-wrap{padding:0.9rem 1.2rem 1rem}
+.progress-row{margin-bottom:0.5rem}
+.progress-bar{width:100%;height:5px;background:var(--dim);border-radius:3px;cursor:pointer;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent1),var(--accent2));border-radius:3px;width:0%;transition:width 0.1s linear;box-shadow:0 0 8px var(--glow)}
+.time-row{display:flex;justify-content:space-between;font-size:0.68rem;color:var(--muted);font-family:'Cormorant Garamond',serif;margin-top:0.3rem}
+.btn-row{display:flex;align-items:center;justify-content:center;gap:0.6rem;margin:0.5rem 0}
+.ctrl-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:1.1rem;padding:0.4rem;border-radius:50%;transition:all 0.2s;display:flex;align-items:center;justify-content:center;width:38px;height:38px}
+.ctrl-btn:hover{color:var(--accent1);background:rgba(192,132,252,0.1)}
+.ctrl-btn.active{color:var(--accent1);background:rgba(192,132,252,0.15);box-shadow:0 0 12px var(--glow)}
+.play-btn{background:linear-gradient(135deg,var(--accent3),var(--accent1),var(--accent2));border:none;cursor:pointer;color:white;font-size:1.4rem;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 24px var(--glow);transition:all 0.2s}
+.play-btn:hover{transform:scale(1.08)}
+.vol-row{display:flex;align-items:center;gap:0.5rem;margin-top:0.2rem}
+.vol-row span{color:var(--muted);font-size:0.8rem}
+.vol-slider{-webkit-appearance:none;appearance:none;flex:1;height:3px;border-radius:2px;background:var(--dim);outline:none;cursor:pointer}
+.vol-slider::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--accent1);cursor:pointer}
+
+/* COLA */
+.queue-wrap{position:relative;z-index:1;width:100%;max-width:500px;padding:0 1.2rem 5rem}
+.queue-header{display:flex;align-items:center;justify-content:space-between;padding:0.8rem 0 0.4rem;flex-wrap:wrap;gap:0.4rem}
+.queue-label{font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted)}
+.queue-count{font-size:0.65rem;color:var(--dim);font-family:'Cormorant Garamond',serif}
+
+/* SORT BUTTONS */
+.sort-row{display:flex;gap:0.3rem;flex-wrap:wrap;padding-bottom:0.5rem}
+.sort-btn{background:rgba(26,18,48,0.6);border:1px solid rgba(192,132,252,0.15);color:var(--muted);padding:0.25rem 0.6rem;border-radius:999px;font-size:0.58rem;letter-spacing:0.08em;cursor:pointer;transition:all 0.2s;font-family:'Cormorant Garamond',serif}
+.sort-btn:hover{border-color:rgba(192,132,252,0.4);color:var(--accent1)}
+.sort-btn.active{background:rgba(192,132,252,0.15);border-color:rgba(192,132,252,0.5);color:var(--accent1);box-shadow:0 0 8px var(--glow)}
+
+.queue-list{display:flex;flex-direction:column;gap:0.3rem}
+.queue-item{display:flex;align-items:center;gap:0.7rem;padding:0.5rem 0.7rem;border-radius:12px;cursor:pointer;transition:all 0.2s;border:1px solid transparent}
+.queue-item:hover{background:rgba(192,132,252,0.06);border-color:rgba(192,132,252,0.15)}
+.queue-item.active{background:rgba(192,132,252,0.1);border-color:rgba(192,132,252,0.3)}
+.queue-item.played{opacity:0.35}
+.queue-num{font-size:0.6rem;color:var(--dim);font-family:'Cormorant Garamond',serif;min-width:16px;text-align:center}
+.queue-img{width:38px;height:38px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--card)}
+.queue-info{flex:1;min-width:0}
+.queue-name{font-family:'Cormorant Garamond',serif;font-size:0.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+.queue-item.active .queue-name{color:var(--accent1)}
+.queue-artist{font-size:0.6rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.queue-dur{font-size:0.6rem;color:var(--dim);font-family:'Cormorant Garamond',serif;flex-shrink:0}
+
+/* LANDSCAPE */
+@media(orientation:landscape) and (max-height:600px){
+  body{flex-direction:row;align-items:stretch;height:100dvh;overflow:hidden;padding:0}
+  body::before{display:none}
+  .top-nav{display:none}
+  .player-wrap{
+    width:48%;max-width:none;
+    padding:0;flex-shrink:0;
+    display:flex;flex-direction:column;
+    height:100dvh;
+    background:rgba(9,7,15,0.95);
+    border-right:1px solid rgba(192,132,252,0.15)
+  }
+  .player-card{
+    flex:1;display:flex;flex-direction:column;
+    border-radius:0;border:none;box-shadow:none;background:transparent
+  }
+  .cover-wrap{flex:1;padding-top:0;min-height:0;position:relative}
+  .cover-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .cover-overlay{background:linear-gradient(to bottom,transparent 30%,rgba(9,7,15,0.9) 100%)}
+  .cover-info{padding:0.6rem 0.8rem 0.5rem}
+  .cover-title{font-size:clamp(0.85rem,2.5vw,1.1rem)}
+  .cover-title-jp{font-size:0.58rem}
+  .cover-artist{font-size:0.55rem}
+  .controls-wrap{padding:0.4rem 0.8rem 0.5rem;flex-shrink:0;background:rgba(9,7,15,0.85);backdrop-filter:blur(10px)}
+  .progress-row{margin-bottom:0.3rem}
+  .time-row{font-size:0.55rem;margin-top:0.2rem}
+  .btn-row{gap:0.35rem;margin:0.25rem 0}
+  .ctrl-btn{width:28px;height:28px;font-size:0.85rem}
+  .play-btn{width:40px;height:40px;font-size:1rem}
+  .vol-row{margin-top:0.1rem}
+  .vol-row span{font-size:0.7rem}
+  .queue-wrap{
+    flex:1;overflow-y:auto;
+    padding:0.4rem 0.5rem 0.4rem 0.6rem;
+    height:100dvh;max-width:none;
+    background:rgba(9,7,15,0.98)
+  }
+  .queue-wrap::-webkit-scrollbar{width:2px}
+  .queue-wrap::-webkit-scrollbar-thumb{background:rgba(192,132,252,0.3);border-radius:2px}
+  .queue-header{padding:0.35rem 0 0.25rem}
+  .queue-label{font-size:0.55rem}
+  .queue-count{font-size:0.55rem}
+  .queue-item{padding:0.28rem 0.4rem;gap:0.4rem;border-radius:8px}
+  .queue-img{width:28px;height:28px;border-radius:5px}
+  .queue-name{font-size:0.72rem}
+  .queue-artist{font-size:0.52rem}
+  .queue-num{font-size:0.52rem;min-width:12px}
+  .sort-btn{font-size:0.5rem;padding:0.2rem 0.45rem}
+}
+
+/* petals */
+.petal{position:fixed;width:7px;height:7px;border-radius:0 50% 50% 50%;background:rgba(244,114,182,0.25);pointer-events:none;animation:fall linear infinite;z-index:0}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:0.7}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+</style>
+</head>
+<body>
+
+<div class="top-nav">
+  <a class="nav-btn" href="index.html">← Menú</a>
+  <span class="nav-title">Reproducir · 音楽</span>
+  <a class="nav-btn" href="index.html">🎌 Canciones</a>
+</div>
+
+<div class="player-wrap">
+  <div class="player-card">
+    <div class="cover-wrap">
+      <img class="cover-img" id="coverImg" src="" alt="">
+      <div class="cover-overlay"></div>
+      <div class="cover-info">
+        <div class="cover-title" id="coverTitle">—</div>
+        <div class="cover-title-jp" id="coverTitleJp"></div>
+        <div class="cover-artist" id="coverArtist"></div>
+      </div>
+    </div>
+    <div class="controls-wrap">
+      <div class="progress-row">
+        <div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="time-row"><span id="timeNow">0:00</span><span id="timeTotal">—</span></div>
+      </div>
+      <div class="btn-row">
+        <!-- ⇌ ahora = siguiente aleatoria (no reordena lista) -->
+        <button class="ctrl-btn" id="shuffleBtn" title="Siguiente aleatoria">⇌</button>
+        <button class="ctrl-btn" id="prevBtn" title="Anterior">⏮</button>
+        <button class="play-btn" id="playBtn">▶</button>
+        <button class="ctrl-btn" id="nextBtn" title="Siguiente">⏭</button>
+        <!-- ↻ = repetir esta canción -->
+        <button class="ctrl-btn" id="repeatBtn" title="Repetir canción">↻</button>
+      </div>
+      <div class="vol-row">
+        <span>🔈</span>
+        <input type="range" class="vol-slider" id="volSlider" min="0" max="1" step="0.05" value="0.8">
+        <span>🔊</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="queue-wrap">
+  <div class="queue-header">
+    <span class="queue-label">Cola · 再生キュー</span>
+    <span class="queue-count" id="queueCount"></span>
+  </div>
+  <!-- SORT BUTTONS -->
+  <div class="sort-row">
+    <button class="sort-btn active" data-sort="default">Original</button>
+    <button class="sort-btn" data-sort="az">A → Z</button>
+    <button class="sort-btn" data-sort="za">Z → A</button>
+    <button class="sort-btn" data-sort="year">Año</button>
+    <button class="sort-btn" data-sort="artist">Artista</button>
+    <button class="sort-btn" data-sort="random">Aleatorio</button>
+  </div>
+  <div class="queue-list" id="queueList"></div>
+</div>
+
+<audio id="audio" preload="auto"></audio>
+
+<script src="utils.js"></script>
+<script>
+const SONGS = [
+  {name:'Vivarium',               jp:'ビバリウム',              artist:'Ado',                          year:2026, mp3:'vivarium.mp3',     img:'vivarium-cover.jpg'},
+  {name:'Eien no Akuruhi',        jp:'永遠の明日へ',            artist:'Ado',                          year:2024, mp3:'E-m.mp3',          img:'E-p.png'},
+  {name:'JANE DOE',               jp:'feat. 宇多田ヒカル',      artist:'Kenshi Yonezu × Hikaru Utada', year:2025, mp3:'Jane Musica.mp3',  img:'Jane-imagen.png'},
+  {name:'Hikaru Nara',            jp:'光るなら',                artist:'Goose House',                  year:2014, mp3:'H-m.mp3',          img:'Hi-p.png'},
+  {name:'Ano Yume wo Nazotte',    jp:'あの夢をなぞって',        artist:'YOASOBI',                      year:2020, mp3:'A-m.mp3',          img:'A-p.png'},
+  {name:'Usseewa',                jp:'うっせぇわ',              artist:'Ado',                          year:2020, mp3:'U-m.mp3',          img:'U-p.png'},
+  {name:'Odo',                    jp:'踊',                      artist:'Ado',                          year:2021, mp3:'O-m.mp3',          img:'O-p.png'},
+  {name:'Aishite Aishite Aishite',jp:'愛して愛して愛して',      artist:'Ado',                          year:2023, mp3:'Ai-m.mp3',         img:'Ai-p.png'},
+  {name:'Ashura-chan',            jp:'阿修羅ちゃん',            artist:'Ado',                          year:2021, mp3:'As-m.mp3',         img:'As-p.png'},
+  {name:'Senbonzakura',           jp:'千本桜',                  artist:'Ado',                          year:2023, mp3:'Se-m.mp3',         img:'Se-p.png'},
+  {name:'Himawari',               jp:'ヒマワリ',                artist:'Ado',                          year:2022, mp3:'Hi-m.mp3',         img:'H-p.png'},
+  {name:'Crime & Punishment',     jp:'罪と罰',                  artist:'Ado',                          year:2021, mp3:'C-m.mp3',          img:'C-p.png'},
+  {name:'Kiss Kiss',              jp:'キス キス キス',          artist:'Akasaki',                      year:2023, mp3:'K-m.mp3',          img:'K-p.jpeg'},
+  {name:'Ready Steady',           jp:'レディーステディー',      artist:'Ado',                          year:2021, mp3:'R-m.mp3',          img:'R-p.png'},
+  {name:'Aitakute',               jp:'会いたくて',              artist:'Ado',                          year:2021, mp3:'Ait-m.mp3',        img:'Ait-p.png'},
+  {name:'Watashi ni Hanataba',    jp:'わたしに花束',            artist:'Ado',                          year:2022, mp3:'Bo-m.mp3',         img:'Bo-p.png'},
+  {name:'DIGNITY',                jp:'ディグニティ',            artist:'Ado',                          year:2023, mp3:'Di-m.mp3',         img:'Di-p.png'},
+  {name:'0 (Zero)',               jp:'ゼロ',                    artist:'Ado',                          year:2022, mp3:'0-m.mp3',          img:'0-p.png'},
+  {name:'Value',                  jp:'バリュー',                artist:'Ado',                          year:2025, mp3:'V-m.mp3',          img:'V-p.png'},
+  {name:'Elf',                    jp:'エルフ',                  artist:'Ado',                          year:2024, mp3:'El-m.mp3',         img:'El-p.png'},
+  {name:'All Night Radio',        jp:'オールナイトレディオ',    artist:'Ado',                          year:2024, mp3:'Ra-m.mp3',         img:'Ra-p.png'},
+];
+
+const audio        = document.getElementById('audio');
+const coverImg     = document.getElementById('coverImg');
+const coverTitle   = document.getElementById('coverTitle');
+const coverTitleJp = document.getElementById('coverTitleJp');
+const coverArtist  = document.getElementById('coverArtist');
+const progressFill = document.getElementById('progressFill');
+const progressBar  = document.getElementById('progressBar');
+const timeNow      = document.getElementById('timeNow');
+const timeTotal    = document.getElementById('timeTotal');
+const playBtn      = document.getElementById('playBtn');
+const prevBtn      = document.getElementById('prevBtn');
+const nextBtn      = document.getElementById('nextBtn');
+const shuffleBtn   = document.getElementById('shuffleBtn');
+const repeatBtn    = document.getElementById('repeatBtn');
+const volSlider    = document.getElementById('volSlider');
+const queueList    = document.getElementById('queueList');
+const queueCount   = document.getElementById('queueCount');
+
+// queue = array de índices de SONGS en el orden actual
+let queue      = [...Array(SONGS.length).keys()];
+let currentIdx = 0;   // posición dentro de queue[]
+let shuffleNext = false; // ⇌: la SIGUIENTE canción será aleatoria
+let repeatOn    = false; // ↻: repetir esta canción
+let isPlaying   = false;
+let currentSort = 'default';
+
+const fmt = s => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+
+function shuffleArray(arr){
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+
+// ─── SORT ───────────────────────────────────────────────────────────────────
+function applySort(type){
+  const curSongIdx = queue[currentIdx]; // canción actual en SONGS[]
+
+  switch(type){
+    case 'default':
+      queue = [...Array(SONGS.length).keys()];
+      break;
+    case 'az':
+      queue = [...Array(SONGS.length).keys()].sort((a,b)=>SONGS[a].name.localeCompare(SONGS[b].name));
+      break;
+    case 'za':
+      queue = [...Array(SONGS.length).keys()].sort((a,b)=>SONGS[b].name.localeCompare(SONGS[a].name));
+      break;
+    case 'year':
+      queue = [...Array(SONGS.length).keys()].sort((a,b)=>SONGS[a].year - SONGS[b].year);
+      break;
+    case 'artist':
+      queue = [...Array(SONGS.length).keys()].sort((a,b)=>SONGS[a].artist.localeCompare(SONGS[b].artist));
+      break;
+    case 'random':
+      queue = shuffleArray([...Array(SONGS.length).keys()]);
+      break;
+  }
+
+  // Mantener la canción actual en su nueva posición dentro de la lista ordenada
+  currentIdx = queue.indexOf(curSongIdx);
+  currentSort = type;
+
+  // Marcar botón activo
+  document.querySelectorAll('.sort-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.sort === type);
+  });
+
+  renderQueue();
+}
+
+document.querySelectorAll('.sort-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=> applySort(btn.dataset.sort));
+});
+
+// ─── LOAD SONG ───────────────────────────────────────────────────────────────
+function loadSong(qIdx, autoplay=false){
+  currentIdx = qIdx;
+  const song = SONGS[queue[qIdx]];
+  audio.src = song.mp3;
+  audio.volume = parseFloat(volSlider.value);
+  coverImg.src = song.img;
+  coverTitle.textContent = song.name;
+  coverTitleJp.textContent = song.jp;
+  coverArtist.textContent = song.artist;
+  progressFill.style.width = '0%';
+  timeNow.textContent = '0:00';
+  timeTotal.textContent = '—';
+  renderQueue();
+  setTimeout(()=>{
+    const active = queueList.querySelector('.queue-item.active');
+    if(active) active.scrollIntoView({behavior:'smooth', block:'center'});
+  }, 100);
+  if(autoplay){ audio.play(); }
+}
+
+// ─── RENDER QUEUE ─────────────────────────────────────────────────────────────
+function renderQueue(){
+  queueList.innerHTML = '';
+  queueCount.textContent = `${queue.length} canciones`;
+  queue.forEach((songIdx, qIdx)=>{
+    const song = SONGS[songIdx];
+    const item = document.createElement('div');
+    item.className = 'queue-item' + (qIdx === currentIdx ? ' active' : '') + (qIdx < currentIdx ? ' played' : '');
+    item.innerHTML = `
+      <span class="queue-num">${qIdx === currentIdx ? '♪' : qIdx+1}</span>
+      <img class="queue-img" src="${song.img}" alt="" onerror="this.style.opacity='0'">
+      <div class="queue-info">
+        <div class="queue-name">${song.name}</div>
+        <div class="queue-artist">${song.artist}</div>
+      </div>
+    `;
+    item.addEventListener('click', ()=> loadSong(qIdx, true));
+    queueList.appendChild(item);
+  });
+}
+
+// ─── CONTROLES ───────────────────────────────────────────────────────────────
+playBtn.addEventListener('click', ()=>{
+  if(audio.paused){ audio.play(); } else { audio.pause(); }
+});
+
+prevBtn.addEventListener('click', ()=>{
+  if(audio.currentTime > 3){
+    audio.currentTime = 0;
+  } else {
+    const prev = currentIdx > 0 ? currentIdx - 1 : queue.length - 1;
+    loadSong(prev, isPlaying);
+  }
+});
+
+nextBtn.addEventListener('click', ()=>{
+  goNext(isPlaying);
+});
+
+function goNext(autoplay){
+  if(shuffleNext){
+    // elige una canción distinta a la actual al azar
+    let rnd;
+    do { rnd = Math.floor(Math.random() * queue.length); } while(rnd === currentIdx && queue.length > 1);
+    loadSong(rnd, autoplay);
+  } else {
+    const next = currentIdx < queue.length - 1 ? currentIdx + 1 : 0;
+    loadSong(next, autoplay);
+  }
+}
+
+// ⇌ Shuffle: activa/desactiva "siguiente aleatoria" (NO reordena la lista)
+shuffleBtn.addEventListener('click', ()=>{
+  shuffleNext = !shuffleNext;
+  shuffleBtn.classList.toggle('active', shuffleNext);
+});
+
+// ↻ Repeat: activa/desactiva repetir canción actual
+repeatBtn.addEventListener('click', ()=>{
+  repeatOn = !repeatOn;
+  repeatBtn.classList.toggle('active', repeatOn);
+});
+
+// ─── AUDIO EVENTOS ───────────────────────────────────────────────────────────
+audio.addEventListener('play', ()=>{
+  isPlaying = true;
+  playBtn.textContent = '⏸';
+});
+audio.addEventListener('pause', ()=>{
+  isPlaying = false;
+  playBtn.textContent = '▶';
+});
+audio.addEventListener('loadedmetadata', ()=>{
+  timeTotal.textContent = fmt(audio.duration);
+});
+audio.addEventListener('timeupdate', ()=>{
+  if(!audio.duration) return;
+  const p = (audio.currentTime / audio.duration) * 100;
+  progressFill.style.width = p + '%';
+  timeNow.textContent = fmt(audio.currentTime);
+});
+audio.addEventListener('ended', ()=>{
+  if(repeatOn){
+    // Repetir: vuelve al inicio de la misma canción
+    audio.currentTime = 0;
+    audio.play();
+  } else {
+    goNext(true);
+  }
+});
+
+// Progress bar click
+progressBar.addEventListener('click', e=>{
+  const r = progressBar.getBoundingClientRect();
+  audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration;
+});
+
+// Volumen
+volSlider.addEventListener('input', ()=>{ audio.volume = parseFloat(volSlider.value); });
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+loadSong(0, false);
+
+MusicUtils.initPetals();
+</script>
+</body>
+</html>

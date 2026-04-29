@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>千本桜 · Senbonzakura — Letras</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<script src="utils.js"></script>
+<style>
+:root{--bg:#0d0610;--card:#1a0d1f;--accent1:#e879a0;--accent2:#f5b8d0;--accent3:#7c2d5e;--text:#fdf0f5;--muted:#5a3050;--glow:rgba(232,121,160,0.35)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden;padding-bottom:40px}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 20%,rgba(180,60,120,0.10) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 80% 80%,rgba(80,20,80,0.08) 0%,transparent 60%);z-index:0;pointer-events:none}
+.back-btn{position:fixed;top:1rem;left:1rem;z-index:100;background:rgba(13,6,16,0.85);border:1px solid rgba(232,121,160,0.3);color:var(--accent1);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px);transition:all 0.2s}
+header{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 1rem;border-bottom:1px solid rgba(232,121,160,0.15)}
+.song-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.05em;margin-bottom:0.3rem}
+.artist-name{color:var(--muted);font-size:0.9rem;font-weight:300;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:1rem}
+.visualizer-wrap{display:flex;justify-content:center;align-items:flex-end;gap:3px;height:50px;padding:0 2rem;margin-top:0.5rem}
+.bar{width:4px;border-radius:2px 2px 0 0;background:linear-gradient(to top,var(--accent3),var(--accent1));opacity:0.4;height:4px}
+@keyframes wave{0%,100%{height:4px}50%{height:var(--max-h)}}
+.playing .bar{opacity:1;animation:wave var(--spd) ease-in-out infinite;animation-delay:var(--delay)}
+audio{display:none}
+.progress-section{position:relative;z-index:1;padding:1rem 2rem 0.5rem;max-width:780px;margin:0 auto}
+.progress-bar-wrap{width:100%;height:6px;background:var(--card);border-radius:3px;cursor:pointer;overflow:hidden;margin-bottom:0.5rem}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent1),var(--accent2));border-radius:3px;width:0%;box-shadow:0 0 10px var(--glow);pointer-events:none}
+.time-row{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--muted);font-family:'Cormorant Garamond',serif}
+.controls{position:relative;z-index:1;display:flex;justify-content:center;gap:1rem;padding:0.8rem 2rem 0.5rem;flex-wrap:wrap}
+.btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem}
+.btn-primary{background:linear-gradient(135deg,var(--accent3),var(--accent1));color:white;padding:0.75rem 2rem;font-size:1rem;font-weight:700;box-shadow:0 0 20px var(--glow);min-width:130px;justify-content:center}
+.btn-primary:hover{transform:scale(1.05)}
+.btn-secondary{background:var(--card);color:var(--accent1);border:1px solid rgba(232,121,160,0.3);padding:0.75rem 1.3rem;font-size:0.9rem}
+.volume-row{display:flex;align-items:center;gap:0.6rem;justify-content:center;padding-bottom:0.5rem;position:relative;z-index:1}
+.volume-row span{color:var(--muted);font-size:0.8rem}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100px;height:4px;border-radius:2px;background:var(--card);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent1);cursor:pointer}
+.view-toggles{position:relative;z-index:1;display:flex;justify-content:center;gap:0.5rem;padding:0 2rem 1.2rem;flex-wrap:wrap}
+.toggle-btn{border:1px solid rgba(232,121,160,0.25);background:transparent;color:var(--muted);padding:0.35rem 1rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.78rem;transition:all 0.2s}
+.toggle-btn.active{background:rgba(232,121,160,0.12);border-color:var(--accent1);color:var(--accent1)}
+.lyrics-container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:0 1.5rem 2rem}
+.section-label{text-align:center;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);padding:1.2rem 0 0.5rem;opacity:0.5;display:flex;align-items:center;gap:0.8rem}
+.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(232,121,160,0.15)}
+.lyric-block{padding:1.2rem 1.6rem;margin-bottom:0.5rem;border-radius:16px;border:1px solid transparent;transition:all 0.4s ease;cursor:pointer;opacity:0.3}
+.lyric-block.past{opacity:0.18}
+.lyric-block.active{opacity:1;background:linear-gradient(135deg,rgba(124,45,94,0.15),rgba(232,121,160,0.07));border-color:rgba(232,121,160,0.4);box-shadow:0 0 30px rgba(232,121,160,0.12);transform:translateX(6px)}
+.lyric-es{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:600;color:var(--text);line-height:1.3;margin-bottom:0.35rem}
+.lyric-block.active .lyric-es{background:linear-gradient(90deg,var(--text),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lyric-romaji{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,2.5vw,1.25rem);color:var(--accent2);margin-bottom:0.3rem}
+.lyric-kanji{font-family:'Noto Serif JP',serif;font-size:clamp(0.95rem,2vw,1.1rem);color:var(--accent2);opacity:0.75;font-weight:400;letter-spacing:0.08em}
+body.view-es .lyric-romaji,body.view-es .lyric-kanji{display:none}
+body.view-romaji .lyric-es,body.view-romaji .lyric-kanji{display:none}
+body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
+.scroll-btn{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent3),var(--accent1));border:none;cursor:pointer;box-shadow:0 4px 20px var(--glow);display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:all 0.2s;opacity:0.5}
+.scroll-btn:hover{transform:scale(1.1);opacity:1}
+.scroll-btn.active{opacity:1}
+
+/* LANDSCAPE */
+.landscape-layout{display:none}
+@media(orientation:landscape) and (max-height:600px){
+  .back-btn{display:none !important}
+  .scroll-btn{display:none !important}
+  body{padding-bottom:0;overflow:hidden;height:100dvh}
+  header,.progress-section,.controls,.volume-row,.view-toggles,.lyrics-container{display:none !important}
+  .landscape-layout{display:flex;height:100dvh;overflow:hidden;position:relative;z-index:1}
+  .land-left{width:50%;flex-shrink:0;display:flex;flex-direction:column;padding:0.55rem 0.8rem;border-right:1px solid rgba(255,255,255,0.1);background:rgba(0,0,0,0.6);backdrop-filter:blur(12px);gap:0.3rem;overflow:hidden}
+  .land-back-btn{display:inline-flex;align-items:center;gap:0.3rem;text-decoration:none;color:var(--accent1);background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:999px;padding:0.2rem 0.65rem;font-size:0.62rem;font-family:'Cormorant Garamond',serif;letter-spacing:0.05em;transition:all 0.2s;align-self:flex-start;flex-shrink:0}
+  .land-back-btn:hover{background:rgba(255,255,255,0.12);border-color:var(--accent1)}
+  .land-title{font-family:'Cormorant Garamond',serif;font-size:0.9rem;font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .land-artist{font-size:0.54rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:0.05rem}
+  .land-viz{display:flex;align-items:flex-end;gap:2px;height:22px}
+  .land-viz .bar{width:3px}
+  .land-progress-wrap{width:100%;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;cursor:pointer;overflow:hidden}
+  .land-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent1),var(--accent2));border-radius:2px;width:0%;pointer-events:none}
+  .land-time{display:flex;justify-content:space-between;font-size:0.58rem;color:var(--muted);font-family:'Cormorant Garamond',serif}
+  .land-btn-row{display:flex;gap:0.4rem}
+  .land-btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.7rem;padding:0.32rem 0.6rem;flex:1;text-align:center;transition:all 0.2s}
+  .land-btn-play{background:linear-gradient(135deg,var(--accent3),var(--accent1));color:white;font-weight:700;box-shadow:0 0 10px rgba(255,255,255,0.1)}
+  .land-btn-reset{background:rgba(255,255,255,0.06);color:var(--accent1);border:1px solid rgba(255,255,255,0.15)}
+  .land-vol-row{display:flex;align-items:center;gap:0.3rem}
+  .land-vol-row span{color:var(--muted);font-size:0.62rem}
+  .land-vol{-webkit-appearance:none;appearance:none;flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,0.08);outline:none;cursor:pointer}
+  .land-vol::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--accent1);cursor:pointer}
+  .land-toggles{display:flex;flex-wrap:wrap;gap:0.22rem}
+  .land-toggle{border:1px solid rgba(255,255,255,0.12);background:transparent;color:var(--muted);padding:0.18rem 0.45rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.58rem;transition:all 0.2s}
+  .land-toggle.active{background:rgba(255,255,255,0.08);border-color:var(--accent1);color:var(--accent1)}
+  .land-nav-row{display:flex;gap:0.4rem;padding-top:0.3rem;border-top:1px solid rgba(255,255,255,0.08);flex-shrink:0;margin-top:auto}
+  .land-nav-btn{display:flex;align-items:center;gap:0;flex:1;text-decoration:none;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.10);border-radius:8px;overflow:hidden;transition:all 0.2s;min-width:0;height:38px}
+  .land-nav-btn:hover{border-color:var(--accent1);box-shadow:0 0 14px rgba(255,255,255,0.08)}
+  .land-nav-btn:hover .land-nav-arrow{background:rgba(255,255,255,0.15);color:var(--accent2)}
+  .land-nav-arrow{display:flex;align-items:center;justify-content:center;width:24px;flex-shrink:0;height:100%;background:rgba(255,255,255,0.07);color:var(--accent1);font-size:0.85rem;border-right:1px solid rgba(255,255,255,0.10);transition:all 0.2s}
+  .land-nav-next .land-nav-arrow{border-right:none;border-left:1px solid rgba(255,255,255,0.10)}
+  .land-nav-img{width:38px;height:38px;object-fit:cover;flex-shrink:0;display:block}
+  .land-nav-label{display:flex;flex-direction:column;min-width:0;overflow:hidden;padding:0 0.3rem;flex:1}
+  .land-nav-dir{font-size:0.44rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap}
+  .land-nav-name{font-size:0.58rem;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Cormorant Garamond',serif;font-weight:600}
+  .land-nav-next{flex-direction:row-reverse}
+  .land-nav-next .land-nav-label{align-items:flex-end;text-align:right}
+  .land-right{flex:1;overflow-y:auto;padding:0.5rem 0.8rem 0.5rem 0.7rem;scroll-behavior:smooth}
+  .land-right::-webkit-scrollbar{width:2px}
+  .land-right::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:2px}
+  .land-right .section-label{font-size:0.52rem;padding:0.5rem 0 0.25rem;opacity:0.38}
+  .land-right .lyric-block{padding:0.38rem 0.6rem;margin-bottom:0.18rem;border-radius:9px}
+  .land-right .lyric-es{font-size:0.88rem;margin-bottom:0.12rem;line-height:1.25}
+  .land-right .lyric-romaji{font-size:0.72rem;margin-bottom:0.08rem}
+  .land-right .lyric-kanji{font-size:0.66rem}
+  .land-right .lyric-block.active{transform:translateX(3px)}
+}
+</style>
+</head>
+<body>
+<a class="back-btn" href="senbonzakura.html">← Volver</a>
+<audio id="audio" src="Se-m.mp3" preload="auto"></audio>
+<header>
+  <div class="song-title">千本桜 · Senbonzakura</div>
+  <div class="artist-name">Ado · 2021</div>
+  <div class="visualizer-wrap" id="visualizer"></div>
+</header>
+<div class="progress-section">
+  <div class="progress-bar-wrap" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="time-row"><span id="timeNow">0:00</span><span id="timeTotal">—</span></div>
+</div>
+<div class="controls">
+  <button class="btn btn-primary" id="playBtn">▶ Play</button>
+  <button class="btn btn-secondary" id="resetBtn">↩ Reinicio</button>
+</div>
+<div class="volume-row">
+  <span>🔈</span><input type="range" id="vol" min="0" max="1" step="0.05" value="0.8"><span>🔊</span>
+</div>
+<div class="view-toggles">
+  <button class="toggle-btn active" data-view="all">Todo</button>
+  <button class="toggle-btn" data-view="es">Español</button>
+  <button class="toggle-btn" data-view="romaji">Romaji</button>
+  <button class="toggle-btn" data-view="kanji">日本語</button>
+</div>
+<div class="lyrics-container" id="lyricsContainer"></div>
+<button class="scroll-btn" id="scrollBtn">♪</button>
+
+<!-- LANDSCAPE -->
+<div class="landscape-layout">
+  <div class="land-left">
+    <a class="land-back-btn" href="senbonzakura.html">← Volver</a>
+    <div class="land-title">千本桜 · Senbonzakura</div>
+    <div class="land-artist">Ado · 2021</div>
+    <div class="land-viz visualizer-wrap" id="vizL"></div>
+    <div class="land-progress-wrap" id="pbL"><div class="land-progress-fill" id="pfL"></div></div>
+    <div class="land-time"><span id="tnL">0:00</span><span id="ttL">—</span></div>
+    <div class="land-btn-row">
+      <button class="land-btn land-btn-play" id="playL">▶ Play</button>
+      <button class="land-btn land-btn-reset" id="resetL">↩</button>
+    </div>
+    <div class="land-vol-row">
+      <span>🔈</span><input class="land-vol" id="volL" type="range" min="0" max="1" step="0.05" value="0.8"><span>🔊</span>
+    </div>
+    <div class="land-toggles" id="landToggles">
+      <button class="land-toggle active" data-view="all">Todo</button>
+      <button class="land-toggle" data-view="es">ES</button>
+      <button class="land-toggle" data-view="romaji">Romaji</button>
+      <button class="land-toggle" data-view="kanji">JP</button>
+    </div>
+    <div class="land-nav-row">
+      <a class="land-nav-btn" href="ashura.html">
+        <div class="land-nav-arrow">‹</div>
+        <img class="land-nav-img" src="As-p.png" alt="">
+        <div class="land-nav-label"><span class="land-nav-dir">Anterior</span><span class="land-nav-name">Ashura-chan</span></div>
+      </a>
+      <a class="land-nav-btn land-nav-next" href="himawari.html">
+        <div class="land-nav-label"><span class="land-nav-dir">Siguiente</span><span class="land-nav-name">Himawari</span></div>
+        <img class="land-nav-img" src="H-p.png" alt="">
+        <div class="land-nav-arrow">›</div>
+      </a>
+    </div>
+  </div>
+  <div class="land-right" id="lyricsL"></div>
+</div>
+
+<script>
+const LYRICS=[
+  {t:0.48, kj:'', ro:'', es:''},
+  {t:32.93, kj:'大胆不敵にハイカラ革命', ro:'Daitan futeki ni haikara kakumei', es:'Una revolución elegante, audaz e intrépida'},
+  {t:35.91, kj:'磊々落々反戦国家', ro:'Rairai rakuraku hansen kokka', es:'Estado pacifista, tranquilo y generoso'},
+  {t:39.07, kj:'日の丸印の二輪車転がし', ro:'Hinomaru jirushi no nirinsha korogashi', es:'Rodando en bicicleta con la bandera del sol naciente'},
+  {t:42.36, kj:'悪霊退散 ICBM', ro:'Akuryou taisan ICBM', es:'Expulsando demonios con misiles balísticos'},
+  {t:45.38, kj:'環状線を走り抜けて', ro:'Kanjousen o hashirinukete', es:'Atravesando la línea circular a toda velocidad'},
+  {t:48.33, kj:'東奔西走なんのその', ro:'Touhon seisou nan no sono', es:'Corriendo de un lado a otro sin descanso'},
+  {t:51.36, kj:'少年少女戦国無双', ro:'Shounen shoujo sengoku musou', es:'Jóvenes guerreros invencibles del período Sengoku'},
+  {t:54.43, kj:'浮世の随に', ro:'Ukiyo no manima ni', es:'A la deriva en este mundo efímero'},
+  {t:57.54, kj:'千本桜 夜ニ紛レ', ro:'Senbonzakura yoru ni magire', es:'Mil cerezos mezclados con la noche'},
+  {t:60.57, kj:'君ノ声モ届カナイヨ', ro:'Kimi no koe mo todokanai yo', es:'Tu voz ya no llega hasta aquí'},
+  {t:63.60, kj:'此処は宴 鋼の檻', ro:'Koko wa utage hagane no ori', es:'Aquí es un banquete, una jaula de acero'},
+  {t:66.46, kj:'その断頭台で見下ろして', ro:'Sono dantoudai de mioroshite', es:'Mirando desde lo alto de ese cadalso'},
+  {t:69.75, kj:'三千世界 常世之闇', ro:'Sanzen sekai tokoyo no yami', es:'Tres mil mundos, oscuridad eterna'},
+  {t:72.82, kj:'嘆ク唄モ聞コエナイヨ', ro:'Nageku uta mo kikokenai yo', es:'La canción de lamento tampoco se escucha'},
+  {t:75.98, kj:'青藍の空 遥か彼方', ro:'Seiran no sora haruka kanata', es:'El cielo azul índigo, muy lejano'},
+  {t:79.18, kj:'その光線銃で打ち抜いて', ro:'Sono kousenjuu de uchinuite', es:'Atravesándolo con ese rifle de rayos'},
+  {t:95.27, kj:'百戦錬磨の見た目は将校', ro:'Hyakusen renma no mitame wa shoukou', es:'Con aspecto de oficial curtido en cien batallas'},
+  {t:98.25, kj:'いったりきたりの花魁道中', ro:'Ittari kitari no oiran douchuu', es:'El vaivén de la procesión de la cortesana'},
+  {t:101.32, kj:'アイツもコイツも皆で集まれ', ro:'Aitsu mo koitsu mo minna de atsumare', es:'Que todos, éste y aquél, se reúnan'},
+  {t:104.57, kj:'聖者の行進 わんっ つー さん しっ', ro:'Seija no koushin wan tsuu san shi', es:'La marcha de los santos: uno, dos, tres, cuatro'},
+  {t:107.68, kj:'禅定門を潜り抜けて', ro:'Zenjoumon o kugurinukete', es:'Cruzando la puerta de la meditación zen'},
+  {t:110.67, kj:'安楽浄土厄払い', ro:'Anraku joudo yakubarai', es:'Purificando males en la tierra pura del descanso'},
+  {t:113.70, kj:'きっと終幕は大団円', ro:'Kitto saigo wa daidan en', es:'El final seguramente será un gran desenlace feliz'},
+  {t:116.77, kj:'拍手の合間に', ro:'Hakushu no aima ni', es:'Entre los aplausos'},
+  {t:119.97, kj:'千本桜 夜ニ紛レ', ro:'Senbonzakura yoru ni magire', es:'Mil cerezos mezclados con la noche'},
+  {t:122.66, kj:'君ノ声モ届カナイヨ', ro:'Kimi no koe mo todokanai yo', es:'Tu voz ya no llega hasta aquí'},
+  {t:125.86, kj:'此処は宴 鋼の檻', ro:'Koko wa utage hagane no ori', es:'Aquí es un banquete, una jaula de acero'},
+  {t:128.97, kj:'その断頭台で見下ろして', ro:'Sono dantoudai de mioroshite', es:'Mirando desde lo alto de ese cadalso'},
+  {t:132.30, kj:'三千世界 常世之闇', ro:'Sanzen sekai tokoyo no yami', es:'Tres mil mundos, oscuridad eterna'},
+  {t:135.33, kj:'嘆ク唄モ聞コエナイヨ', ro:'Nageku uta mo kikokenai yo', es:'La canción de lamento tampoco se escucha'},
+  {t:138.32, kj:'希望の丘 遥か彼方', ro:'Kibou no oka haruka kanata', es:'La colina de la esperanza, muy lejana'},
+  {t:141.52, kj:'その閃光弾を打ち上げろ', ro:'Sono senkoudan o uchiagero', es:'¡Lanza esa bengala al cielo!'},
+  {t:170.36, kj:'環状線を走り抜けて', ro:'Kanjousen o hashirinukete', es:'Atravesando la línea circular a toda velocidad'},
+  {t:172.92, kj:'東奔西走なんのその', ro:'Touhon seisou nan no sono', es:'Corriendo de un lado a otro sin descanso'},
+  {t:176.08, kj:'少年少女戦国無双', ro:'Shounen shoujo sengoku musou', es:'Jóvenes guerreros invencibles del período Sengoku'},
+  {t:179.11, kj:'浮世の随に', ro:'Ukiyo no manima ni', es:'A la deriva en este mundo efímero'},
+  {t:183.76, kj:'千本桜 夜ニ紛レ', ro:'Senbonzakura yoru ni magire', es:'Mil cerezos mezclados con la noche'},
+  {t:186.83, kj:'君ノ声モ届カナイヨ', ro:'Kimi no koe mo todokanai yo', es:'Tu voz ya no llega hasta aquí'},
+  {t:189.78, kj:'此処は宴 鋼の檻', ro:'Koko wa utage hagane no ori', es:'Aquí es un banquete, una jaula de acero'},
+  {t:192.81, kj:'その断頭台を飛び降りて', ro:'Sono dantoudai o tobiorite', es:'Saltando desde ese cadalso'},
+  {t:196.18, kj:'千本桜 夜ニ紛レ', ro:'Senbonzakura yoru ni magire', es:'Mil cerezos mezclados con la noche'},
+  {t:199.29, kj:'君が歌い僕は踊る', ro:'Kimi ga utai boku wa odoru', es:'Tú cantas y yo bailo'},
+  {t:202.32, kj:'此処は宴 鋼の檻', ro:'Koko wa utage hagane no ori', es:'Aquí es un banquete, una jaula de acero'},
+  {t:206.12, kj:'さあ光線銃を撃ちまくれ', ro:'Saa kousenjuu o uchimakure', es:'¡Vamos, dispara sin parar con el rifle de rayos!'},
+];
+</script>
+<script>
+  MusicUtils.initKaraoke({
+    lyrics: LYRICS,
+    // IDs portrait
+    audioId:          'audio',
+    vizId:            'visualizer',
+    progressBarId:    'progressBar',
+    progressFillId:   'progressFill',
+    timeNowId:        'timeNow',
+    timeTotalId:      'timeTotal',
+    playBtnId:        'playBtn',
+    resetBtnId:       'resetBtn',
+    volId:            'vol',
+    containerId:      'lyricsContainer',
+    scrollBtnId:      'scrollBtn',
+    // IDs landscape
+    vizId_L:          'vizL',
+    progressBarId_L:  'pbL',
+    progressFillId_L: 'pfL',
+    timeNowId_L:      'tnL',
+    timeTotalId_L:    'ttL',
+    playBtnId_L:      'playL',
+    resetBtnId_L:     'resetL',
+    volId_L:          'volL',
+    containerId_L:    'lyricsL',
+  });
+</script>
+</body>
+</html>
