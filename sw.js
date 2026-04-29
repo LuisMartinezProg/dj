@@ -1,4 +1,4 @@
-const CACHE_NAME = 'musica-v1';
+const CACHE_NAME = 'musica-v2';
 const urlsToCache = ['/dj/', '/dj/index.html', '/dj/manifest.json'];
 
 self.addEventListener('install', event => {
