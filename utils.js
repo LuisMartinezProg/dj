@@ -18,15 +18,12 @@ window.addEventListener('orientationchange', () => {
   setTimeout(() => {
     window.scrollTo(0, 0);
     document.body.style.display = 'none';
-    document.body.offsetHeight; // fuerza reflow
+    document.body.offsetHeight;
     document.body.style.display = '';
   }, 300);
 });
 
-/* ── 2. PÉTALOS ANIMADOS ────────────────────────────────────────
-   Agrega pétalos decorativos al body.
-   Solo se activan si la página tiene la clase "has-petals" en <body>,
-   o si llamas MusicUtils.initPetals() manualmente. */
+/* ── 2. PÉTALOS ANIMADOS ──────────────────────────────────────── */
 const MusicUtils = {
 
   initPetals(count = 10) {
@@ -50,9 +47,7 @@ const MusicUtils = {
     return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
   },
 
-  /* ── 4. VISUALIZADOR DE BARRAS ───────────────────────────────
-     Recibe el ID del contenedor y genera las barras animadas.
-     Llama a MusicUtils.initVisualizer('vizV') en cada página. */
+  /* ── 4. VISUALIZADOR DE BARRAS ─────────────────────────────── */
   initVisualizer(containerId, barCount = 28) {
     const wrap = document.getElementById(containerId);
     if (!wrap) return;
@@ -71,32 +66,19 @@ const MusicUtils = {
   },
 
   /* ── 5. MOTOR DE KARAOKE ─────────────────────────────────────
-     Inicializa toda la lógica de una página de letras.
-
-     Uso en cada -letras.html:
-       MusicUtils.initKaraoke({
-         lyrics: LYRICS,
-         audioId: 'audio',
-         containerId: 'lyricsV',
-         progressBarId: 'pbV',
-         progressFillId: 'pfV',
-         timeNowId: 'tnV',
-         timeTotalId: 'ttV',
-         playBtnId: 'playV',
-         resetBtnId: 'resetV',
-         volId: 'volV',
-         vizId: 'vizV',
-         containerId_L: 'lyricsL',
-         progressBarId_L: 'pbL',
-         progressFillId_L: 'pfL',
-         timeNowId_L: 'tnL',
-         timeTotalId_L: 'ttL',
-         playBtnId_L: 'playL',
-         resetBtnId_L: 'resetL',
-         volId_L: 'volL',
-         vizId_L: 'vizL',
-         scrollBtnId: 'scrollBtn',
-       });
+     MusicUtils.initKaraoke({
+       lyrics: LYRICS,
+       audioId: 'audio',
+       vizId: 'vizV', containerId: 'lyricsV',
+       progressBarId: 'pbV', progressFillId: 'pfV',
+       timeNowId: 'tnV', timeTotalId: 'ttV',
+       playBtnId: 'playV', resetBtnId: 'resetV',
+       volId: 'volV', scrollBtnId: 'scrollBtn',
+       vizId_L: 'vizL', containerId_L: 'lyricsL',
+       progressBarId_L: 'pbL', progressFillId_L: 'pfL',
+       timeNowId_L: 'tnL', timeTotalId_L: 'ttL',
+       playBtnId_L: 'playL', resetBtnId_L: 'resetL', volId_L: 'volL',
+     });
   */
   initKaraoke(cfg) {
     const audio = document.getElementById(cfg.audioId || 'audio');
@@ -106,7 +88,6 @@ const MusicUtils = {
     let activeIdx = -1;
     let autoScroll = true;
 
-    // ── Construir letras en un contenedor ──
     function buildLyrics(containerId) {
       const container = document.getElementById(containerId);
       if (!container) return;
@@ -137,11 +118,9 @@ const MusicUtils = {
     buildLyrics(cfg.containerId   || 'lyricsV');
     buildLyrics(cfg.containerId_L || 'lyricsL');
 
-    // ── Visualizadores ──
     this.initVisualizer(cfg.vizId   || 'vizV');
     this.initVisualizer(cfg.vizId_L || 'vizL');
 
-    // ── Helpers de DOM ──
     const el = id => document.getElementById(id);
 
     const pfV    = el(cfg.progressFillId   || 'pfV');
@@ -160,7 +139,6 @@ const MusicUtils = {
     const volL   = el(cfg.volId_L          || 'volL');
     const scrollBtn = el(cfg.scrollBtnId   || 'scrollBtn');
 
-    // ── Título y artista en landscape ──
     const landTitle  = el(cfg.landTitleId  || 'landTitle');
     const landArtist = el(cfg.landArtistId || 'landArtist');
     if (landTitle) {
@@ -172,7 +150,6 @@ const MusicUtils = {
       if (src) landArtist.textContent = src.textContent;
     }
 
-    // ── Actualizar progreso ──
     function updateProgress() {
       if (!audio.duration) return;
       const p = (audio.currentTime / audio.duration) * 100 + '%';
@@ -183,7 +160,6 @@ const MusicUtils = {
       if (tnL) tnL.textContent = t;
     }
 
-    // ── Actualizar línea activa ──
     function updateActive() {
       const now = audio.currentTime;
       let idx = -1;
@@ -211,13 +187,11 @@ const MusicUtils = {
       if (scrollBtn) scrollBtn.classList.toggle('active', idx >= 0);
     }
 
-    // ── Play / Pause ──
     function setPlayState(playing) {
       const label  = playing ? '⏸ Pausa' : '▶ Play';
       const labelL = playing ? '⏸' : '▶';
       if (playV) playV.textContent = label;
       if (playL) playL.textContent = labelL;
-
       [cfg.vizId || 'vizV', cfg.vizId_L || 'vizL'].forEach(id => {
         const viz = document.getElementById(id);
         if (viz) viz.classList.toggle('playing', playing);
@@ -235,7 +209,6 @@ const MusicUtils = {
     audio.addEventListener('pause', () => setPlayState(false));
     audio.addEventListener('ended', () => setPlayState(false));
 
-    // ── Reset ──
     function doReset() {
       audio.pause();
       audio.currentTime = 0;
@@ -245,7 +218,6 @@ const MusicUtils = {
     if (resetV) resetV.addEventListener('click', doReset);
     if (resetL) resetL.addEventListener('click', doReset);
 
-    // ── Volumen ──
     if (volV) {
       audio.volume = parseFloat(volV.value);
       volV.addEventListener('input', () => {
@@ -260,7 +232,6 @@ const MusicUtils = {
       });
     }
 
-    // ── Progress bar click ──
     function seekClick(e, bar) {
       if (!audio.duration) return;
       const r = bar.getBoundingClientRect();
@@ -269,7 +240,6 @@ const MusicUtils = {
     if (pbV) pbV.addEventListener('click', e => seekClick(e, pbV));
     if (pbL) pbL.addEventListener('click', e => seekClick(e, pbL));
 
-    // ── Time update ──
     audio.addEventListener('loadedmetadata', () => {
       const d = fmt(audio.duration);
       if (ttV) ttV.textContent = d;
@@ -280,7 +250,6 @@ const MusicUtils = {
       updateActive();
     });
 
-    // ── View toggles (Todo / ES / Romaji / JP) ──
     const views = ['all', 'es', 'romaji', 'kanji'];
     function applyView(view) {
       views.forEach(v => document.body.classList.remove('view-' + v));
@@ -296,7 +265,6 @@ const MusicUtils = {
       btn.addEventListener('click', () => applyView(btn.dataset.view));
     });
 
-    // ── Scroll button ──
     if (scrollBtn) {
       scrollBtn.addEventListener('click', () => {
         autoScroll = !autoScroll;
@@ -310,7 +278,7 @@ const MusicUtils = {
   }
 };
 
-/* ── Auto-init pétalos si el body tiene clase "has-petals" ── */
+/* ── Auto-init pétalos ── */
 document.addEventListener('DOMContentLoaded', () => {
   if (document.body.classList.contains('has-petals')) {
     MusicUtils.initPetals();
@@ -318,18 +286,15 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 /* ═══════════════════════════════════════════════════════════════
-   AUTO-NAVEGACIÓN — requiere canciones.js cargado antes
-   Detecta la canción actual por la URL y genera botones
-   anterior/siguiente en:
-     · [id].html        → al final de .main-wrap
-     · [id]-letras.html → barra fija inferior (portrait) + landscape (.land-nav-row)
+   AUTO-NAVEGACIÓN
+   · [id].html        → debajo de .main-wrap (afterend)
+   · [id]-letras.html → barra fija inferior portrait + landscape
    ═══════════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   if (typeof CANCIONES === 'undefined') return;
 
   const path = location.pathname;
 
-  // ── Detectar modo y canción actual ──────────────────────────
   const letrasMatch = path.match(/\/([^/]+)-letras\.html/);
   const coverMatch  = path.match(/\/([^/]+)\.html/);
 
@@ -346,17 +311,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const prev = idx > 0                    ? CANCIONES[idx - 1] : null;
   const next = idx < CANCIONES.length - 1 ? CANCIONES[idx + 1] : null;
 
-  // ── Inyectar estilos de navegación (una sola vez) ──────────
+  /* ── Estilos ── */
   if (!document.getElementById('nav-styles')) {
     const style = document.createElement('style');
     style.id = 'nav-styles';
     style.textContent = `
-      /* ── Navegación portrait: barra fija en la parte inferior ── */
+      /* ── Portrait: barra fija inferior ── */
       .portrait-nav-row {
         position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
+        bottom: 0; left: 0; right: 0;
         display: flex;
         justify-content: space-between;
         gap: 0.6rem;
@@ -382,43 +345,32 @@ document.addEventListener('DOMContentLoaded', () => {
         padding: 0.45rem 0.75rem;
         flex: 1;
         min-width: 0;
-        transition: background 0.2s, border-color 0.2s;
         max-width: 48%;
+        transition: background 0.2s, border-color 0.2s;
       }
-      .portrait-nav-btn:hover {
-        background: rgba(255,255,255,0.09);
-        border-color: rgba(255,255,255,0.2);
-      }
+      .portrait-nav-btn:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.2); }
       .portrait-nav-next { justify-content: flex-end; text-align: right; }
-      .portrait-nav-img {
-        width: 34px; height: 34px;
-        border-radius: 7px;
-        object-fit: cover;
-        flex-shrink: 0;
-      }
-      .portrait-nav-fallback {
-        width: 34px; height: 34px;
-        border-radius: 7px;
-        background: rgba(255,255,255,0.06);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.9rem;
-        flex-shrink: 0;
-      }
+      .portrait-nav-img { width: 34px; height: 34px; border-radius: 7px; object-fit: cover; flex-shrink: 0; }
+      .portrait-nav-fallback { width: 34px; height: 34px; border-radius: 7px; background: rgba(255,255,255,0.06); display: none; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; }
       .portrait-nav-label { display: flex; flex-direction: column; min-width: 0; }
       .portrait-nav-dir  { font-size: 0.55rem; letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.4; color: inherit; }
       .portrait-nav-name { font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: inherit; }
       .portrait-nav-arrow { font-size: 0.95rem; opacity: 0.45; flex-shrink: 0; }
-      /* Subir el botón ♪ para que no tape la barra de nav */
       .scroll-btn { bottom: 5rem !important; }
 
-      /* ── Navegación cover ([id].html) ── */
+      /* ── Cover ([id].html): debajo del main-wrap ── */
       .cover-nav-row {
         display: flex;
         justify-content: space-between;
         gap: 0.6rem;
-        padding: 0.5rem 0 1.5rem;
+        padding: 0.5rem 1.2rem 2rem;
+        max-width: 500px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+      }
+      @media (min-width: 768px) {
+        .cover-nav-row { max-width: 860px; padding: 0.5rem 2rem 2rem; }
       }
       .cover-nav-btn {
         display: flex;
@@ -434,34 +386,16 @@ document.addEventListener('DOMContentLoaded', () => {
         min-width: 0;
         transition: background 0.2s, border-color 0.2s, transform 0.2s;
       }
-      .cover-nav-btn:hover {
-        background: rgba(255,255,255,0.07);
-        border-color: rgba(255,255,255,0.2);
-        transform: translateY(-2px);
-      }
+      .cover-nav-btn:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
       .cover-nav-next { justify-content: flex-end; text-align: right; }
-      .cover-nav-img {
-        width: 42px; height: 42px;
-        border-radius: 9px;
-        object-fit: cover;
-        flex-shrink: 0;
-      }
-      .cover-nav-fallback {
-        width: 42px; height: 42px;
-        border-radius: 9px;
-        background: rgba(255,255,255,0.06);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.1rem;
-        flex-shrink: 0;
-      }
+      .cover-nav-img { width: 42px; height: 42px; border-radius: 9px; object-fit: cover; flex-shrink: 0; }
+      .cover-nav-fallback { width: 42px; height: 42px; border-radius: 9px; background: rgba(255,255,255,0.06); display: none; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
       .cover-nav-label { display: flex; flex-direction: column; min-width: 0; }
       .cover-nav-dir   { font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.45; color: inherit; }
       .cover-nav-name  { font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: inherit; }
       .cover-nav-arrow { font-size: 1.1rem; opacity: 0.5; flex-shrink: 0; }
 
-      /* ── Navegación landscape ── */
+      /* ── Landscape ── */
       .land-nav-row {
         display: flex;
         flex-direction: column;
@@ -486,22 +420,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       .land-nav-btn:hover { background: rgba(255,255,255,0.08); }
       .land-nav-arrow { font-size: 0.65rem; opacity: 0.5; flex-shrink: 0; }
-      .land-nav-img {
-        width: 22px; height: 22px;
-        border-radius: 4px;
-        object-fit: cover;
-        flex-shrink: 0;
-      }
-      .land-nav-fallback {
-        width: 22px; height: 22px;
-        border-radius: 4px;
-        background: rgba(255,255,255,0.06);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.65rem;
-        flex-shrink: 0;
-      }
+      .land-nav-img { width: 22px; height: 22px; border-radius: 4px; object-fit: cover; flex-shrink: 0; }
+      .land-nav-fallback { width: 22px; height: 22px; border-radius: 4px; background: rgba(255,255,255,0.06); display: none; align-items: center; justify-content: center; font-size: 0.65rem; flex-shrink: 0; }
       .land-nav-label { display: flex; flex-direction: column; min-width: 0; }
       .land-nav-dir   { font-size: 0.48rem; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.4; }
       .land-nav-name  { font-size: 0.58rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -509,13 +429,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(style);
   }
 
-  // ── Generador de botón ──────────────────────────────────────
+  /* ── Generador de botón ── */
   function makeBtn(cancion, dir, variant) {
     const isPrev = dir === 'prev';
     const prefix = variant === 'land' ? 'land-nav' : `${variant}-nav`;
-    const href   = isLetras
-      ? `${cancion.id}-letras.html`
-      : `${cancion.id}.html`;
+    const href   = isLetras ? `${cancion.id}-letras.html` : `${cancion.id}.html`;
 
     const a = document.createElement('a');
     a.className = `${prefix}-btn ${prefix}-${dir}`;
@@ -567,7 +485,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return a;
   }
 
-  // ── 1. Landscape: inyectar en .land-nav-row ─────────────────
+  /* ── 1. Landscape ── */
   let navRow = document.querySelector('.land-nav-row');
   if (!navRow && isLetras) {
     const landLeft = document.querySelector('.land-left');
@@ -583,7 +501,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (next) navRow.appendChild(makeBtn(next, 'next', 'land'));
   }
 
-  // ── 2. Portrait (letras): barra fija en la parte inferior ───
+  /* ── 2. Portrait letras: barra fija inferior ── */
   if (isLetras) {
     const row = document.createElement('div');
     row.className = 'portrait-nav-row';
@@ -592,7 +510,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(row);
   }
 
-  // ── 3. Cover ([id].html): inyectar al final de .main-wrap ───
+  /* ── 3. Cover: inyectar DESPUÉS de .main-wrap ── */
   if (!isLetras) {
     const mainWrap = document.querySelector('.main-wrap');
     if (mainWrap) {
@@ -600,7 +518,7 @@ document.addEventListener('DOMContentLoaded', () => {
       row.className = 'cover-nav-row';
       if (prev) row.appendChild(makeBtn(prev, 'prev', 'cover'));
       if (next) row.appendChild(makeBtn(next, 'next', 'cover'));
-      mainWrap.appendChild(row);
+      mainWrap.insertAdjacentElement('afterend', row);
     }
   }
 });
