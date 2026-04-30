@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>向日葵 · Himawari — Letras</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<script src="canciones.js"></script>
+<script src="utils.js"></script>
+<style>
+:root{--bg:#0d1a0a;--card:#121f0e;--accent1:#e8b800;--accent2:#7ec850;--accent3:#1a3010;--text:#f5f0e8;--muted:#5a6e40;--glow:rgba(232,184,0,0.4)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Noto Serif JP',serif;min-height:100vh;overflow-x:hidden;padding-bottom:40px}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(232,184,0,0.10) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 80% 90%,rgba(126,200,80,0.08) 0%,transparent 60%);z-index:0;pointer-events:none}
+.back-btn{position:fixed;top:1rem;left:1rem;z-index:100;background:rgba(13,26,10,0.85);border:1px solid rgba(232,184,0,0.3);color:var(--accent1);padding:0.5rem 1rem;border-radius:999px;text-decoration:none;font-size:0.8rem;backdrop-filter:blur(8px);transition:all 0.2s}
+header{position:relative;z-index:1;text-align:center;padding:2.5rem 2rem 1rem;border-bottom:1px solid rgba(232,184,0,0.15)}
+.song-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,5vw,3rem);font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.05em;margin-bottom:0.3rem}
+.artist-name{color:var(--muted);font-size:0.9rem;font-weight:300;letter-spacing:0.3em;text-transform:uppercase;margin-bottom:1rem}
+.visualizer-wrap{display:flex;justify-content:center;align-items:flex-end;gap:3px;height:50px;padding:0 2rem;margin-top:0.5rem}
+.bar{width:4px;border-radius:2px 2px 0 0;background:linear-gradient(to top,var(--accent3),var(--accent1));opacity:0.4;height:4px}
+@keyframes wave{0%,100%{height:4px}50%{height:var(--max-h)}}
+.playing .bar{opacity:1;animation:wave var(--spd) ease-in-out infinite;animation-delay:var(--delay)}
+audio{display:none}
+.progress-section{position:relative;z-index:1;padding:1rem 2rem 0.5rem;max-width:780px;margin:0 auto}
+.progress-bar-wrap{width:100%;height:6px;background:var(--card);border-radius:3px;cursor:pointer;overflow:hidden;margin-bottom:0.5rem}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent1),var(--accent2));border-radius:3px;width:0%;box-shadow:0 0 10px var(--glow);pointer-events:none}
+.time-row{display:flex;justify-content:space-between;font-size:0.75rem;color:var(--muted);font-family:'Cormorant Garamond',serif}
+.controls{position:relative;z-index:1;display:flex;justify-content:center;gap:1rem;padding:0.8rem 2rem 0.5rem;flex-wrap:wrap}
+.btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;transition:all 0.2s;display:flex;align-items:center;gap:0.4rem}
+.btn-primary{background:linear-gradient(135deg,var(--accent3),var(--accent1));color:white;padding:0.75rem 2rem;font-size:1rem;font-weight:700;box-shadow:0 0 20px var(--glow);min-width:130px;justify-content:center}
+.btn-primary:hover{transform:scale(1.05)}
+.btn-secondary{background:var(--card);color:var(--accent1);border:1px solid rgba(232,184,0,0.3);padding:0.75rem 1.3rem;font-size:0.9rem}
+.volume-row{display:flex;align-items:center;gap:0.6rem;justify-content:center;padding-bottom:0.5rem;position:relative;z-index:1}
+.volume-row span{color:var(--muted);font-size:0.8rem}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100px;height:4px;border-radius:2px;background:var(--card);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent1);cursor:pointer}
+.view-toggles{position:relative;z-index:1;display:flex;justify-content:center;gap:0.5rem;padding:0 2rem 1.2rem;flex-wrap:wrap}
+.toggle-btn{border:1px solid rgba(232,184,0,0.25);background:transparent;color:var(--muted);padding:0.35rem 1rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.78rem;transition:all 0.2s}
+.toggle-btn.active{background:rgba(232,184,0,0.12);border-color:var(--accent1);color:var(--accent1)}
+.lyrics-container{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:0 1.5rem 2rem}
+.section-label{text-align:center;font-size:0.65rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--muted);padding:1.2rem 0 0.5rem;opacity:0.5;display:flex;align-items:center;gap:0.8rem}
+.section-label::before,.section-label::after{content:'';flex:1;height:1px;background:rgba(232,184,0,0.22)}
+.lyric-block{padding:1.2rem 1.6rem;margin-bottom:0.5rem;border-radius:16px;border:1px solid transparent;transition:all 0.4s ease;cursor:pointer;opacity:0.3}
+.lyric-block.past{opacity:0.18}
+.lyric-block.active{opacity:1;background:linear-gradient(135deg,rgba(20,40,10,0.25),rgba(232,184,0,0.08));border-color:rgba(232,184,0,0.4);box-shadow:0 0 30px rgba(232,184,0,0.15);transform:translateX(6px)}
+.lyric-es{font-family:'Cormorant Garamond',serif;font-size:clamp(1.2rem,3vw,1.8rem);font-weight:600;color:var(--text);line-height:1.3;margin-bottom:0.35rem}
+.lyric-block.active .lyric-es{background:linear-gradient(90deg,var(--text),var(--accent1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.lyric-romaji{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:clamp(1rem,2.5vw,1.25rem);color:var(--accent1);margin-bottom:0.3rem}
+.lyric-kanji{font-family:'Noto Serif JP',serif;font-size:clamp(0.95rem,2vw,1.1rem);color:var(--accent2);opacity:0.75;font-weight:400;letter-spacing:0.08em}
+body.view-es .lyric-romaji,body.view-es .lyric-kanji{display:none}
+body.view-romaji .lyric-es,body.view-romaji .lyric-kanji{display:none}
+body.view-kanji .lyric-es,body.view-kanji .lyric-romaji{display:none}
+.scroll-btn{position:fixed;bottom:1.5rem;right:1.5rem;z-index:200;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent1),var(--accent2));border:none;cursor:pointer;box-shadow:0 4px 20px var(--glow);display:flex;align-items:center;justify-content:center;font-size:1.3rem;transition:all 0.2s;opacity:0.5}
+.scroll-btn:hover{transform:scale(1.1);opacity:1}.scroll-btn.active{opacity:1}
+.landscape-layout{display:none}
+@media(orientation:landscape) and (max-height:600px){
+  .back-btn{display:none !important}.scroll-btn{display:none !important}
+  body{padding-bottom:0;overflow:hidden;height:100dvh}
+  header,.progress-section,.controls,.volume-row,.view-toggles,.lyrics-container{display:none !important}
+  .landscape-layout{display:flex;height:100dvh;overflow:hidden;position:relative;z-index:1}
+  .land-left{width:50%;flex-shrink:0;display:flex;flex-direction:column;padding:0.55rem 0.8rem;border-right:1px solid rgba(232,184,0,0.15);background:rgba(13,26,10,0.8);backdrop-filter:blur(12px);gap:0.3rem;overflow:hidden}
+  .land-back-btn{display:inline-flex;align-items:center;gap:0.3rem;text-decoration:none;color:var(--accent1);background:rgba(232,184,0,0.06);border:1px solid rgba(232,184,0,0.18);border-radius:999px;padding:0.2rem 0.65rem;font-size:0.62rem;font-family:'Cormorant Garamond',serif;align-self:flex-start;flex-shrink:0}
+  .land-title{font-family:'Cormorant Garamond',serif;font-size:0.9rem;font-weight:600;background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .land-artist{font-size:0.54rem;color:var(--muted);letter-spacing:0.15em;text-transform:uppercase}
+  .land-viz{display:flex;align-items:flex-end;gap:2px;height:22px}
+  .land-viz .bar{width:3px}
+  .land-progress-wrap{width:100%;height:4px;background:var(--card);border-radius:2px;cursor:pointer;overflow:hidden}
+  .land-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent3),var(--accent1),var(--accent2));border-radius:2px;width:0%;pointer-events:none}
+  .land-time{display:flex;justify-content:space-between;font-size:0.58rem;color:var(--muted);font-family:'Cormorant Garamond',serif}
+  .land-btn-row{display:flex;gap:0.4rem}
+  .land-btn{border:none;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.7rem;padding:0.32rem 0.6rem;flex:1;text-align:center;transition:all 0.2s}
+  .land-btn-play{background:linear-gradient(135deg,var(--accent3),var(--accent1));color:white;font-weight:700;box-shadow:0 0 10px var(--glow)}
+  .land-btn-reset{background:var(--card);color:var(--accent1);border:1px solid rgba(232,184,0,0.18)}
+  .land-vol-row{display:flex;align-items:center;gap:0.3rem}
+  .land-vol-row span{color:var(--muted);font-size:0.62rem}
+  .land-vol{-webkit-appearance:none;appearance:none;flex:1;height:3px;border-radius:2px;background:var(--card);outline:none;cursor:pointer}
+  .land-vol::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--accent1);cursor:pointer}
+  .land-toggles{display:flex;flex-wrap:wrap;gap:0.22rem}
+  .land-toggle{border:1px solid rgba(232,184,0,0.14);background:transparent;color:var(--muted);padding:0.18rem 0.45rem;border-radius:999px;cursor:pointer;font-family:'Noto Serif JP',serif;font-size:0.58rem;transition:all 0.2s}
+  .land-toggle.active{background:rgba(232,184,0,0.08);border-color:var(--accent1);color:var(--accent1)}
+  .land-right{flex:1;overflow-y:auto;padding:0.5rem 0.8rem 0.5rem 0.7rem;scroll-behavior:smooth}
+  .land-right::-webkit-scrollbar{width:2px}
+  .land-right::-webkit-scrollbar-thumb{background:rgba(232,184,0,0.32);border-radius:2px}
+  .land-right .section-label{font-size:0.52rem;padding:0.5rem 0 0.25rem;opacity:0.38}
+  .land-right .lyric-block{padding:0.38rem 0.6rem;margin-bottom:0.18rem;border-radius:9px}
+  .land-right .lyric-es{font-size:0.88rem;margin-bottom:0.12rem;line-height:1.25}
+  .land-right .lyric-romaji{font-size:0.72rem;margin-bottom:0.08rem}
+  .land-right .lyric-kanji{font-size:0.66rem}
+  .land-right .lyric-block.active{transform:translateX(3px)}
+}
+</style>
+</head>
+<body>
+<a class="back-btn" href="himawari.html">← Volver</a>
+<audio id="audio" src="H-m.mp3" preload="auto"></audio>
+<header>
+  <div class="song-title">向日葵 · Himawari</div>
+  <div class="artist-name">Ado · 2023</div>
+  <div class="visualizer-wrap" id="vizV"></div>
+</header>
+<div class="progress-section">
+  <div class="progress-bar-wrap" id="pbV"><div class="progress-fill" id="pfV"></div></div>
+  <div class="time-row"><span id="tnV">0:00</span><span id="ttV">—</span></div>
+</div>
+<div class="controls">
+  <button class="btn btn-primary" id="playV">▶ Play</button>
+  <button class="btn btn-secondary" id="resetV">↩ Reinicio</button>
+</div>
+<div class="volume-row"><span>🔈</span><input type="range" id="volV" min="0" max="1" step="0.05" value="0.8"><span>🔊</span></div>
+<div class="view-toggles">
+  <button class="toggle-btn active" data-view="all">Todo</button>
+  <button class="toggle-btn" data-view="es">Español</button>
+  <button class="toggle-btn" data-view="romaji">Romaji</button>
+  <button class="toggle-btn" data-view="kanji">日本語</button>
+</div>
+<div class="lyrics-container" id="lyricsV"></div>
+<button class="scroll-btn" id="scrollBtn">♪</button>
+<div class="landscape-layout">
+  <div class="land-left">
+    <a class="land-back-btn" href="himawari.html">← Volver</a>
+    <div class="land-title">向日葵 · Himawari</div>
+    <div class="land-artist">Ado · 2023</div>
+    <div class="land-viz" id="vizL"></div>
+    <div class="land-progress-wrap" id="pbL"><div class="land-progress-fill" id="pfL"></div></div>
+    <div class="land-time"><span id="tnL">0:00</span><span id="ttL">—</span></div>
+    <div class="land-btn-row">
+      <button class="land-btn land-btn-play" id="playL">▶</button>
+      <button class="land-btn land-btn-reset" id="resetL">↩</button>
+    </div>
+    <div class="land-vol-row"><span>🔈</span><input type="range" class="land-vol" id="volL" min="0" max="1" step="0.05" value="0.8"><span>🔊</span></div>
+    <div class="land-toggles">
+      <button class="land-toggle active" data-view="all">Todo</button>
+      <button class="land-toggle" data-view="es">ES</button>
+      <button class="land-toggle" data-view="romaji">Roma</button>
+      <button class="land-toggle" data-view="kanji">JP</button>
+    </div>
+  </div>
+  <div class="land-right" id="lyricsL"></div>
+</div>
+<script>
+const LYRICS = [
+  {t:13.19, es:'Aunque te guste, no puedo alegrarme sinceramente,', ro:'Suki na no ni "waruku nai" to sunao ni yorokobenai watashi ni,', kj:'好きなのに「悪くない」と 素直に喜べない私に'},
+  {t:17.89, es:'Mirando el mar en un día de verano,', ro:'Natsu no hi no umi mi nagara,', kj:'夏の日の海見ながら'},
+  {t:23.28, es:'"Qué típico de ti, qué bien", me sonreíste.', ro:'"Rashikute ii ne" to warai kaketa.', kj:'「らしくていいね」と笑いかけた'},
+  {t:33.54, es:'Aunque el sol brille demasiado,', ro:'Taiyō ga terashi sugite mo,', kj:'太陽が照らしすぎても'},
+  {t:42.32, es:'Hasta que las lágrimas se sequen,', ro:'Namida ga kareru made,', kj:'涙が枯れるまで'},
+  {t:46.92, es:'Me apoyaste y me sostuviste a mi lado.', ro:'Yorisoi ai sasaete kureta.', kj:'寄り添い合い支えてくれた'},
+  {t:53.18, es:'Ah, quiero florecer como un girasol,', ro:'Aa, himawari no yō ni saite,', kj:'ああ 向日葵のように咲いて'},
+  {t:56.20, es:'Mirar al cielo y reír.', ro:'Ten wo aoidete waratte,', kj:'天を仰いで笑って'},
+  {t:58.66, es:'Quiero ser como tú,', ro:'Tada massugu na,', kj:'ただ真っ直ぐな'},
+  {t:61.06, es:'Que eres tan directo.', ro:'Anata no yō ni naritai.', kj:'あなたのようになりたい'},
+  {t:63.75, es:'Aunque yo sea cobarde,', ro:'Okubyō na watashi mo,', kj:'臆病な私も'},
+  {t:66.35, es:'Me esforzaré un poco más,', ro:'Sukoshi dake se nobite,', kj:'少しだけ背伸びして'},
+  {t:68.98, es:'Y caminaré hacia donde brilla la luz.', ro:'Hikari no sasu hō e aruite ikō.', kj:'光の差す方へ歩いて行こう'},
+  {t:84.03, es:'"Si algún día renaciera,', ro:'"Moshi itsuka umarekawaru,', kj:'「もしいつか生まれ変わる'},
+  {t:88.83, es:'Aunque llegue ese momento, quiero ser yo de nuevo."', ro:'Toki ga kite mo mata watashi ga ii."', kj:'時が来てもまた私がいい」'},
+  {t:94.03, es:'Sin dudar, así respondes,', ro:'Sō yatte mayoi mo naku,', kj:'そうやって迷いもなく'},
+  {t:98.38, es:'Y me gustas así.', ro:'Kotaete shimau anata ga suki.', kj:'答えてしまうあなたが好き'},
+  {t:104.33, es:'Aunque el sol se ponga,', ro:'Taiyō ga shizunde shimatte mo,', kj:'太陽が沈んでしまっても'},
+  {t:113.01, es:'Sigues brillando, reluciendo, resplandeciendo.', ro:'Terashite kiramekite kagayaiteru.', kj:'照らして煌めいて輝いてる'},
+  {t:119.92, es:'Si estás tú.', ro:'Anata ga ireba.', kj:'あなたがいれば'},
+  {t:123.83, es:'Ah, en los días en que miro hacia abajo,', ro:'Aa, shita wo muku yō na hi wa,', kj:'ああ 下を向くような日は'},
+  {t:127.08, es:'Llorando mirando las estrellas.', ro:'Hoshi wo miagete naite,', kj:'星を見上げて泣いて'},
+  {t:129.38, es:'Ámame tal como soy, sin poder ser fuerte.', ro:'Tsuyoku narenai watashi no mama aishite.', kj:'強くなれない私のまま愛して'},
+  {t:134.46, es:'Aunque los días torpes del verano,', ro:'Bukiyō na natsu no hi mo,', kj:'不器用な夏の日も'},
+  {t:137.19, es:'Se desborden de ternura.', ro:'Itoshisa de afureru yō ni.', kj:'愛しさで溢れるように'},
+  {t:139.53, es:'Y caminaré hacia donde brilla la luz.', ro:'Hikari no sasu hō e aruite ikō.', kj:'光の差す方へ歩いて行こう'},
+  {t:155.07, es:'Aunque haya cosas imposibles,', ro:'Dōshita tte mucha na koto datte aru kedo,', kj:'どうしたって無茶なことだってあるけど'},
+  {t:161.47, es:'Los pañuelos esparcidos en el suelo', ro:'Yuka ni chitta tisshu ga,', kj:'床に散ったティッシュが'},
+  {t:166.06, es:'Son el triángulo de verano en el que creo.', ro:'Watashi no shinjiru natsu no dai sankaku.', kj:'私の信じる夏の大三角'},
+  {t:174.33, es:'Ah, quiero florecer como un girasol,', ro:'Aa, himawari no yō ni saite,', kj:'ああ 向日葵のように咲いて'},
+  {t:177.55, es:'Mirar al cielo y reír.', ro:'Ten wo aoidete waratte,', kj:'天を仰いで笑って'},
+  {t:179.95, es:'Quiero ser como tú,', ro:'Tada massugu na,', kj:'ただ真っ直ぐな'},
+  {t:182.31, es:'Que eres tan directo.', ro:'Anata no yō ni naritai.', kj:'あなたのようになりたい'},
+  {t:184.97, es:'Aunque yo sea cobarde,', ro:'Okubyō na watashi mo,', kj:'臆病な私も'},
+  {t:187.67, es:'Me esforzaré un poco más,', ro:'Sukoshi dake se nobite,', kj:'少しだけ背伸びして'},
+  {t:189.91, es:'Hacia donde brilla la luz,', ro:'Hikari no sasu hō e.', kj:'光の差す方へ'},
+  {t:193.99, es:'Ah, un amor como el girasol,', ro:'Aa, himawari no yō na ai wo,', kj:'ああ 向日葵のような愛を'},
+  {t:197.75, es:'Un tiempo que nunca se marchita,', ro:'Kareru koto nai toki wo,', kj:'枯れることない時を'},
+  {t:200.31, es:'Porque tú, que eres tan directo,', ro:'Tada massugu na,', kj:'ただ真っ直ぐな'},
+  {t:202.44, es:'Me lo diste.', ro:'Anata ga kureta kara.', kj:'あなたがくれたから'},
+  {t:205.12, es:'Aunque yo sea cobarde,', ro:'Okubyō na watashi mo,', kj:'臆病な私も'},
+  {t:207.78, es:'Pude volverme un poco más fuerte.', ro:'Sukoshi wa tsuyoku nareta yo.', kj:'少しは強くなれたよ'},
+  {t:210.50, es:'Y caminaré hacia donde brilla la luz.', ro:'Hikari no sasu hō e aruite ikō.', kj:'光の差す方へ歩いて行こう'},
+  {t:219.60, es:'Oh, ah...', ro:'Oh, ah...', kj:'Oh, ah'},
+  {t:225.59, es:'Florecer como un girasol,', ro:'Himawari no yō ni saite,', kj:'向日葵のように咲いて'},
+  {t:227.92, es:'Mirar al cielo y reír.', ro:'Ten wo aoidete waratte.', kj:'天を仰いで笑って'},
+  {t:235.34, es:'Un amor como el girasol,', ro:'Himawari no yō na ai wo,', kj:'向日葵のような愛を'},
+  {t:238.09, es:'Un tiempo que nunca se marchita.', ro:'Kareru koto nai toki wo.', kj:'枯れることない時を'},
+];
+</script>
+<script>
+MusicUtils.initKaraoke({
+  lyrics: LYRICS,
+  audioId:          'audio',
+  vizId:            'vizV',
+  progressBarId:    'pbV',
+  progressFillId:   'pfV',
+  timeNowId:        'tnV',
+  timeTotalId:      'ttV',
+  playBtnId:        'playV',
+  resetBtnId:       'resetV',
+  volId:            'volV',
+  containerId:      'lyricsV',
+  scrollBtnId:      'scrollBtn',
+  vizId_L:          'vizL',
+  progressBarId_L:  'pbL',
+  progressFillId_L: 'pfL',
+  timeNowId_L:      'tnL',
+  timeTotalId_L:    'ttL',
+  playBtnId_L:      'playL',
+  resetBtnId_L:     'resetL',
+  volId_L:          'volL',
+  containerId_L:    'lyricsL',
+});
+</script>
+</body>
+</html>

@@ -23,5 +23,6 @@ const CANCIONES = [
   { id: "value",         titulo: "Value",                  tituloJp: "バリュー",             artista: "Ado",                              img: "V-p.png"            },
   { id: "elf",           titulo: "Elf",                    tituloJp: "エルフ",              artista: "Ado",                              img: "El-p.png"           },
   { id: "allnightradio", titulo: "All Night Radio",        tituloJp: "オールナイトレディオ", artista: "Ado",                              img: "Ra-p.png"           },
-  // Agrega nuevas canciones aquí ↓
+  { id: "himawari",      titulo: "Himawari",               tituloJp: "向日葵",              artista: "Ado",                              img: "Hi-m.png"           },
+  { id: "kisskisskiss",  titulo: "kissKissKiss",           tituloJp: "kissKissKiss",        artista: "Akasaki",                          img: "K-p.jpeg"           },
 ];
