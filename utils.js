@@ -561,12 +561,17 @@ document.addEventListener('DOMContentLoaded', () => {
     return a;
   }
 
-  // ── 1. Landscape: inyectar en .land-nav-row ─────────────────
-  const navRow = document.querySelector('.land-nav-row');
-  if (navRow) {
-    navRow.innerHTML = '';
-    if (prev) navRow.appendChild(makeBtn(prev, 'prev', 'land'));
-    if (next) navRow.appendChild(makeBtn(next, 'next', 'land'));
+// ── 1. Landscape: inyectar en .land-nav-row ─────────────────
+  let navRow = document.querySelector('.land-nav-row');
+  if (!navRow && isLetras) {
+    const landLeft = document.querySelector('.land-left');
+    if (landLeft) {
+      navRow = document.createElement('div');
+      navRow.className = 'land-nav-row';
+      landLeft.appendChild(navRow);
+    }
+  }
+  if (navRow) { (next) navRow.appendChild(makeBtn(next, 'next', 'land'));
   }
 
   // ── 2. Portrait (letras): inyectar tras #scrollBtn ──────────
