@@ -1,10 +1,19 @@
-/* ═══════════════════════════════════════════════════════════════
+yo/* ═══════════════════════════════════════════════════════════════
    utils.js — Música Karaoke App
    Funciones compartidas para todas las páginas
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── 1. FIX DE ORIENTACIÓN ─────────────────────────────────────
    Desbloquea la orientación al cargar y fuerza re-render al rotar. */
+document.addEventListener('DOMContentLoaded', () => {
+  if (screen.orientation && screen.orientation.unlock) {
+    screen.orientation.unlock();
+  }
+});
+
+window.addEventListener('orientationchange', () => {
+  if (screen.orientation && screen.orientation.unlock) {
+    screen.orientation.unlock()
   
   setTimeout(() => {
     window.scrollTo(0, 0);
