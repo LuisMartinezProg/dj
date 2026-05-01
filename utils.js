@@ -13,8 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.addEventListener('orientationchange', () => {
   if (screen.orientation && screen.orientation.unlock) {
-    screen.orientation.unlock()
-  
+    screen.orientation.unlock();
+     
+  }
   setTimeout(() => {
     window.scrollTo(0, 0);
     document.body.style.display = 'none';
