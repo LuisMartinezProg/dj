@@ -97,11 +97,12 @@ const MusicUtils = {
           navigator.mediaSession.metadata = new MediaMetadata({
             title:  cancion.titulo,
             artist: cancion.artista,
-            artwork: [
-              { src: cancion.img, sizes: '512x512', type: 'image/png'  },
-              { src: cancion.img, sizes: '256x256', type: 'image/png'  },
-              { src: cancion.img, sizes: '128x128', type: 'image/jpeg' },
-            ]
+            artwork: (() => {
+              const base = location.origin + location.pathname.replace(/\/[^/]+$/, '/');
+              return [
+                { src: base + cancion.img, sizes: '512x512', type: 'image/png' },
+              ];
+            })()
           });
           navigator.mediaSession.setActionHandler('play',  () => audio.play());
           navigator.mediaSession.setActionHandler('pause', () => audio.pause());
