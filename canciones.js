@@ -7,7 +7,7 @@ const CANCIONES = [
   { id: "vivarium",      titulo: "Vivarium",               tituloJp: "ビバリウム",          artista: "Ado",                              img: "vivarium-cover.jpg" },
   { id: "eien",          titulo: "Eien no Akuruhi",        tituloJp: "永遠の明日へ",         artista: "Ado",                              img: "E-p.png"            },
   { id: "jane",          titulo: "JANE DOE",               tituloJp: "feat. 宇多田ヒカル",   artista: "Kenshi Yonezu × Hikaru Utada",     img: "Jane-imagen.png"    },
-  { id: "hikaru",        titulo: "Hikaru Nara",            tituloJp: "光るなら",             artista: "Goose House",                      img: "Hi-p.png"           },
+  { id: "hikaru",        titulo: "Hikaru Nara",            tituloJp: "光るなら",             artista: "Goose House",                      img: "H-p.png"           },
   { id: "anoyume",       titulo: "Ano Yume wo Nazotte",    tituloJp: "あの夢をなぞって",     artista: "YOASOBI",                          img: "A-p.png"            },
   { id: "usseewa",       titulo: "Usseewa",                tituloJp: "うっせぇわ",           artista: "Ado",                              img: "U-p.png"            },
   { id: "odo",           titulo: "Odo",                    tituloJp: "踊",                  artista: "Ado",                              img: "O-p.png"            },
