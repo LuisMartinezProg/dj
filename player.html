@@ -311,6 +311,19 @@ function loadSong(qIdx, autoplay=false){
   renderQueue();
   setTimeout(()=>{
     const active = queueList.querySelector('.queue-item.active');
+    // ── Media Session ──────────────────────────────────────
+  if ('mediaSession' in navigator) {
+    const base = location.origin + location.pathname.replace(/\/[^/]+$/, '/');
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title:  song.name,
+      artist: song.artist,
+      artwork: [{ src: base + song.img, sizes: '512x512', type: 'image/png' }]
+    });
+    navigator.mediaSession.setActionHandler('play',  () => audio.play());
+    navigator.mediaSession.setActionHandler('pause', () => audio.pause());
+    navigator.mediaSession.setActionHandler('previoustrack', () => prevBtn.click());
+    navigator.mediaSession.setActionHandler('nexttrack',     () => nextBtn.click());
+  }
     if(active) active.scrollIntoView({behavior:'smooth', block:'center'});
   }, 100);
   if(autoplay){ audio.play(); }
