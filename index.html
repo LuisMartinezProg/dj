@@ -255,5 +255,148 @@ searchInput.addEventListener('input',()=>{
 MusicUtils.initPetals(12);
 </script>
 <script type="module" src="push.js"></script>
+  <!-- ══ SPOTLIGHT TUTORIAL ══ -->
+<style>
+#tutOverlay{position:fixed;inset:0;z-index:9999;pointer-events:none}
+#tutSvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:all;transition:opacity 0.3s}
+.tut-box{position:absolute;background:linear-gradient(160deg,#1a1230,#120d22);border:1px solid rgba(192,132,252,0.35);border-radius:18px;padding:1rem 1.2rem;width:230px;box-shadow:0 8px 32px rgba(0,0,0,0.6);pointer-events:all;z-index:10000;animation:tutIn 0.3s ease}
+@keyframes tutIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.tut-num{font-size:0.55rem;letter-spacing:0.25em;text-transform:uppercase;color:#c084fc;opacity:0.7;margin-bottom:0.25rem}
+.tut-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:white;margin-bottom:0.35rem}
+.tut-body{font-size:0.76rem;color:#6b5e8c;line-height:1.6}
+.tut-body strong{color:#c084fc;font-weight:400}
+.tut-row{display:flex;align-items:center;justify-content:space-between;margin-top:0.8rem}
+.tut-dots{display:flex;gap:0.3rem}
+.tut-dot{width:5px;height:5px;border-radius:50%;background:rgba(192,132,252,0.2);transition:all 0.3s}
+.tut-dot.on{background:#c084fc;width:14px;border-radius:3px}
+.tut-next{background:linear-gradient(135deg,#818cf8,#c084fc);border:none;color:white;padding:0.4rem 0.9rem;border-radius:999px;font-size:0.73rem;font-family:'Noto Serif JP',serif;font-weight:700;cursor:pointer;box-shadow:0 0 12px rgba(192,132,252,0.3)}
+.tut-skip{background:none;border:none;color:#6b5e8c;font-size:0.68rem;cursor:pointer;font-family:'Noto Serif JP',serif;text-decoration:underline;text-underline-offset:3px}
+</style>
+
+<div id="tutOverlay" style="display:none">
+  <svg id="tutSvg" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <mask id="tutMask">
+        <rect width="100%" height="100%" fill="white"/>
+        <rect id="tutHole" rx="16" fill="black"/>
+      </mask>
+    </defs>
+    <rect width="100%" height="100%" fill="rgba(0,0,0,0.78)" mask="url(#tutMask)"/>
+  </svg>
+  <div class="tut-box" id="tutBox"></div>
+</div>
+
+<script>
+(function(){
+  if (localStorage.getItem('tutDone')) return;
+
+  const STEPS = [
+    {
+      sel: '.songs-grid',
+      title: 'Canciones',
+      body: 'Aquí están todas las <strong>canciones disponibles</strong>. Desplázate para verlas todas.',
+    },
+    {
+      sel: '.song-card',
+      title: 'Abrir canción',
+      body: 'Toca cualquier portada para ver sus <strong>letras, info y video</strong>.',
+    },
+    {
+      sel: '.mode-btn-player',
+      title: 'Reproductor',
+      body: 'Desde aquí puedes escuchar toda la cola, <strong>ordenar y mezclar</strong> canciones.',
+    },
+    {
+      sel: '.search-box',
+      title: 'Buscador',
+      body: 'Busca por <strong>título o artista</strong> para encontrar rápidamente cualquier canción.',
+    },
+  ];
+
+  let cur = 0;
+  const overlay = document.getElementById('tutOverlay');
+  const hole    = document.getElementById('tutHole');
+  const box     = document.getElementById('tutBox');
+  const PAD     = 10;
+
+  overlay.style.display = '';
+
+  function show() {
+    const s   = STEPS[cur];
+    const el  = document.querySelector(s.sel);
+    if (!el) { next(); return; }
+
+    const r   = el.getBoundingClientRect();
+    const isLast = cur === STEPS.length - 1;
+
+    // spotlight
+    hole.setAttribute('x',      r.left - PAD);
+    hole.setAttribute('y',      r.top  - PAD);
+    hole.setAttribute('width',  r.width  + PAD*2);
+    hole.setAttribute('height', r.height + PAD*2);
+
+    // scroll el elemento a la vista si hace falta
+    el.scrollIntoView({behavior:'smooth', block:'center'});
+
+    // contenido
+    box.innerHTML = `
+      <div class="tut-num">Paso ${cur+1} de ${STEPS.length}</div>
+      <div class="tut-title">${s.title}</div>
+      <div class="tut-body">${s.body}</div>
+      <div class="tut-row">
+        <div class="tut-dots">${STEPS.map((_,i)=>`<div class="tut-dot${i===cur?' on':''}"></div>`).join('')}</div>
+        <div style="display:flex;gap:0.45rem;align-items:center">
+          ${!isLast?`<button class="tut-skip" id="tutSkip">Saltar</button>`:''}
+          <button class="tut-next" id="tutNext">${isLast?'¡Listo! 🎌':'Siguiente →'}</button>
+        </div>
+      </div>`;
+
+    document.getElementById('tutNext').onclick = next;
+    const sk = document.getElementById('tutSkip');
+    if (sk) sk.onclick = finish;
+
+    // posición del tooltip
+    setTimeout(() => {
+      const bh  = box.offsetHeight || 160;
+      const bw  = 230;
+      const vw  = window.innerWidth;
+      const vh  = window.innerHeight;
+      const rb  = el.getBoundingClientRect(); // re-read tras scroll
+      let top, left;
+
+      // intentar abajo, si no cabe arriba
+      if (rb.bottom + PAD + bh + 12 < vh) {
+        top = rb.bottom + PAD + 10;
+      } else {
+        top = rb.top - PAD - bh - 10;
+      }
+      left = rb.left + rb.width/2 - bw/2;
+      left = Math.max(10, Math.min(left, vw - bw - 10));
+      top  = Math.max(10, Math.min(top,  vh - bh - 10));
+
+      box.style.top  = top  + 'px';
+      box.style.left = left + 'px';
+      box.style.animation = 'none';
+      box.offsetHeight;
+      box.style.animation = '';
+    }, 120);
+  }
+
+  function next() {
+    if (cur < STEPS.length-1) { cur++; show(); }
+    else finish();
+  }
+
+  function finish() {
+    localStorage.setItem('tutDone','1');
+    overlay.style.opacity = '0';
+    overlay.style.transition = 'opacity 0.4s';
+    setTimeout(()=>overlay.style.display='none', 400);
+  }
+
+  window.addEventListener('resize', show);
+  show();
+})();
+</script>
 </body>
 </html>
